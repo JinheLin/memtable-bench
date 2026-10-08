@@ -10,7 +10,8 @@
 namespace memtable_bench {
 
 // Keys and values are owned by the index. All operations use exact binary keys.
-// A cursor owns its position; concurrent inserts may change subsequent results.
+// The index must outlive its cursors. Views remain valid until Seek/Next or
+// cursor destruction. Active cursors may observe concurrent inserts.
 class Cursor {
  public:
   virtual ~Cursor() = default;
@@ -24,6 +25,8 @@ class Cursor {
 class Index {
  public:
   virtual ~Index() = default;
+  // Returns false if frozen, or if an append-only adapter sees a duplicate key.
+  // Upsert adapters replace the value of an existing exact key.
   virtual bool Insert(std::string_view key, std::string_view value) = 0;
   virtual bool Get(std::string_view key, std::string* value) const = 0;
   virtual std::unique_ptr<Cursor> NewCursor() const = 0;
@@ -32,12 +35,14 @@ class Index {
   virtual void Freeze() = 0;
   virtual std::size_t Size() const = 0;
   virtual std::string_view ConcurrencyMode() const = 0;
+  virtual bool SupportsUpsert() const { return true; }
 };
 
 struct AdapterInfo {
   std::string name;
   bool available;
   std::string reason;
+  bool supports_upsert = true;
 };
 
 std::vector<AdapterInfo> ListAdapters();

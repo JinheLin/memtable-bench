@@ -14,6 +14,10 @@
 #endif
 
 namespace memtable_bench {
+#ifdef MEMTABLE_BENCH_HAVE_ROCKSDB
+std::unique_ptr<Index> MakeRocksDBInlineSkipList();
+#endif
+
 std::size_t Index::Scan(std::string_view start, std::size_t limit,
                         std::uint64_t* checksum) const {
   auto cursor = NewCursor();
@@ -92,7 +96,38 @@ class LockedMapIndex final : public Index {
     bool valid_ = false;
   };
 
+  // Freeze prevents all future writes, so iterators and their referenced bytes
+  // stay valid. One seek followed by increments gives a linear full traversal.
+  class FrozenMapCursor final : public Cursor {
+   public:
+    explicit FrozenMapCursor(const Map& map) : map_(map), it_(map.end()) {}
+
+    bool Seek(std::string_view key) override {
+      it_ = map_.lower_bound(std::string(key));
+      return Valid();
+    }
+
+    bool Next() override {
+      if (Valid()) ++it_;
+      return Valid();
+    }
+
+    bool Valid() const override { return it_ != map_.end(); }
+    std::string_view Key() const override {
+      return Valid() ? std::string_view(it_->first) : std::string_view{};
+    }
+    std::string_view Value() const override {
+      return Valid() ? std::string_view(it_->second) : std::string_view{};
+    }
+
+   private:
+    const Map& map_;
+    typename Map::const_iterator it_;
+  };
+
   std::unique_ptr<Cursor> NewCursor() const override {
+    std::shared_lock lock(mu_);
+    if (frozen_) return std::make_unique<FrozenMapCursor>(map_);
     return std::make_unique<MapCursor>(*this);
   }
 
@@ -131,7 +166,11 @@ std::vector<AdapterInfo> ListAdapters() {
 #else
       {"tlx_btree", false, "configure -DMEMTABLE_BENCH_FETCH_TLX=ON"},
 #endif
-      {"rocksdb_inlineskiplist", false, "TODO: arena allocation, comparator, and iterator adapter"},
+#ifdef MEMTABLE_BENCH_HAVE_ROCKSDB
+      {"rocksdb_inlineskiplist", true, "RocksDB InlineSkipList + ConcurrentArena; append-only", false},
+#else
+      {"rocksdb_inlineskiplist", false, "configure -DMEMTABLE_BENCH_FETCH_ROCKSDB=ON", false},
+#endif
       {"btreeolc", false, "TODO: binary keys and ordered iterator semantics"},
       {"unodb_art", false, "TODO: binary-key encoding, cursor, and concurrency contract"},
       {"masstree", false, "TODO: thread context, value ownership, and iterator adapter"},
@@ -142,6 +181,9 @@ std::vector<AdapterInfo> ListAdapters() {
 
 std::unique_ptr<Index> MakeIndex(std::string_view name) {
   if (name == "std_map") return std::make_unique<LockedMapIndex<StandardMap>>();
+#ifdef MEMTABLE_BENCH_HAVE_ROCKSDB
+  if (name == "rocksdb_inlineskiplist") return MakeRocksDBInlineSkipList();
+#endif
 #ifdef MEMTABLE_BENCH_HAVE_ABSEIL
   if (name == "abseil_btree") {
     return std::make_unique<LockedMapIndex<absl::btree_map<std::string, std::string>>>();

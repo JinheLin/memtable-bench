@@ -412,8 +412,8 @@ void Stage1(const Options& o, Csv& csv) {
   const auto reads = ReadTrace(o, o.ops, 1);
   const auto scan_starts = ReadTrace(o, std::max<std::size_t>(1, o.ops / o.scan_length), 2);
   const std::string value = Value(o);
-  auto index = mb::MakeIndex(o.index);
   const auto before = ResidentBytes();
+  auto index = mb::MakeIndex(o.index);
   const auto inserted = Measure(order.size(), [&](std::size_t i, std::uint64_t*) {
     if (!index->Insert(mb::EncodeKey(order[i], o.key_size, o.internal_key), value))
       throw std::runtime_error("insert rejected");
@@ -432,6 +432,9 @@ void Stage1(const Options& o, Csv& csv) {
   });
   csv.Write(o, index->ConcurrencyMode(), index->Size(), 1, "get", get, before, ResidentBytes(), 1);
 
+  // Freeze outside the timed scan so every adapter can use a stable native
+  // iterator. The lifecycle stage measures Freeze separately.
+  index->Freeze();
   const auto scan = Measure(scan_starts.size(), [&](std::size_t i, std::uint64_t* hash) {
     return index->Scan(mb::EncodeKey(scan_starts[i], o.key_size, o.internal_key),
                        o.scan_length, hash);
@@ -583,6 +586,10 @@ int main(int argc, char** argv) {
     if (selected == adapters.end() || !selected->available)
       throw std::invalid_argument("adapter unavailable: " + o.index +
                                   "; run --list-indexes for details");
+    if (!selected->supports_upsert && !o.internal_key && o.read_percent < 100 &&
+        (o.stage == "2" || o.stage == "all"))
+      throw std::invalid_argument(o.index + " is append-only; stage 2 writes require "
+                                  "--internal-key (or use --read-percent 100)");
     ConfigureThread(o, 0);
     Csv csv(o.output);
     if (o.stage == "1" || o.stage == "all") Stage1(o, csv);

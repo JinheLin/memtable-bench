@@ -1,8 +1,8 @@
 # memtable-bench
 
 A C++20 harness for comparing ordered in-memory indexes as LSM MemTable candidates.
-It starts with a working `std::map` reference adapter. Abseil B-tree and TLX B+Tree
-are optional, buildable adapters. The remaining candidates have named, unavailable
+It starts with a working `std::map` reference adapter. Abseil B-tree, TLX B+Tree,
+and RocksDB InlineSkipList are optional, buildable adapters. Other candidates have named, unavailable
 adapter slots with explicit integration work; the harness never substitutes one
 data structure for another.
 
@@ -13,7 +13,7 @@ data structure for another.
 | `std_map` | `std::map` | Default | Coarse reader/writer lock |
 | `abseil_btree` | Abseil `btree_map` | Optional FetchContent | Coarse reader/writer lock |
 | `tlx_btree` | TLX `btree_map` (B+Tree) | Optional FetchContent | Coarse reader/writer lock |
-| `rocksdb_inlineskiplist` | RocksDB InlineSkipList | Stub | Not measured |
+| `rocksdb_inlineskiplist` | RocksDB InlineSkipList + ConcurrentArena | Optional FetchContent | Native concurrent insert; append-only |
 | `btreeolc` | BTreeOLC | Stub | Not measured |
 | `unodb_art` | UnoDB ART | Stub | Not measured |
 | `masstree` | Masstree | Stub | Not measured |
@@ -21,10 +21,11 @@ data structure for another.
 | `wormhole` | Wormhole | Stub | Not measured |
 
 `--list-indexes` reports the status of the actual binary. Requesting an unavailable
-adapter exits with an error before creating the result file. The three working
-adapters use the same owned `std::string` key/value format and the same coarse lock.
-Their stage 2 measurements are **wrapper scalability**, not native concurrent-index
-scalability. Native stage 2 results must wait for native adapters.
+adapter exits with an error before creating the result file. The three map/tree
+adapters use owned `std::string` keys and values with a coarse reader/writer lock;
+their stage 2 measurements describe wrapper scalability. RocksDB uses its upstream
+native concurrent insertion and arena storage. All adapters receive identical
+logical binary keys and values. Results record their concurrency mode in CSV.
 
 ## Build
 
@@ -45,8 +46,27 @@ cmake --build build-optional -j
 
 CMake FetchContent pins Abseil to commit `76bb24329e8bf5f39704eb10d21b9a80befa7c81`
 (tag `20250512.1`) and TLX to `502601e2328129263eeb31a61342e4a48f519a2b`
-(tag `v0.6.1`). Keep these pins fixed within an experiment series. Dependencies
+(tag `v0.6.1`). RocksDB uses tag `v9.10.0`, verified against commit
+`ae8fb3e5000e46d8d4c9dbf3a36019c0aaceebff`. Its FetchContent downloader performs
+a single-branch shallow clone and verifies the commit on configuration. Keep these
+pins fixed within an experiment series. Dependencies
 retain their own licenses; this repository's MIT license covers only its own code.
+
+To build the native skiplist:
+
+```sh
+cmake -S . -B build-rocksdb -DCMAKE_BUILD_TYPE=Release \
+  -DMEMTABLE_BENCH_FETCH_ROCKSDB=ON
+cmake --build build-rocksdb --target memtable_bench adapter_contract -j
+ctest --test-dir build-rocksdb --output-on-failure
+```
+
+The first build compiles the upstream RocksDB static library with tools, upstream
+tests, and optional compression dependencies disabled. No skiplist source is copied
+or modified. The internal-header adapter uses the same platform definitions as the
+upstream library. All three FetchContent options can be enabled in the same build.
+On macOS, the system compiler can be selected with
+`-DCMAKE_CXX_COMPILER=/usr/bin/clang++` in a new build directory.
 
 ## Run
 
@@ -59,6 +79,10 @@ retain their own licenses; this repository's MIT license covers only its own cod
 ./build/memtable_bench --stage 3 --index std_map --internal-key \
   --keys 100000 --key-size 24 --value-size 128 \
   --distribution zipf --output lifecycle.csv
+
+./build-rocksdb/memtable_bench --stage all --index rocksdb_inlineskiplist \
+  --internal-key --keys 100000 --ops 1000000 --threads 8 \
+  --key-size 24 --value-size 64 --output rocksdb.csv
 ```
 
 On Linux, pin worker threads and bind their future allocations to a NUMA node:
@@ -77,7 +101,7 @@ with proxy environment variables unset on hosts where that is required.
 ## Three stages and measurement rules
 
 1. **Single thread:** construct an index, insert each user key once, run exact-key
-   gets, then bounded ordered scans. Insert order is a seeded permutation for
+   gets, freeze outside the timed region, then run bounded ordered scans. Insert order is a seeded permutation for
    `uniform`/`zipf`, sequential for `sequential`. The selected distribution controls
    read and scan start IDs. Zipf uses exponent 1.1. `scan_length` is a maximum
    per scan.
@@ -86,6 +110,10 @@ with proxy environment variables unset on hosts where that is required.
    prefilled versions so all reads are hits. Without `--internal-key`, writes update
    existing keys. With it, writes insert unique newer versions. The start barrier
    excludes thread creation; throughput uses the wall time until all workers finish.
+   RocksDB is append-only: stage 2 writes require `--internal-key`. Without it, a
+   read-only phase (`--read-percent 100`) is allowed. Incompatible workloads are
+   rejected before creating output. Duplicate exact keys return false for RocksDB,
+   while the map/tree adapters implement upsert.
 3. **MemTable lifecycle:** create, insert, `Freeze`, one complete ordered scan
    simulating a flush, then destroy the index. The flush verifies strict key order
    and exact row count. Freeze and destroy get separate timing rows.
@@ -97,6 +125,26 @@ fills larger keys. `--internal-key` appends the one's complement of a big-endian
 64-bit sequence and a one-byte value type. This sorts versions of the same user key
 newest first. `Get` is an exact **encoded key** lookup; snapshot-visible lookup,
 tombstone resolution, and compaction are not implemented.
+
+Frozen map/tree cursors hold a native const iterator: `Seek` calls `lower_bound`
+once, and each `Next` increments the iterator without a key/value copy or another
+lookup. Full traversal is linear. Cursors created before Freeze retain their safe
+active-table behavior, which re-seeks on `Next` to tolerate iterator invalidation
+from writes. Stage 1 scan and stage 3 flush always create cursors after Freeze.
+RocksDB cursors use its native iterator in both modes and return views into arena
+records. An index must outlive every cursor.
+
+The [RocksDB InlineSkipList](https://github.com/facebook/rocksdb/blob/v9.10.0/memtable/inlineskiplist.h)
+adapter stores `[varint32 key length][key][varint32 value length][value]`
+in `InlineSkipList::AllocateKey` storage owned by `ConcurrentArena` (64 KiB blocks,
+huge pages disabled). A custom binary comparator preserves the harness's encoded
+key order; this is an InternalKey-style benchmark format, not RocksDB's on-disk
+InternalKey trailer format. It calls upstream `InsertConcurrently`, with no global
+adapter lock. A small atomic admission/count gate lets Freeze stop new writes and
+wait for admitted inserts to finish. Its overhead is included in insertion timing.
+Published records remain immutable; duplicate attempts retain their unlinked arena
+allocation until Destroy. `--seed` controls workload traces; upstream skiplist
+height randomness is seeded by its own thread-local generator.
 
 Workload plans and constant values are prepared outside timed regions. Timed
 operations include key encoding, adapter locks, value copies, cursor work, and
@@ -139,7 +187,6 @@ binary ordering and per-index value ownership. Each adapter needs verification o
 exact reads, seek/next order, freeze behavior, memory cleanup, and concurrent API
 semantics before its `available` flag changes. In particular:
 
-- [RocksDB InlineSkipList](https://github.com/facebook/rocksdb/blob/main/memtable/inlineskiplist.h): pair its arena allocation and comparator with the correct memtable key encoding; handle lifetime and concurrent insert semantics.
 - [BTreeOLC](https://github.com/wangziqi2016/index-microbench/blob/master/BTreeOLC/BTreeOLC.h): adapt arbitrary binary keys and add a safe ordered cursor.
 - [UnoDB ART](https://github.com/unodb-dev/unodb): verify byte-key encoding, range iterator, and chosen concurrency mode.
 - [Masstree](https://github.com/kohler/masstree-beta): provide thread contexts and explicit value ownership.
@@ -155,6 +202,9 @@ and their wrapper concurrency modes are stated alongside results.
 CMakeLists.txt                  Build and pinned optional dependencies
 include/memtable_bench/index.h Unified ordered-index interface
 src/index.cc                   Working adapters, registry, key encoding
+src/rocksdb_index.cc            Native InlineSkipList/ConcurrentArena adapter
 src/main.cc                    Workloads, placement, metrics, CSV
-tests/adapter_contract.cc       Binary order, cursor, upsert, freeze contracts
+cmake/RocksDB.cmake             Pinned upstream library configuration
+cmake/FetchRocksDB.cmake         Single-branch dependency downloader
+tests/adapter_contract.cc       Binary/MVCC order, cursors, duplicate policy, concurrent Freeze
 ```
