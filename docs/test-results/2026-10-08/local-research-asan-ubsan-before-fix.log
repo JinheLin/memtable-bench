@@ -1,0 +1,66 @@
+Internal ctest changing into directory: /Users/jinhelin/github/memtable-bench/build-research-asan
+Test project /Users/jinhelin/github/memtable-bench/build-research-asan
+    Start 1: key_dataset_contract
+1/9 Test #1: key_dataset_contract .............   Passed    1.00 sec
+    Start 2: adapter_contract
+2/9 Test #2: adapter_contract .................   Passed    6.44 sec
+    Start 3: smoke
+3/9 Test #3: smoke ............................   Passed    0.48 sec
+    Start 4: btreeolc_smoke
+4/9 Test #4: btreeolc_smoke ...................   Passed    0.12 sec
+    Start 5: unodb_art_smoke
+5/9 Test #5: unodb_art_smoke ..................   Passed    0.37 sec
+    Start 6: masstree_smoke
+6/9 Test #6: masstree_smoke ...................   Passed    0.10 sec
+    Start 7: wormhole_smoke
+7/9 Test #7: wormhole_smoke ...................   Passed    0.10 sec
+    Start 8: unodb_reject_upsert
+8/9 Test #8: unodb_reject_upsert ..............   Passed    0.03 sec
+    Start 9: harness_integration
+9/9 Test #9: harness_integration ..............***Failed    3.48 sec
+std_map: all stages, CSV and checksums match std_map
+btreeolc: all stages, CSV and checksums match std_map
+unodb_art: all stages, CSV and checksums match std_map
+masstree: all stages, CSV and checksums match std_map
+wormhole: all stages, CSV and checksums match std_map
+Traceback (most recent call last):
+  File "/Users/jinhelin/github/memtable-bench/tests/harness_integration.py", line 81, in <module>
+    invoke("--stage", "all", "--index", name, "--internal-key", "--keys", 2500,
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           "--ops", 5000, "--threads", 4, "--key-size", 64, "--value-size", 1024,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+           "--hotspot-placement", "clustered", "--dataset-output", dataset,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           "--output", output)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jinhelin/github/memtable-bench/tests/harness_integration.py", line 19, in invoke
+    raise AssertionError(f"{args}: exit {result.returncode}\n{result.stdout}\n{result.stderr}")
+AssertionError: ('--stage', 'all', '--index', 'wormhole', '--internal-key', '--keys', 2500, '--ops', 5000, '--threads', 4, '--key-size', 64, '--value-size', 1024, '--scan-length', 37, '--distribution', 'zipf', '--measure-detail', '--key-layout', 'random', '--prefix-bytes', 0, '--prefix-groups', 1, '--key-preparation', 'precomputed', '--insert-order', 'reverse', '--hotspot-placement', 'clustered', '--dataset-output', PosixPath('/var/folders/65/01w3yh1d5zbg153dfwzd68900000gn/T/memtable-contract-ewvr49xb/random-wormhole.json'), '--output', PosixPath('/var/folders/65/01w3yh1d5zbg153dfwzd68900000gn/T/memtable-contract-ewvr49xb/random-wormhole.csv')): exit -6
+
+/Users/jinhelin/github/memtable-bench/build-vendor/wormhole/lib.c:298:27: runtime error: load of misaligned address 0x000102c166de for type 'u64' (aka 'unsigned long'), which requires 8 byte alignment
+0x000102c166de: note: pointer points here
+ ff ff fe 01 ff be  3e a6 f1 d2 57 31 3b 26  7d 8e 6b 70 09 fd 8d 0e  4e a8 a9 5b 27 df a8 5e  24 17
+             ^ 
+    #0 0x1004afd40 in crc32c_inc_x4 lib.c:298
+    #1 0x1004affb4 in crc32c_inc lib.c:308
+    #2 0x1004cb61c in kv_crc32c kv.c:20
+    #3 0x100434594 in memtable_bench::(anonymous namespace)::Probe(std::__1::basic_string_view<char, std::__1::char_traits<char>>) wormhole_index.cc:23
+    #4 0x10042eebc in memtable_bench::(anonymous namespace)::WormholeIndex::Insert(std::__1::basic_string_view<char, std::__1::char_traits<char>>, std::__1::basic_string_view<char, std::__1::char_traits<char>>) wormhole_index.cc:42
+    #5 0x1001e96c8 in (anonymous namespace)::Stage1((anonymous namespace)::Options const&, (anonymous namespace)::Csv&, memtable_bench::KeyDataset const*)::$_3::operator()(unsigned long, unsigned long long*) const main.cc:600
+    #6 0x10019f474 in (anonymous namespace)::Sample (anonymous namespace)::Measure<(anonymous namespace)::Stage1((anonymous namespace)::Options const&, (anonymous namespace)::Csv&, memtable_bench::KeyDataset const*)::$_3>(unsigned long, (anonymous namespace)::Stage1((anonymous namespace)::Options const&, (anonymous namespace)::Csv&, memtable_bench::KeyDataset const*)::$_3&&, (anonymous namespace)::Perf*) main.cc:341
+    #7 0x100161f98 in (anonymous namespace)::Stage1((anonymous namespace)::Options const&, (anonymous namespace)::Csv&, memtable_bench::KeyDataset const*) main.cc:598
+    #8 0x10015827c in main main.cc:842
+    #9 0x18ba60270  (<unknown module>)
+
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior /Users/jinhelin/github/memtable-bench/build-vendor/wormhole/lib.c:298:27 in 
+
+
+
+89% tests passed, 1 tests failed out of 9
+
+Total Test time (real) =  12.13 sec
+
+The following tests FAILED:
+	  9 - harness_integration (Failed)
+Errors while running CTest

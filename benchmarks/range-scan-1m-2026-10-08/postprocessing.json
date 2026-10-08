@@ -1,0 +1,6 @@
+{
+  "report-generator.py": "5993cbcfb9561ee78e900ba7643f3ccda266a248793d82971c1e15ea1b7e6328",
+  "plot-generator.py": "41de2605704ef61a8b01dd430bedad0d8af5688190277a7bd30d71085bda4a82",
+  "analysis-generator.py": "da559ad52647c406c0742c5c3f1d9970b10691ec88da9754c0686c2f375fa502",
+  "note": "Generators captured separately. Analysis generator derives per-row costs and adds the latency sampling note. Benchmark source snapshot and binary unchanged."
+}

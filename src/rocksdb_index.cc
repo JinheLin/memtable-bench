@@ -81,6 +81,13 @@ class RocksDBInlineSkipList final : public Index {
     return true;
   }
 
+  bool Contains(std::string_view key) const override {
+    const auto probe = EncodeProbe(key);
+    SkipList::Iterator it(&list_);
+    it.Seek(probe.data());
+    return it.Valid() && RecordKey(it.key()) == key;
+  }
+
   bool Get(std::string_view key, std::string* value) const override {
     const std::string probe = EncodeProbe(key);
     SkipList::Iterator it(&list_);

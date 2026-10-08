@@ -1,0 +1,119 @@
+[0/1] Re-running CMake...
+CMake Warning (dev) at cmake/UnoDB.cmake:6 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable BOOST_ROOT is set to:
+
+    /Users/jinhelin/github/memtable-bench/build-research/_deps/memtable_boost-src/boost_1_86_0
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  cmake/UnoDB.cmake:32 (memtable_unodb)
+  CMakeLists.txt:62 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at cmake/UnoDB.cmake:6 (find_package):
+  Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+  --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+  set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  cmake/UnoDB.cmake:32 (memtable_unodb)
+  CMakeLists.txt:62 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Warning diagnostics are not fatal
+-- Using SSE4.1 instructions on x86_64
+-- Code coverage reporting not enabled
+-- SANITIZER_ENV: 
+CMake Warning (dev) at build-vendor/unodb/CMakeLists.txt:372 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable BOOST_ROOT is set to:
+
+    /Users/jinhelin/github/memtable-bench/build-research/_deps/memtable_boost-src/boost_1_86_0
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning at /opt/homebrew/share/cmake/Modules/FindBoost.cmake:1414 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /opt/homebrew/share/cmake/Modules/FindBoost.cmake:1539 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/homebrew/share/cmake/Modules/FindBoost.cmake:2151 (_Boost_MISSING_DEPENDENCIES)
+  build-vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /opt/homebrew/share/cmake/Modules/FindBoost.cmake:1414 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /opt/homebrew/share/cmake/Modules/FindBoost.cmake:1539 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/homebrew/share/cmake/Modules/FindBoost.cmake:2151 (_Boost_MISSING_DEPENDENCIES)
+  build-vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /opt/homebrew/share/cmake/Modules/FindBoost.cmake:1414 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /opt/homebrew/share/cmake/Modules/FindBoost.cmake:1539 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/homebrew/share/cmake/Modules/FindBoost.cmake:2151 (_Boost_MISSING_DEPENDENCIES)
+  build-vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+-- clang-tidy not found
+-- cppcheck not found
+-- cpplint not found
+-- Build configuration and user-set CMake options:
+-- CMAKE_BUILD_TYPE: Debug
+-- STANDALONE: OFF
+-- AVX2: OFF
+-- SPINLOCK_LOOP: PAUSE
+-- STATS: OFF
+-- TESTS: OFF
+-- BENCHMARKS: OFF
+-- MAINTAINER_MODE: OFF
+-- COVERAGE: OFF
+-- GCOV_PATH: NOTFOUND
+-- SANITIZE_ADDRESS: OFF
+-- SANITIZE_THREAD: OFF
+-- SANITIZE_UB: OFF
+-- STATIC_ANALYSIS: OFF
+-- CPPCHECK_AGGRESSIVE: OFF
+-- IWYU: OFF
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/jinhelin/github/memtable-bench/build-research-asan
+[1/7] Building C object CMakeFiles/memtable_wormhole.dir/build-vendor/wormhole/lib.c.o
+/Users/jinhelin/github/memtable-bench/build-vendor/wormhole/lib.c:427:3: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  427 |   sprintf(buf, pattern, timestamp, threadname, hostname, getpid());
+      |   ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.1.sdk/usr/include/_stdio.h:274:1: note: 'sprintf' has been explicitly marked deprecated here
+  274 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.1.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+  218 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+/Users/jinhelin/github/memtable-bench/build-vendor/wormhole/lib.c:439:5: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  439 |     sprintf(buf, "/run/user/%u/.debug_wait_gdb_pid", getuid());
+      |     ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.1.sdk/usr/include/_stdio.h:274:1: note: 'sprintf' has been explicitly marked deprecated here
+  274 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.1.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+  218 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+2 warnings generated.
+[2/7] Linking C static library libmemtable_wormhole.a
+[3/7] Linking CXX executable key_dataset_contract
+[4/7] Linking CXX executable memtable_bench
+[5/7] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[6/7] Linking CXX executable adapter_contract

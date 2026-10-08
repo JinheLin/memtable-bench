@@ -1,0 +1,5 @@
+{
+  "report_generator_sha256": "5993cbcfb9561ee78e900ba7643f3ccda266a248793d82971c1e15ea1b7e6328",
+  "plot_generator_sha256": "41de2605704ef61a8b01dd430bedad0d8af5688190277a7bd30d71085bda4a82",
+  "note": "Postprocessing scripts captured separately; benchmark source snapshot unchanged."
+}

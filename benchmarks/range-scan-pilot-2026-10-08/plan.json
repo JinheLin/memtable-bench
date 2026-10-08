@@ -1,0 +1,141 @@
+{
+  "configs": [
+    {
+      "config_id": "range_random_l1",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 1,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_random_l10",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 10,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_random_l100",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 100,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_random_l1000",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 1000,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_random_l10000",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 10000,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_prefix_l1",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "global-prefix",
+      "prefix_bytes": 56,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 1,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_prefix_l10",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "global-prefix",
+      "prefix_bytes": 56,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 10,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_prefix_l100",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "global-prefix",
+      "prefix_bytes": 56,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 100,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_prefix_l1000",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "global-prefix",
+      "prefix_bytes": 56,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 1000,
+      "read_percent": 80
+    },
+    {
+      "config_id": "range_prefix_l10000",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "global-prefix",
+      "prefix_bytes": 56,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 10000,
+      "read_percent": 80
+    }
+  ],
+  "workloads": [
+    [
+      "range_uniform",
+      1,
+      1
+    ]
+  ]
+}

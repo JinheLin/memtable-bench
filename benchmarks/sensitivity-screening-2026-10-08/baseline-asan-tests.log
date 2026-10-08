@@ -1,0 +1,39 @@
+-- The CXX compiler identification is AppleClang 16.0.0.16000026
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (0.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/jinhelin/github/memtable-bench/build-dataset-asan
+[ 22%] Building CXX object CMakeFiles/memtable_bench_index.dir/src/index.cc.o
+[ 22%] Building CXX object CMakeFiles/memtable_bench_index.dir/src/key_dataset.cc.o
+[ 33%] Linking CXX static library libmemtable_bench_index.a
+[ 33%] Built target memtable_bench_index
+[ 66%] Building CXX object CMakeFiles/memtable_bench.dir/src/main.cc.o
+[ 66%] Building CXX object CMakeFiles/key_dataset_contract.dir/tests/key_dataset_contract.cc.o
+[ 66%] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[ 77%] Linking CXX executable key_dataset_contract
+[ 77%] Built target key_dataset_contract
+[ 88%] Linking CXX executable adapter_contract
+[ 88%] Built target adapter_contract
+[100%] Linking CXX executable memtable_bench
+[100%] Built target memtable_bench
+Internal ctest changing into directory: /Users/jinhelin/github/memtable-bench/build-dataset-asan
+Test project /Users/jinhelin/github/memtable-bench/build-dataset-asan
+    Start 1: key_dataset_contract
+1/4 Test #1: key_dataset_contract .............   Passed    1.06 sec
+    Start 2: adapter_contract
+2/4 Test #2: adapter_contract .................   Passed    0.53 sec
+    Start 3: smoke
+3/4 Test #3: smoke ............................   Passed    0.32 sec
+    Start 4: harness_integration
+4/4 Test #4: harness_integration ..............   Passed    1.26 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   3.17 sec

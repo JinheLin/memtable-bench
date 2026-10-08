@@ -1,0 +1,11 @@
+{
+  "kind": "formal",
+  "original_directory": "results/range-scan-1m-2026-10-08",
+  "formal_processes": 270,
+  "phase_rows": 810,
+  "raw_csv_columns": 61,
+  "adapter_checksum_groups_verified": 90,
+  "per_process_files": 837,
+  "runs_archive_sha256": "b58709c208dbe693b363ad2cb0fa04591c32f5d67265b4b84fe00b80e315caa2",
+  "note": "Top-level measured files are byte-for-byte copies. Per-process files are packed in runs.tar.gz; extract it to restore the original runs/ tree."
+}

@@ -1,0 +1,79 @@
+[0/1] Re-running CMake...
+CMake Warning (dev) at vendor/tlx/CMakeLists.txt:19 (project):
+  Policy CMP0048 is not set: project() command manages VERSION variables.
+  Run "cmake --help-policy CMP0048" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  The following variable(s) would be set to empty:
+
+    PROJECT_VERSION
+    PROJECT_VERSION_MAJOR
+    PROJECT_VERSION_MINOR
+    PROJECT_VERSION_PATCH
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- TLX CMAKE_CXX_FLAGS: -Wshadow -Wold-style-cast -std=c++20 -g -W -Wall -Wextra -fPIC  -Wcast-qual -Winit-self -Wnoexcept -Woverloaded-virtual -Wredundant-decls
+-- Enabling RTTI in all builds
+-- ROCKSDB_PLUGINS: 
+-- ROCKSDB PLUGINS TO BUILD 
+-- JNI library is disabled
+-- Warning diagnostics are not fatal
+-- Using SSE4.1 instructions on x86_64
+-- Code coverage reporting not enabled
+-- SANITIZER_ENV: 
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+-- Not using clang-tidy due to non-clang compiler being used
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+-- cppcheck not found
+-- cpplint not found
+-- Build configuration and user-set CMake options:
+-- CMAKE_BUILD_TYPE: Release
+-- STANDALONE: OFF
+-- AVX2: OFF
+-- SPINLOCK_LOOP: PAUSE
+-- STATS: OFF
+-- TESTS: OFF
+-- BENCHMARKS: OFF
+-- MAINTAINER_MODE: OFF
+-- COVERAGE: OFF
+-- GCOV_PATH: NOTFOUND
+-- SANITIZE_ADDRESS: OFF
+-- SANITIZE_THREAD: OFF
+-- SANITIZE_UB: OFF
+-- STATIC_ANALYSIS: OFF
+-- CPPCHECK_AGGRESSIVE: OFF
+-- IWYU: OFF
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+[1/6] Building C object CMakeFiles/memtable_wormhole.dir/vendor/wormhole/lib.c.o
+[2/6] Linking C static library libmemtable_wormhole.a
+[3/6] Linking CXX executable key_dataset_contract
+[4/6] Linking CXX executable memtable_bench
+[5/6] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[6/6] Linking CXX executable adapter_contract

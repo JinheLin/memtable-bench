@@ -1,0 +1,24 @@
+name: adapters
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  linux-x86:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+    env:
+      MEMTABLE_BENCH_REQUIRE_HOT: "1"
+      BUILD_JOBS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools and Boost headers
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build clang libboost-dev
+      - name: Build and validate all adapters including HOT
+        shell: bash
+        run: |
+          if [ "${{ matrix.compiler }}" = clang ]; then
+            export CC=clang CXX=clang++
+          else
+            export CC=gcc CXX=g++
+          fi
+          ./scripts/build_all.sh build-all -G Ninja

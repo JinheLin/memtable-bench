@@ -1,0 +1,78 @@
+{
+  "configs": [
+    {
+      "config_id": "random",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 100,
+      "read_percent": 80
+    },
+    {
+      "config_id": "long_prefix",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "global-prefix",
+      "prefix_bytes": 56,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 100,
+      "read_percent": 80
+    },
+    {
+      "config_id": "groups",
+      "key_size": 64,
+      "value_size": 64,
+      "key_layout": "group-prefix",
+      "prefix_bytes": 24,
+      "prefix_groups": 1024,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 100,
+      "read_percent": 80
+    },
+    {
+      "config_id": "large_value",
+      "key_size": 64,
+      "value_size": 1024,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "distribution": "uniform",
+      "hotspot_placement": "spread",
+      "insert_order": "random",
+      "scan_length": 100,
+      "read_percent": 80
+    }
+  ],
+  "workloads": [
+    [
+      "mixed_t1",
+      2,
+      1
+    ],
+    [
+      "mixed_t4",
+      2,
+      4
+    ],
+    [
+      "mixed_t16",
+      2,
+      16
+    ],
+    [
+      "lifecycle_uniform",
+      3,
+      1
+    ]
+  ]
+}

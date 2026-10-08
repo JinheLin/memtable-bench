@@ -1,4 +1,7 @@
 /build/
 /build-*/
+/results/
 *.csv
+!/benchmarks/**/*.csv
 .DS_Store
+__pycache__/

@@ -1,0 +1,11 @@
+{
+  "kind": "pilot",
+  "original_directory": "results/representative-pilot-2026-10-08",
+  "formal_processes": 144,
+  "phase_rows": 288,
+  "raw_csv_columns": 61,
+  "adapter_checksum_groups_verified": 32,
+  "per_process_files": 459,
+  "runs_archive_sha256": "94b60991cd15216d7b92a78223066d1423fc17be9c72ca6dd7ac376026b10bfc",
+  "note": "Top-level measured files are byte-for-byte copies. Per-process files are packed in runs.tar.gz; extract it to restore the original runs/ tree."
+}

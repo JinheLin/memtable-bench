@@ -1,0 +1,30 @@
+[1/2] Building CXX object CMakeFiles/memtable_bench.dir/src/main.cc.o
+[2/2] Linking CXX executable memtable_bench
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+      Start  1: key_dataset_contract
+ 1/11 Test  #1: key_dataset_contract .............   Passed    0.01 sec
+      Start  2: adapter_contract
+ 2/11 Test  #2: adapter_contract .................   Passed    0.63 sec
+      Start  3: smoke
+ 3/11 Test  #3: smoke ............................   Passed    0.03 sec
+      Start  4: rocksdb_smoke
+ 4/11 Test  #4: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  5: rocksdb_reject_upsert
+ 5/11 Test  #5: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  6: btreeolc_smoke
+ 6/11 Test  #6: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  7: unodb_art_smoke
+ 7/11 Test  #7: unodb_art_smoke ..................   Passed    0.02 sec
+      Start  8: masstree_smoke
+ 8/11 Test  #8: masstree_smoke ...................   Passed    0.01 sec
+      Start  9: wormhole_smoke
+ 9/11 Test  #9: wormhole_smoke ...................   Passed    0.02 sec
+      Start 10: unodb_reject_upsert
+10/11 Test #10: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 11: harness_integration
+11/11 Test #11: harness_integration ..............   Passed    1.18 sec
+
+100% tests passed, 0 tests failed out of 11
+
+Total Test time (real) =   1.93 sec

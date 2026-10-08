@@ -1,0 +1,45 @@
+diff --git a/BTreeOLC/BTreeOLC.h b/BTreeOLC/BTreeOLC.h
+index e7826a9..d8469d9 100644
+--- a/BTreeOLC/BTreeOLC.h
++++ b/BTreeOLC/BTreeOLC.h
+@@ -3,7 +3,15 @@
+ #include <cassert>
+ #include <cstring>
+ #include <atomic>
++#include <algorithm>
++#include <cstdint>
++#if defined(__x86_64__) || defined(__i386__)
+ #include <immintrin.h>
++#elif defined(__aarch64__)
++inline void _mm_pause() { __asm__ __volatile__("yield"); }
++#else
++#error "BTreeOLC adapter requires x86_64 or ARM64"
++#endif
+ #include <sched.h>
+ 
+ namespace btreeolc {
+@@ -97,6 +105,7 @@ struct BTreeLeaf : public BTreeLeafBase {
+    bool isFull() { return count==maxEntries; };
+ 
+    unsigned lowerBound(Key k) {
++      if (count == 0) return 0;
+       unsigned lower=0;
+       unsigned upper=count;
+       do {
+@@ -183,6 +192,7 @@ struct BTreeInner : public BTreeInnerBase {
+    }
+ 
+    unsigned lowerBound(Key k) {
++      if (count == 0) return 0;
+       unsigned lower=0;
+       unsigned upper=count;
+       do {
+@@ -391,7 +401,7 @@ struct BTree {
+ 
+     BTreeLeaf<Key,Value>* leaf = static_cast<BTreeLeaf<Key,Value>*>(node);
+     unsigned pos = leaf->lowerBound(k);
+-    bool success;
++    bool success = false;
+     if ((pos<leaf->count) && (leaf->keys[pos]==k)) {
+       success = true;
+       result = leaf->payloads[pos];

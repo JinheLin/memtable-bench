@@ -1,0 +1,9 @@
+{
+  "binary_reused_from": "/DATA/disk1/jinhelin/github/memtable-bench/results/range-scan-pilot-2026-10-08",
+  "binary_sha256": "8fc3997719fe9739b6d47c77e55e64c735d87aeb7405da41a39ea1033e1a0bf3",
+  "compiled_sources_unchanged": true,
+  "validation_logs": "/DATA/disk1/jinhelin/github/memtable-bench/results/range-scan-pilot-2026-10-08/build-tests.log",
+  "latency_sampling_interval": 64,
+  "latency_samples_per_phase": 16,
+  "tail_latency_limitation": "16 samples per phase per repeat; sampled p99 is descriptive and is not a robust tail estimate"
+}

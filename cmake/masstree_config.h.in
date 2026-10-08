@@ -1,0 +1,47 @@
+#pragma once
+
+// Configuration for the embedded Masstree templates on 64-bit Clang/GCC hosts.
+// Autoconf's server, test runner, allocator and network options are not used.
+#define HAVE_TYPE_TRAITS 1
+#define HAVE_CXX_TEMPLATE_ALIAS 1
+#define HAVE_CXX_USER_LITERALS 1
+#define HAVE_STD_IS_TRIVIALLY_COPYABLE 1
+#define HAVE_STD_IS_TRIVIALLY_DESTRUCTIBLE 1
+#define HAVE___BUILTIN_CLZ 1
+#define HAVE___BUILTIN_CLZL 1
+#define HAVE___BUILTIN_CLZLL 1
+#define HAVE___BUILTIN_CTZ 1
+#define HAVE___BUILTIN_CTZL 1
+#define HAVE___BUILTIN_CTZLL 1
+#define HAVE___SYNC_BOOL_COMPARE_AND_SWAP 1
+#define HAVE___SYNC_BOOL_COMPARE_AND_SWAP_8 1
+#define HAVE___SYNC_VAL_COMPARE_AND_SWAP 1
+#define HAVE___SYNC_VAL_COMPARE_AND_SWAP_8 1
+#define HAVE___SYNC_FETCH_AND_ADD 1
+#define HAVE___SYNC_FETCH_AND_ADD_8 1
+#define HAVE___SYNC_FETCH_AND_OR_8 1
+#define HAVE_VSNPRINTF 1
+#cmakedefine01 HAVE_INT64_T_IS_LONG
+#cmakedefine01 HAVE_INT64_T_IS_LONG_LONG
+#cmakedefine01 HAVE_SIZE_T_IS_UNSIGNED_LONG
+#cmakedefine01 HAVE_SIZE_T_IS_UNSIGNED_LONG_LONG
+#cmakedefine01 HAVE_OFF_T_IS_LONG_LONG
+#define WORDS_BIGENDIAN_SET 1
+#define CACHE_LINE_SIZE 64
+#define MASSTREE_MAXKEYLEN 1024
+#define HAVE_MEMDEBUG 0
+#define HAVE_ASSERTIONS 0
+#define SIZEOF_SHORT 2
+#define SIZEOF_INT 4
+#define SIZEOF_LONG 8
+#define SIZEOF_LONG_LONG 8
+
+#include <cassert>
+extern void fail_always_assert(const char*, int, const char*, const char* = nullptr)
+    __attribute__((noreturn));
+#define always_assert(x, ...) do { if (!(x)) fail_always_assert(__FILE__, __LINE__, #x); } while (0)
+#define mandatory_assert always_assert
+#define masstree_invariant(x, ...) assert(x)
+#define masstree_precondition(x, ...) assert(x)
+#define invariant masstree_invariant
+#define precondition masstree_precondition

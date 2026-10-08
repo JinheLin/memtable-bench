@@ -1,0 +1,11 @@
+{
+  "kind": "formal",
+  "original_directory": "results/sensitivity-screening-2026-10-08",
+  "formal_processes": 540,
+  "phase_rows": 2700,
+  "raw_csv_columns": 61,
+  "adapter_checksum_groups_verified": 300,
+  "per_process_files": 1647,
+  "runs_archive_sha256": "da13179bd9275528fb4ab0f7d0aace0fb817d21cd6c1ee932cb6555399f3b85b",
+  "note": "Top-level measured files are byte-for-byte copies. Per-process files are packed in runs.tar.gz; extract it to restore the original runs/ tree."
+}

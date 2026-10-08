@@ -1,0 +1,3 @@
+layout,user_key_bytes,prefix_bytes,prefix_groups,seed,keys,logical_key_bytes,dataset_hash_fnv1a64,lcp_pairs,lcp_min,lcp_p50,lcp_p95,lcp_p99,lcp_max,lcp_mean
+global-prefix,64,56,1,42,10000,73,16807049854409047505,9999,56,57,58,58,59,57.0479047905
+random,64,0,1,42,10000,73,1484689140466761640,9999,0,1,2,2,3,1.04790479048

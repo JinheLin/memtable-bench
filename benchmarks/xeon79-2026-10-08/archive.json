@@ -1,0 +1,11 @@
+{
+  "kind": "formal",
+  "original_directory": "results/xeon79-2026-10-08",
+  "formal_processes": 360,
+  "phase_rows": 675,
+  "raw_csv_columns": 41,
+  "adapter_checksum_groups_verified": 75,
+  "per_process_files": 738,
+  "runs_archive_sha256": "5cd8e142068e38632a1a23119fc9f36a0e91f0fe49fb9041e041c797c1016709",
+  "note": "Top-level measured files are byte-for-byte copies. Per-process files are packed in runs.tar.gz; extract it to restore the original runs/ tree."
+}

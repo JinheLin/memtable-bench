@@ -1,0 +1,1062 @@
+-- The CXX compiler identification is GNU 11.3.1
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Performing Test ABSL_INTERNAL_AT_LEAST_CXX17
+-- Performing Test ABSL_INTERNAL_AT_LEAST_CXX17 - Success
+-- Performing Test ABSL_INTERNAL_AT_LEAST_CXX20
+-- Performing Test ABSL_INTERNAL_AT_LEAST_CXX20 - Success
+CMake Warning (dev) at vendor/tlx/CMakeLists.txt:19 (project):
+  Policy CMP0048 is not set: project() command manages VERSION variables.
+  Run "cmake --help-policy CMP0048" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  The following variable(s) would be set to empty:
+
+    PROJECT_VERSION
+    PROJECT_VERSION_MAJOR
+    PROJECT_VERSION_MINOR
+    PROJECT_VERSION_PATCH
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- The C compiler identification is GNU 11.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Performing Test TLX_CXX_HAS_CXX20
+-- Performing Test TLX_CXX_HAS_CXX20 - Success
+-- TLX CMAKE_CXX_FLAGS: -Wshadow -Wold-style-cast -std=c++20 -g -W -Wall -Wextra -fPIC  -Wcast-qual -Winit-self -Wnoexcept -Woverloaded-virtual -Wredundant-decls
+-- Found Git: /usr/bin/git (found version "2.47.1") 
+-- The ASM compiler identification is GNU
+-- Found assembler: /usr/bin/gcc
+-- Performing Test HAVE_OMIT_LEAF_FRAME_POINTER
+-- Performing Test HAVE_OMIT_LEAF_FRAME_POINTER - Success
+-- Performing Test BUILTIN_ATOMIC
+-- Performing Test BUILTIN_ATOMIC - Success
+-- Enabling RTTI in all builds
+-- Performing Test HAVE_FALLOCATE
+-- Performing Test HAVE_FALLOCATE - Success
+-- Performing Test HAVE_SYNC_FILE_RANGE_WRITE
+-- Performing Test HAVE_SYNC_FILE_RANGE_WRITE - Success
+-- Performing Test HAVE_PTHREAD_MUTEX_ADAPTIVE_NP
+-- Performing Test HAVE_PTHREAD_MUTEX_ADAPTIVE_NP - Success
+-- Looking for malloc_usable_size
+-- Looking for malloc_usable_size - found
+-- Looking for sched_getcpu
+-- Looking for sched_getcpu - found
+-- Looking for getauxval
+-- Looking for getauxval - found
+-- Looking for F_FULLFSYNC
+-- Looking for F_FULLFSYNC - not found
+-- ROCKSDB_PLUGINS: 
+-- ROCKSDB PLUGINS TO BUILD 
+-- JNI library is disabled
+-- Warning diagnostics are not fatal
+-- Using SSE4.1 instructions on x86_64
+-- Code coverage reporting not enabled
+-- SANITIZER_ENV: 
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+-- Found Boost: /DATA/disk1/jinhelin/github/memtable-bench/vendor/boost_1_86_0 (found version "1.86.0")  missing components: stacktrace_basic stacktrace_backtrace stacktrace_windbg
+-- Not using clang-tidy due to non-clang compiler being used
+-- cppcheck not found
+-- cpplint not found
+-- Build configuration and user-set CMake options:
+-- CMAKE_BUILD_TYPE: Release
+-- STANDALONE: OFF
+-- AVX2: OFF
+-- SPINLOCK_LOOP: PAUSE
+-- STATS: OFF
+-- TESTS: OFF
+-- BENCHMARKS: OFF
+-- MAINTAINER_MODE: OFF
+-- COVERAGE: OFF
+-- GCOV_PATH: NOTFOUND
+-- SANITIZE_ADDRESS: OFF
+-- SANITIZE_THREAD: OFF
+-- SANITIZE_UB: OFF
+-- STATIC_ANALYSIS: OFF
+-- CPPCHECK_AGGRESSIVE: OFF
+-- IWYU: OFF
+-- Performing Test HAVE_INT64_T_IS_LONG
+-- Performing Test HAVE_INT64_T_IS_LONG - Success
+-- Performing Test HAVE_INT64_T_IS_LONG_LONG
+-- Performing Test HAVE_INT64_T_IS_LONG_LONG - Failed
+-- Performing Test HAVE_SIZE_T_IS_UNSIGNED_LONG
+-- Performing Test HAVE_SIZE_T_IS_UNSIGNED_LONG - Success
+-- Performing Test HAVE_SIZE_T_IS_UNSIGNED_LONG_LONG
+-- Performing Test HAVE_SIZE_T_IS_UNSIGNED_LONG_LONG - Failed
+-- Performing Test HAVE_OFF_T_IS_LONG_LONG
+-- Performing Test HAVE_OFF_T_IS_LONG_LONG - Failed
+-- Configuring done (2.8s)
+-- Generating done (0.2s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+[1/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/wormhole_index.cc.o
+/DATA/disk1/jinhelin/github/memtable-bench/src/wormhole_index.cc:125:11: warning: invalid use of 'struct kv' with a zero-size array in 'class memtable_bench::{anonymous}::WormholeIndex::WormCursor' [-Wpedantic]
+  125 |     kvref view_{};
+      |           ^~~~~
+In file included from /DATA/disk1/jinhelin/github/memtable-bench/src/wormhole_index.cc:5:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/wormhole/kv.h:49:6: note: array member 'u8 kv::kv [0]' declared here
+   49 |   u8 kv[0];  // len(kv) == klen + vlen
+      |      ^~
+[2/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/rocksdb_index.cc.o
+[3/499] Building CXX object CMakeFiles/memtable_masstree.dir/vendor/masstree/compiler.cc.o
+[4/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/btreeolc_index.cc.o
+[5/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/masstree_index.cc.o
+[6/499] Building CXX object CMakeFiles/memtable_masstree.dir/vendor/masstree/str.cc.o
+[7/499] Building CXX object CMakeFiles/memtable_masstree.dir/vendor/masstree/straccum.cc.o
+[8/499] Building CXX object CMakeFiles/memtable_masstree.dir/vendor/masstree/string.cc.o
+[9/499] Building C object CMakeFiles/memtable_wormhole.dir/vendor/wormhole/kv.c.o
+[10/499] Linking CXX static library libmemtable_masstree.a
+[11/499] Building C object CMakeFiles/memtable_wormhole.dir/vendor/wormhole/lib.c.o
+[12/499] Building CXX object CMakeFiles/memtable_bench.dir/src/main.cc.o
+[13/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/index.cc.o
+In file included from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/strings/numbers.h:50,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/strings/str_cat.h:111,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/container/internal/layout.h:198,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/container/internal/btree.h:68,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/container/btree_map.h:61,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/src/index.cc:14:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:108:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  108 |     alignas(unsigned __int128)
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:122:21: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  122 |   constexpr uint128(__int128 v);           // NOLINT(runtime/explicit)
+      |                     ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:123:30: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  123 |   constexpr uint128(unsigned __int128 v);  // NOLINT(runtime/explicit)
+      |                              ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:138:22: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  138 |   uint128& operator=(__int128 v);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:139:31: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  139 |   uint128& operator=(unsigned __int128 v);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:164:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  164 |   constexpr explicit operator __int128() const;
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:164:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:165:40: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  165 |   constexpr explicit operator unsigned __int128() const;
+      |                                        ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:165:40: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'H absl::lts_20250512::AbslHashValue(H, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:220:58: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  220 |     return H::combine(std::move(h), static_cast<unsigned __int128>(v));
+      |                                                          ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:294:57: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  294 |   static constexpr bool traps = numeric_limits<unsigned __int128>::traps;
+      |                                                         ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:361:20: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  361 |   constexpr int128(__int128 v);  // NOLINT(runtime/explicit)
+      |                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:362:38: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  362 |   constexpr explicit int128(unsigned __int128 v);
+      |                                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:377:21: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  377 |   int128& operator=(__int128 v);
+      |                     ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:401:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  401 |   constexpr explicit operator __int128() const;
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:401:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:402:40: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  402 |   constexpr explicit operator unsigned __int128() const;
+      |                                        ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:402:40: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:484:3: warning: ISO C++ does not support '__int128' for 'v_' [-Wpedantic]
+  484 |   __int128 v_;
+      |   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:543:48: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  543 |   static constexpr bool traps = numeric_limits<__int128>::traps;
+      |                                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:597:36: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  597 | inline uint128& uint128::operator=(__int128 v) { return *this = uint128(v); }
+      |                                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:599:45: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  599 | inline uint128& uint128::operator=(unsigned __int128 v) {
+      |                                             ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:678:28: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  678 | constexpr uint128::uint128(__int128 v)
+      |                            ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In constructor 'constexpr absl::lts_20250512::uint128::uint128(__int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:680:54: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  680 |       hi_{static_cast<uint64_t>(static_cast<unsigned __int128>(v) >> 64)} {}
+      |                                                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:681:37: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+  681 | constexpr uint128::uint128(unsigned __int128 v)
+      |                                     ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:780:29: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  780 | constexpr uint128::operator __int128() const {
+      |                             ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:780:29: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:780:29: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In member function 'constexpr absl::lts_20250512::uint128::operator __int128() const':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:781:23: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  781 |   return (static_cast<__int128>(hi_) << 64) + lo_;
+      |                       ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:784:38: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  784 | constexpr uint128::operator unsigned __int128() const {
+      |                                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:784:38: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:784:38: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In member function 'constexpr absl::lts_20250512::uint128::operator __int128 unsigned() const':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:785:32: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  785 |   return (static_cast<unsigned __int128>(hi_) << 64) + lo_;
+      |                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr bool absl::lts_20250512::operator==(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:812:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  812 |   return static_cast<unsigned __int128>(lhs) ==
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:813:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  813 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr bool absl::lts_20250512::operator<(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:824:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  824 |   return static_cast<unsigned __int128>(lhs) <
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:825:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  825 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr std::strong_ordering absl::lts_20250512::operator<=>(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:842:43: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  842 |   if (auto lhs_128 = static_cast<unsigned __int128>(lhs),
+      |                                           ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:843:38: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  843 |       rhs_128 = static_cast<unsigned __int128>(rhs);
+      |                                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator-(absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:877:32: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  877 |   return -static_cast<unsigned __int128>(val);
+      |                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr bool absl::lts_20250512::operator!(absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:887:32: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  887 |   return !static_cast<unsigned __int128>(val);
+      |                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator~(absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:897:32: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  897 |   return ~static_cast<unsigned __int128>(val);
+      |                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator|(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:905:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  905 |   return static_cast<unsigned __int128>(lhs) |
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:906:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  906 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator&(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:915:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  915 |   return static_cast<unsigned __int128>(lhs) &
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:916:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  916 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator^(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:925:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  925 |   return static_cast<unsigned __int128>(lhs) ^
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:926:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  926 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator<<(absl::lts_20250512::uint128, int)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:952:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  952 |   return static_cast<unsigned __int128>(lhs) << amount;
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator>>(absl::lts_20250512::uint128, int)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:966:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  966 |   return static_cast<unsigned __int128>(lhs) >> amount;
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator+(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:991:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  991 |   return static_cast<unsigned __int128>(lhs) +
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:992:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  992 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'constexpr absl::lts_20250512::uint128 absl::lts_20250512::operator-(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1014:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1014 |   return static_cast<unsigned __int128>(lhs) -
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1015:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1015 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'absl::lts_20250512::uint128 absl::lts_20250512::operator*(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1028:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1028 |   return static_cast<unsigned __int128>(lhs) *
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1029:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1029 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'absl::lts_20250512::uint128 absl::lts_20250512::operator/(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1053:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1053 |   return static_cast<unsigned __int128>(lhs) /
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1054:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1054 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h: In function 'absl::lts_20250512::uint128 absl::lts_20250512::operator%(absl::lts_20250512::uint128, absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1058:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1058 |   return static_cast<unsigned __int128>(lhs) %
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1059:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+ 1059 |          static_cast<unsigned __int128>(rhs);
+      |                               ^~~~~~~~
+In file included from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128.h:1194,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/strings/numbers.h:50,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/strings/str_cat.h:111,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/container/internal/layout.h:198,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/container/internal/btree.h:68,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/container/btree_map.h:61,
+                 from /DATA/disk1/jinhelin/github/memtable-bench/src/index.cc:14:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:24:45: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+   24 | constexpr __int128 BitCastToSigned(unsigned __int128 v) {
+      |                                             ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:24:11: warning: ISO C++ does not support '__int128' for 'BitCastToSigned' [-Wpedantic]
+   24 | constexpr __int128 BitCastToSigned(unsigned __int128 v) {
+      |           ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr __int128 absl::lts_20250512::int128_internal::BitCastToSigned(__int128 unsigned)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:30:36: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   30 |   return v & (static_cast<unsigned __int128>(1) << 127)
+      |                                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:31:29: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   31 |              ? ~static_cast<__int128>(~v)
+      |                             ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:32:28: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   32 |              : static_cast<__int128>(v);
+      |                            ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:37:34: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+   37 | inline int128& int128::operator=(__int128 v) {
+      |                                  ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr int64_t absl::lts_20250512::Int128High64(absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:49:50: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   49 |       static_cast<uint64_t>(static_cast<unsigned __int128>(v.v_) >> 64));
+      |                                                  ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In constructor 'constexpr absl::lts_20250512::int128::int128(int64_t, uint64_t)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:54:64: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   54 |     : v_(int128_internal::BitCastToSigned(static_cast<unsigned __int128>(high)
+      |                                                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:65:26: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+   65 | constexpr int128::int128(__int128 v) : v_{v} {}
+      |                          ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:74:35: warning: ISO C++ does not support '__int128' for 'v' [-Wpedantic]
+   74 | constexpr int128::int128(unsigned __int128 v) : v_{static_cast<__int128>(v)} {}
+      |                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In constructor 'constexpr absl::lts_20250512::int128::int128(__int128 unsigned)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:74:64: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   74 | constexpr int128::int128(unsigned __int128 v) : v_{static_cast<__int128>(v)} {}
+      |                                                                ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In constructor 'absl::lts_20250512::int128::int128(float)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:77:20: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   77 |   v_ = static_cast<__int128>(v);
+      |                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In constructor 'absl::lts_20250512::int128::int128(double)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:81:20: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   81 |   v_ = static_cast<__int128>(v);
+      |                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In constructor 'absl::lts_20250512::int128::int128(long double)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:85:20: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   85 |   v_ = static_cast<__int128>(v);
+      |                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In constructor 'constexpr absl::lts_20250512::int128::int128(absl::lts_20250512::uint128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:88:54: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+   88 | constexpr int128::int128(uint128 v) : v_{static_cast<__int128>(v)} {}
+      |                                                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: At global scope:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:146:28: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  146 | constexpr int128::operator __int128() const { return v_; }
+      |                            ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:146:28: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:146:28: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:148:37: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  148 | constexpr int128::operator unsigned __int128() const {
+      |                                     ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:148:37: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:148:37: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In member function 'constexpr absl::lts_20250512::int128::operator __int128 unsigned() const':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:149:31: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  149 |   return static_cast<unsigned __int128>(v_);
+      |                               ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator==(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:202:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  202 |   return static_cast<__int128>(lhs) == static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:202:52: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  202 |   return static_cast<__int128>(lhs) == static_cast<__int128>(rhs);
+      |                                                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator!=(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:206:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  206 |   return static_cast<__int128>(lhs) != static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:206:52: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  206 |   return static_cast<__int128>(lhs) != static_cast<__int128>(rhs);
+      |                                                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator<(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:210:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  210 |   return static_cast<__int128>(lhs) < static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:210:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  210 |   return static_cast<__int128>(lhs) < static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator>(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:214:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  214 |   return static_cast<__int128>(lhs) > static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:214:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  214 |   return static_cast<__int128>(lhs) > static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator<=(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:218:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  218 |   return static_cast<__int128>(lhs) <= static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:218:52: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  218 |   return static_cast<__int128>(lhs) <= static_cast<__int128>(rhs);
+      |                                                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator>=(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:222:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  222 |   return static_cast<__int128>(lhs) >= static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:222:52: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  222 |   return static_cast<__int128>(lhs) >= static_cast<__int128>(rhs);
+      |                                                    ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr std::strong_ordering absl::lts_20250512::operator<=>(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:227:34: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  227 |   if (auto lhs_128 = static_cast<__int128>(lhs),
+      |                                  ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:228:29: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  228 |       rhs_128 = static_cast<__int128>(rhs);
+      |                             ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator-(absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:241:60: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  241 | constexpr int128 operator-(int128 v) { return -static_cast<__int128>(v); }
+      |                                                            ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr bool absl::lts_20250512::operator!(absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:243:58: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  243 | constexpr bool operator!(int128 v) { return !static_cast<__int128>(v); }
+      |                                                          ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator~(absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:245:62: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  245 | constexpr int128 operator~(int128 val) { return ~static_cast<__int128>(val); }
+      |                                                              ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator+(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:250:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  250 |   return static_cast<__int128>(lhs) + static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:250:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  250 |   return static_cast<__int128>(lhs) + static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator-(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:254:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  254 |   return static_cast<__int128>(lhs) - static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:254:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  254 |   return static_cast<__int128>(lhs) - static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'absl::lts_20250512::int128 absl::lts_20250512::operator*(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:258:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  258 |   return static_cast<__int128>(lhs) * static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:258:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  258 |   return static_cast<__int128>(lhs) * static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'absl::lts_20250512::int128 absl::lts_20250512::operator/(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:262:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  262 |   return static_cast<__int128>(lhs) / static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:262:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  262 |   return static_cast<__int128>(lhs) / static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'absl::lts_20250512::int128 absl::lts_20250512::operator%(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:266:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  266 |   return static_cast<__int128>(lhs) % static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:266:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  266 |   return static_cast<__int128>(lhs) % static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator|(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:292:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  292 |   return static_cast<__int128>(lhs) | static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:292:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  292 |   return static_cast<__int128>(lhs) | static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator&(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:296:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  296 |   return static_cast<__int128>(lhs) & static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:296:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  296 |   return static_cast<__int128>(lhs) & static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator^(absl::lts_20250512::int128, absl::lts_20250512::int128)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:300:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  300 |   return static_cast<__int128>(lhs) ^ static_cast<__int128>(rhs);
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:300:51: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  300 |   return static_cast<__int128>(lhs) ^ static_cast<__int128>(rhs);
+      |                                                   ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator<<(absl::lts_20250512::int128, int)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:304:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  304 |   return static_cast<__int128>(lhs) << amount;
+      |                      ^~~~~~~~
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc: In function 'constexpr absl::lts_20250512::int128 absl::lts_20250512::operator>>(absl::lts_20250512::int128, int)':
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/abseil-cpp/absl/numeric/int128_have_intrinsic.inc:308:22: warning: ISO C++ does not support '__int128' for 'type name' [-Wpedantic]
+  308 |   return static_cast<__int128>(lhs) >> amount;
+      |                      ^~~~~~~~
+[14/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/unodb_index.cc.o
+[15/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_log_severity.dir/log_severity.cc.o
+[16/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_log_severity.a
+[17/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_spinlock_wait.dir/internal/spinlock_wait.cc.o
+[18/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_spinlock_wait.a
+[19/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_raw_logging_internal.dir/internal/raw_logging.cc.o
+[20/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_base.dir/internal/spinlock.cc.o
+[21/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_raw_logging_internal.a
+[22/499] Building C object CMakeFiles/memtable_wormhole.dir/vendor/wormhole/wh.c.o
+[23/499] Linking C static library libmemtable_wormhole.a
+[24/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_debugging_internal.dir/internal/elf_mem_image.cc.o
+[25/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_base.dir/internal/unscaledcycleclock.cc.o
+[26/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_base.dir/internal/cycleclock.cc.o
+[27/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_tracing_internal.dir/internal/tracing.cc.o
+[28/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_malloc_internal.dir/internal/low_level_alloc.cc.o
+[29/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_base.dir/internal/thread_identity.cc.o
+[30/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc_cpu_detect.dir/internal/cpu_detect.cc.o
+[31/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_base.dir/internal/sysinfo.cc.o
+[32/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_base.a
+[33/499] Building CXX object _deps/abseil-cpp-build/absl/base/CMakeFiles/absl_throw_delegate.dir/internal/throw_delegate.cc.o
+[34/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_malloc_internal.a
+[35/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_throw_delegate.a
+[36/499] Linking CXX static library _deps/abseil-cpp-build/absl/base/libabsl_tracing_internal.a
+[37/499] Linking CXX static library _deps/abseil-cpp-build/absl/crc/libabsl_crc_cpu_detect.a
+[38/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc_internal.dir/internal/crc.cc.o
+[39/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc_internal.dir/internal/crc_x86_arm_combined.cc.o
+[40/499] Linking CXX static library _deps/abseil-cpp-build/absl/crc/libabsl_crc_internal.a
+[41/499] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[42/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc32c.dir/crc32c.cc.o
+[43/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc32c.dir/internal/crc_memcpy_fallback.cc.o
+[44/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_debugging_internal.dir/internal/address_is_readable.cc.o
+[45/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_stacktrace.dir/stacktrace.cc.o
+[46/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_debugging_internal.dir/internal/vdso_support.cc.o
+[47/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_debugging_internal.a
+[48/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc32c.dir/internal/crc_memcpy_x86_arm_combined.cc.o
+[49/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_stacktrace.a
+[50/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_utf8_for_code_point.dir/internal/utf8_for_code_point.cc.o
+[51/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc32c.dir/internal/crc_non_temporal_memcpy.cc.o
+[52/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_utf8_for_code_point.a
+[53/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_symbolize.dir/symbolize.cc.o
+[54/499] Building CXX object _deps/abseil-cpp-build/absl/crc/CMakeFiles/absl_crc_cord_state.dir/internal/crc_cord_state.cc.o
+[55/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_decode_rust_punycode.dir/internal/decode_rust_punycode.cc.o
+[56/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_demangle_rust.dir/internal/demangle_rust.cc.o
+[57/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_decode_rust_punycode.a
+[58/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_demangle_rust.a
+[59/499] Building CXX object _deps/abseil-cpp-build/absl/profiling/CMakeFiles/absl_exponential_biased.dir/internal/exponential_biased.cc.o
+[60/499] Linking CXX static library _deps/abseil-cpp-build/absl/profiling/libabsl_exponential_biased.a
+[61/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_contents.cc.o
+[62/499] Building CXX object _deps/abseil-cpp-build/absl/numeric/CMakeFiles/absl_int128.dir/int128.cc.o
+[63/499] Linking CXX static library _deps/abseil-cpp-build/absl/numeric/libabsl_int128.a
+[64/499] Building CXX object _deps/abseil-cpp-build/absl/debugging/CMakeFiles/absl_demangle_internal.dir/internal/demangle.cc.o
+[65/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_demangle_internal.a
+[66/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/attribute_group_iterator_impl.cc.o
+[67/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_string_view.dir/string_view.cc.o
+[68/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_string_view.a
+[69/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/ascii.cc.o
+[70/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/trace_replay/trace_record.cc.o
+[71/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/charconv.cc.o
+[72/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/internal/charconv_parse.cc.o
+[73/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/internal/damerau_levenshtein_distance.cc.o
+[74/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/escaping.cc.o
+[75/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/internal/memutil.cc.o
+[76/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/internal/charconv_bigint.cc.o
+[77/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/internal/stringify_sink.cc.o
+[78/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/match.cc.o
+[79/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_fetcher.cc.o
+[80/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/str_cat.cc.o
+[81/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/str_split.cc.o
+[82/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings_internal.dir/internal/utf8.cc.o
+[83/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/numbers.cc.o
+[84/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/str_replace.cc.o
+[85/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings_internal.dir/internal/ostringstream.cc.o
+[86/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings.dir/substitute.cc.o
+[87/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_strings_internal.dir/internal/escaping.cc.o
+[88/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/extension.cc.o
+[89/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_strings_internal.a
+[90/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_strings.a
+[91/499] Linking CXX static library _deps/abseil-cpp-build/absl/debugging/libabsl_symbolize.a
+[92/499] Building CXX object CMakeFiles/memtable_bench_index.dir/src/hot_index.cc.o
+[93/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/output.cc.o
+[94/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/bind.cc.o
+[95/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/arg.cc.o
+[96/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord_internal.dir/internal/cord_rep_btree_navigator.cc.o
+[97/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/parser.cc.o
+[98/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord_internal.dir/internal/cord_internal.cc.o
+[99/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/float_conversion.cc.o
+[100/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_str_format_internal.a
+[101/499] Linking CXX static library _deps/abseil-cpp-build/absl/crc/libabsl_crc32c.a
+[102/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord_internal.dir/internal/cord_rep_btree_reader.cc.o
+[103/499] Linking CXX static library _deps/abseil-cpp-build/absl/crc/libabsl_crc_cord_state.a
+[104/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cordz_functions.dir/internal/cordz_functions.cc.o
+[105/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_cordz_functions.a
+[106/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord_internal.dir/internal/cord_rep_consume.cc.o
+[107/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord_internal.dir/internal/cord_rep_crc.cc.o
+[108/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cordz_handle.dir/internal/cordz_handle.cc.o
+[109/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/trace_replay/trace_replay.cc.o
+[110/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord_internal.dir/internal/cord_rep_btree.cc.o
+[111/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_cord_internal.a
+[112/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_kernel_timeout_internal.dir/internal/kernel_timeout.cc.o
+[113/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cordz_info.dir/internal/cordz_info.cc.o
+[114/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/barrier.cc.o
+[115/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_graphcycles_internal.dir/internal/graphcycles.cc.o
+[116/499] Linking CXX static library _deps/abseil-cpp-build/absl/synchronization/libabsl_graphcycles_internal.a
+[117/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord.dir/cord_analysis.cc.o
+[118/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/blocking_counter.cc.o
+[119/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/create_thread_identity.cc.o
+[120/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/win32_waiter.cc.o
+[121/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/futex_waiter.cc.o
+[122/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/per_thread_sem.cc.o
+[123/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/pthread_waiter.cc.o
+[124/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/sem_waiter.cc.o
+[125/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/stdcpp_waiter.cc.o
+[126/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/internal/waiter_base.cc.o
+[127/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/notification.cc.o
+[128/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time.dir/clock.cc.o
+[129/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time.dir/format.cc.o
+[130/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_civil_time.dir/internal/cctz/src/civil_time_detail.cc.o
+[131/499] Linking CXX static library _deps/abseil-cpp-build/absl/time/libabsl_civil_time.a
+[132/499] Building CXX object _deps/abseil-cpp-build/absl/synchronization/CMakeFiles/absl_synchronization.dir/mutex.cc.o
+[133/499] Building CXX object _deps/abseil-cpp-build/absl/strings/CMakeFiles/absl_cord.dir/cord.cc.o
+[134/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time.dir/time.cc.o
+[135/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time.dir/civil_time.cc.o
+[136/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time.dir/duration.cc.o
+[137/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_fixed.cc.o
+[138/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_if.cc.o
+[139/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_posix.cc.o
+[140/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_impl.cc.o
+[141/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/zone_info_source.cc.o
+[142/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_lookup.cc.o
+[143/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_libc.cc.o
+[144/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_format.cc.o
+[145/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/cache_entry_roles.cc.o
+[146/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/cache_helpers.cc.o
+[147/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/cache_key.cc.o
+[148/499] Building CXX object _deps/abseil-cpp-build/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_info.cc.o
+[149/499] Linking CXX static library _deps/abseil-cpp-build/absl/time/libabsl_time_zone.a
+[150/499] Linking CXX static library _deps/abseil-cpp-build/absl/time/libabsl_time.a
+[151/499] Linking CXX static library _deps/abseil-cpp-build/absl/synchronization/libabsl_kernel_timeout_internal.a
+[152/499] Linking CXX static library _deps/abseil-cpp-build/absl/synchronization/libabsl_synchronization.a
+[153/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_cordz_handle.a
+[154/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_cordz_info.a
+[155/499] Linking CXX static library _deps/abseil-cpp-build/absl/strings/libabsl_cord.a
+[156/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/charged_cache.cc.o
+[157/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/cache_reservation_manager.cc.o
+[158/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/secondary_cache.cc.o
+[159/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/cache.cc.o
+[160/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/compressed_secondary_cache.cc.o
+[161/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/sharded_cache.cc.o
+[162/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/lru_cache.cc.o
+[163/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_file_addition.cc.o
+[164/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/tiered_secondary_cache.cc.o
+[165/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/clock_cache.cc.o
+[166/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/cache/secondary_cache_adapter.cc.o
+[167/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_file_garbage.cc.o
+[168/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_file_meta.cc.o
+[169/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_file_cache.cc.o
+[170/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_log_format.cc.o
+[171/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_garbage_meter.cc.o
+[172/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_log_sequential_reader.cc.o
+[173/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_file_reader.cc.o
+[174/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/arena_wrapped_db_iter.cc.o
+[175/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/prefetch_buffer_collection.cc.o
+[176/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_log_writer.cc.o
+[177/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_source.cc.o
+[178/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/blob/blob_file_builder.cc.o
+[179/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/coalescing_iterator.cc.o
+[180/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/builder.cc.o
+[181/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_picker_fifo.cc.o
+[182/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction.cc.o
+[183/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_picker.cc.o
+[184/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_iterator.cc.o
+[185/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/c.cc.o
+[186/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/column_family.cc.o
+[187/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/sst_partitioner.cc.o
+[188/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_picker_level.cc.o
+[189/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_state.cc.o
+[190/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_job.cc.o
+[191/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_picker_universal.cc.o
+[192/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_outputs.cc.o
+[193/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/subcompaction_state.cc.o
+[194/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/compaction/compaction_service_job.cc.o
+[195/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/convenience.cc.o
+[196/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_filesnapshot.cc.o
+[197/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_debug.cc.o
+[198/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/compacted_db_impl.cc.o
+[199/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_write.cc.o
+[200/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_files.cc.o
+[201/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_experimental.cc.o
+[202/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_follower.cc.o
+[203/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_info_dumper.cc.o
+[204/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/dbformat.cc.o
+[205/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_readonly.cc.o
+[206/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_compaction_flush.cc.o
+[207/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_open.cc.o
+[208/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/file_indexer.cc.o
+[209/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/event_helpers.cc.o
+[210/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl_secondary.cc.o
+[211/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_iter.cc.o
+[212/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/error_handler.cc.o
+[213/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/flush_scheduler.cc.o
+[214/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/external_sst_file_ingestion_job.cc.o
+[215/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/logs_with_prep_tracker.cc.o
+[216/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/db_impl/db_impl.cc.o
+[217/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/malloc_stats.cc.o
+[218/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/experimental.cc.o
+[219/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/manifest_ops.cc.o
+[220/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/log_reader.cc.o
+[221/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/import_column_family_job.cc.o
+[222/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/forward_iterator.cc.o
+[223/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/log_writer.cc.o
+[224/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/flush_job.cc.o
+[225/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/output_validator.cc.o
+[226/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/merge_operator.cc.o
+[227/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/internal_stats.cc.o
+[228/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/periodic_task_scheduler.cc.o
+[229/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/snapshot_impl.cc.o
+[230/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/memtable.cc.o
+[231/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/merge_helper.cc.o
+[232/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/table_properties_collector.cc.o
+[233/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/range_del_aggregator.cc.o
+[234/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/seqno_to_time_mapping.cc.o
+[235/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/range_tombstone_fragmenter.cc.o
+[236/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/memtable_list.cc.o
+[237/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/table_cache.cc.o
+[238/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/trim_history_scheduler.cc.o
+[239/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/repair.cc.o
+[240/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/wal_edit.cc.o
+[241/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/transaction_log_impl.cc.o
+[242/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/wide/wide_columns.cc.o
+[243/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/wide/wide_columns_helper.cc.o
+[244/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/wide/wide_column_serialization.cc.o
+[245/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/write_batch_base.cc.o
+[246/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/write_controller.cc.o
+[247/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/version_edit.cc.o
+[248/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/version_builder.cc.o
+[249/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/version_edit_handler.cc.o
+[250/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/wal_manager.cc.o
+[251/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/write_stall_stats.cc.o
+[252/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/write_thread.cc.o
+[253/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/composite_env.cc.o
+[254/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/env_chroot.cc.o
+[255/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/fs_remap.cc.o
+[256/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/file_system_tracer.cc.o
+[257/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/fs_on_demand.cc.o
+[258/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/env.cc.o
+[259/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/env_encryption.cc.o
+[260/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/write_batch.cc.o
+[261/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/unique_id_gen.cc.o
+[262/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/file_system.cc.o
+[263/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/mock_env.cc.o
+[264/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/line_file_reader.cc.o
+[265/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/file_prefetch_buffer.cc.o
+[266/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/filename.cc.o
+[267/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/read_write_util.cc.o
+[268/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/readahead_raf.cc.o
+[269/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/random_access_file_reader.cc.o
+[270/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/sequence_file_reader.cc.o
+[271/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/delete_scheduler.cc.o
+[272/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/file_util.cc.o
+[273/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/db/version_set.cc.o
+[274/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/logging/event_logger.cc.o
+[275/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/logging/log_buffer.cc.o
+[276/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memory/arena.cc.o
+[277/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memory/memkind_kmem_allocator.cc.o
+[278/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memory/concurrent_arena.cc.o
+[279/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/logging/auto_roll_logger.cc.o
+[280/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/alloc_tracker.cc.o
+[281/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memory/jemalloc_nodump_allocator.cc.o
+[282/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/writable_file_writer.cc.o
+[283/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memory/memory_allocator.cc.o
+[284/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/file/sst_file_manager_impl.cc.o
+[285/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/histogram.cc.o
+[286/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/hash_linklist_rep.cc.o
+[287/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/hash_skiplist_rep.cc.o
+[288/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/histogram_windowing.cc.o
+[289/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/skiplistrep.cc.o
+[290/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/vectorrep.cc.o
+[291/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/perf_level.cc.o
+[292/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/iostats_context.cc.o
+[293/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/wbwi_memtable.cc.o
+[294/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/instrumented_mutex.cc.o
+[295/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/perf_context.cc.o
+[296/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/thread_status_impl.cc.o
+[297/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/thread_status_updater.cc.o
+[298/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/thread_status_util.cc.o
+[299/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/memtable/write_buffer_manager.cc.o
+[300/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/thread_status_util_debug.cc.o
+[301/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/offpeak_time_info.cc.o
+[302/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/in_memory_stats_history.cc.o
+[303/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/statistics.cc.o
+[304/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/customizable.cc.o
+[305/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/port/mmap.cc.o
+[306/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/port/stack_trace.cc.o
+[307/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/configurable.cc.o
+[308/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/monitoring/persistent_stats_history.cc.o
+[309/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/options.cc.o
+[310/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/binary_search_index_reader.cc.o
+[311/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/adaptive/adaptive_table_factory.cc.o
+[312/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/db_options.cc.o
+[313/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/cf_options.cc.o
+[314/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/options_parser.cc.o
+[315/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block.cc.o
+[316/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/options/options_helper.cc.o
+[317/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_builder.cc.o
+[318/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/data_block_hash_index.cc.o
+[319/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_prefix_index.cc.o
+[320/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_cache.cc.o
+[321/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/data_block_footer.cc.o
+[322/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_based_table_iterator.cc.o
+[323/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_prefetcher.cc.o
+[324/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_based_table_builder.cc.o
+[325/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/filter_block_reader_common.cc.o
+[326/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_based_table_factory.cc.o
+[327/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/full_filter_block.cc.o
+[328/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/flush_block_policy.cc.o
+[329/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/index_reader_common.cc.o
+[330/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/parsed_full_filter_block.cc.o
+[331/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/index_builder.cc.o
+[332/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/hash_index_reader.cc.o
+[333/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/filter_policy.cc.o
+[334/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/partitioned_index_iterator.cc.o
+[335/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/reader_common.cc.o
+[336/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/partitioned_filter_block.cc.o
+[337/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/uncompression_dict_reader.cc.o
+[338/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/block_based_table_reader.cc.o
+[339/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_based/partitioned_index_reader.cc.o
+[340/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/block_fetcher.cc.o
+[341/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/cuckoo/cuckoo_table_factory.cc.o
+[342/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/iterator.cc.o
+[343/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/cuckoo/cuckoo_table_builder.cc.o
+[344/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/format.cc.o
+[345/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/get_context.cc.o
+[346/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/cuckoo/cuckoo_table_reader.cc.o
+[347/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/compaction_merging_iterator.cc.o
+[348/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/plain/plain_table_bloom.cc.o
+[349/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/persistent_cache_helper.cc.o
+[350/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/plain/plain_table_index.cc.o
+[351/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/plain/plain_table_key_coding.cc.o
+[352/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/merging_iterator.cc.o
+[353/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/meta_blocks.cc.o
+[354/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/plain/plain_table_factory.cc.o
+[355/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/plain/plain_table_builder.cc.o
+[356/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/unique_id.cc.o
+[357/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/table_factory.cc.o
+[358/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/plain/plain_table_reader.cc.o
+[359/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/two_level_iterator.cc.o
+[360/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/table_properties.cc.o
+[361/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/block_cache_analyzer/block_cache_trace_analyzer.cc.o
+[362/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/sst_file_dumper.cc.o
+[363/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/io_tracer_parser_tool.cc.o
+[364/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/test_util/sync_point_impl.cc.o
+[365/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/test_util/sync_point.cc.o
+[366/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/sst_file_reader.cc.o
+[367/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/trace_analyzer_tool.cc.o
+[368/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/dump/db_dump_tool.cc.o
+[369/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/test_util/transaction_test_util.cc.o
+[370/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/ldb_tool.cc.o
+[371/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/table/sst_file_writer.cc.o
+[372/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/async_file_reader.cc.o
+[373/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/trace_replay/trace_record_result.cc.o
+[374/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/cleanable.cc.o
+[375/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/compaction_job_stats_impl.cc.o
+[376/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/coding.cc.o
+[377/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/trace_replay/trace_record_handler.cc.o
+[378/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/sst_dump_tool.cc.o
+[379/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/test_util/testutil.cc.o
+[380/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/compression.cc.o
+[381/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/concurrent_task_limiter_impl.cc.o
+[382/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/data_structure.cc.o
+[383/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/compression_context_cache.cc.o
+[384/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/murmurhash.cc.o
+[385/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/crc32c.cc.o
+[386/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/trace_replay/block_cache_tracer.cc.o
+[387/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/comparator.cc.o
+[388/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/hash.cc.o
+[389/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/random.cc.o
+[390/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/ribbon_config.cc.o
+[391/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/dynamic_bloom.cc.o
+[392/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/trace_replay/io_tracer.cc.o
+[393/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/status.cc.o
+[394/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/stderr_logger.cc.o
+[395/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/rate_limiter.cc.o
+[396/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/string_util.cc.o
+[397/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/file_checksum_helper.cc.o
+[398/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/thread_local.cc.o
+[399/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/write_batch_util.cc.o
+[400/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/slice.cc.o
+[401/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/xxhash.cc.o
+[402/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/udt_util.cc.o
+[403/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/util/threadpool_imp.cc.o
+[404/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/agg_merge/agg_merge.cc.o
+[405/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/blob_db/blob_dump_tool.cc.o
+[406/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/blob_db/blob_compaction_filter.cc.o
+[407/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/blob_db/blob_db_impl_filesnapshot.cc.o
+[408/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/blob_db/blob_db.cc.o
+[409/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/cache_dump_load.cc.o
+[410/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/blob_db/blob_file.cc.o
+[411/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/tools/ldb_cmd.cc.o
+[412/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/cassandra/format.cc.o
+[413/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/cassandra/cassandra_compaction_filter.cc.o
+[414/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/cassandra/merge_operator.cc.o
+[415/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/compaction_filters/remove_emptyvalue_compactionfilter.cc.o
+[416/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/compaction_filters.cc.o
+[417/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/cache_dump_load_impl.cc.o
+[418/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/backup/backup_engine.cc.o
+[419/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/blob_db/blob_db_impl.cc.o
+[420/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/counted_fs.cc.o
+[421/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/env_mirror.cc.o
+[422/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/env_timed.cc.o
+[423/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/fault_injection_secondary_cache.cc.o
+[424/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/leveldb_options/leveldb_options.cc.o
+[425/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/fault_injection_env.cc.o
+[426/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/checkpoint/checkpoint_impl.cc.o
+[427/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/max.cc.o
+[428/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/bytesxor.cc.o
+[429/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/put.cc.o
+[430/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators.cc.o
+[431/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/sortlist.cc.o
+[432/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/debug.cc.o
+[433/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/fault_injection_fs.cc.o
+[434/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/uint64add.cc.o
+[435/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/string_append/stringappend.cc.o
+[436/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/merge_operators/string_append/stringappend2.cc.o
+[437/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/option_change_migration/option_change_migration.cc.o
+[438/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/memory/memory_util.cc.o
+[439/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/object_registry.cc.o
+[440/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/persistent_cache/persistent_cache_tier.cc.o
+[441/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/persistent_cache/block_cache_tier_metadata.cc.o
+[442/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/persistent_cache/volatile_tier_impl.cc.o
+[443/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/persistent_cache/block_cache_tier_file.cc.o
+[444/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/options/options_util.cc.o
+[445/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/persistent_cache/block_cache_tier.cc.o
+[446/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/simulator_cache/cache_simulator.cc.o
+[447/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/table_properties_collectors/compact_for_tiering_collector.cc.o
+[448/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/trace/replayer_impl.cc.o
+[449/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/lock_manager.cc.o
+[450/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/simulator_cache/sim_cache.cc.o
+[451/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/table_properties_collectors/compact_on_deletion_collector.cc.o
+[452/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/point/point_lock_tracker.cc.o
+[453/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/trace/file_trace_reader_writer.cc.o
+[454/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/range_tree_lock_tracker.cc.o
+[455/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/optimistic_transaction.cc.o
+[456/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/range_tree_lock_manager.cc.o
+[457/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/transaction_db_mutex_impl.cc.o
+[458/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/snapshot_checker.cc.o
+[459/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/point/point_lock_manager.cc.o
+[460/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/pessimistic_transaction.cc.o
+[461/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/optimistic_transaction_db_impl.cc.o
+[462/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/types_util.cc.o
+[463/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/pessimistic_transaction_db.cc.o
+[464/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/transaction_base.cc.o
+[465/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/wal_filter.cc.o
+[466/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/transaction_util.cc.o
+[467/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/concurrent_tree.cc.o
+[468/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/keyrange.cc.o
+[469/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/write_prepared_txn.cc.o
+[470/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/lock_request.cc.o
+[471/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/write_unprepared_txn_db.cc.o
+[472/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/write_unprepared_txn.cc.o
+[473/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/range_buffer.cc.o
+[474/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/treenode.cc.o
+[475/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/txnid_set.cc.o
+[476/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/standalone_port.cc.o
+[477/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/util/dbt.cc.o
+[478/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/write_prepared_txn_db.cc.o
+[479/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/wfg.cc.o
+[480/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/util/memarena.cc.o
+[481/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/locktree.cc.o
+[482/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/transactions/lock/range/range_tree/lib/locktree/manager.cc.o
+[483/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/port/port_posix.cc.o
+[484/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/ttl/db_ttl_impl.cc.o
+[485/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/__/__/build_version.cc.o
+[486/499] Building CXX object _deps/unodb-build/CMakeFiles/unodb_qsbr.dir/qsbr.cpp.o
+[487/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/write_batch_with_index/write_batch_with_index.cc.o
+[488/499] Building CXX object _deps/unodb-build/CMakeFiles/unodb_qsbr.dir/qsbr_ptr.cpp.o
+[489/499] Linking CXX static library _deps/unodb-build/libunodb_qsbr.a
+[490/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/utilities/write_batch_with_index/write_batch_with_index_internal.cc.o
+[491/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/env_posix.cc.o
+[492/499] Building CXX object _deps/unodb-build/CMakeFiles/unodb.dir/art_internal.cpp.o
+[493/499] Linking CXX static library _deps/unodb-build/libunodb.a
+[494/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/io_posix.cc.o
+[495/499] Building CXX object _deps/rocksdb-build/CMakeFiles/rocksdb.dir/env/fs_posix.cc.o
+[496/499] Linking CXX static library _deps/rocksdb-build/librocksdb.a
+[497/499] Linking CXX static library libmemtable_bench_index.a
+[498/499] Linking CXX executable memtable_bench
+[499/499] Linking CXX executable adapter_contract
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+      Start  1: adapter_contract
+ 1/10 Test  #1: adapter_contract .................   Passed    0.60 sec
+      Start  2: smoke
+ 2/10 Test  #2: smoke ............................   Passed    0.03 sec
+      Start  3: rocksdb_smoke
+ 3/10 Test  #3: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  4: rocksdb_reject_upsert
+ 4/10 Test  #4: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  5: btreeolc_smoke
+ 5/10 Test  #5: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  6: unodb_art_smoke
+ 6/10 Test  #6: unodb_art_smoke ..................   Passed    0.01 sec
+      Start  7: masstree_smoke
+ 7/10 Test  #7: masstree_smoke ...................   Passed    0.01 sec
+      Start  8: wormhole_smoke
+ 8/10 Test  #8: wormhole_smoke ...................   Passed    0.02 sec
+      Start  9: unodb_reject_upsert
+ 9/10 Test  #9: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 10: harness_integration
+10/10 Test #10: harness_integration ..............   Passed    0.23 sec
+
+100% tests passed, 0 tests failed out of 10
+
+Total Test time (real) =   0.93 sec
+std_map	available	reference baseline; coarse reader/writer lock	key_encoding=binary
+abseil_btree	available	Abseil btree_map; coarse reader/writer lock	key_encoding=binary
+tlx_btree	available	TLX btree_map; coarse reader/writer lock	key_encoding=binary
+rocksdb_inlineskiplist	available	RocksDB InlineSkipList + ConcurrentArena; append-only	key_encoding=binary
+btreeolc	available	BTreeOLC; native OLC with per-key stripes for exact size/upsert	key_encoding=binary
+unodb_art	available	UnoDB olc_db + QSBR; append-only; terminated nibble keys	key_encoding=nibble_terminated
+masstree	available	Masstree; native concurrency; deferred node/value reclamation	key_encoding=binary	max_key_bytes=1024
+hot	available	HOTSingleThreaded; coarse reader/writer lock; terminated nibble keys	key_encoding=nibble_terminated	max_key_bytes=127
+wormhole	available	Wormhole; native whsafe API with parked per-thread references	key_encoding=binary	max_key_bytes=65535

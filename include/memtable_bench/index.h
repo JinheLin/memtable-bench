@@ -29,6 +29,8 @@ class Index {
   // Upsert adapters replace the value of an existing exact key.
   virtual bool Insert(std::string_view key, std::string_view value) = 0;
   virtual bool Get(std::string_view key, std::string* value) const = 0;
+  // Exact lookup without allocating/copying the value payload.
+  virtual bool Contains(std::string_view key) const = 0;
   virtual std::unique_ptr<Cursor> NewCursor() const = 0;
   virtual std::size_t Scan(std::string_view start, std::size_t limit,
                            std::uint64_t* checksum) const;
@@ -36,6 +38,7 @@ class Index {
   virtual std::size_t Size() const = 0;
   virtual std::string_view ConcurrencyMode() const = 0;
   virtual bool SupportsUpsert() const { return true; }
+  virtual std::string_view KeyEncoding() const { return "binary"; }
 };
 
 struct AdapterInfo {
@@ -43,6 +46,10 @@ struct AdapterInfo {
   bool available;
   std::string reason;
   bool supports_upsert = true;
+  // Limit on the complete logical binary key, including the MVCC trailer.
+  // Zero means no adapter-specific limit beyond representable allocation sizes.
+  std::size_t max_key_size = 0;
+  std::string key_encoding = "binary";
 };
 
 std::vector<AdapterInfo> ListAdapters();

@@ -1,0 +1,122 @@
+--- a/lib.c
++++ b/lib.c
+@@ -1533,78 +1533,78 @@
+ 
+ // for switch/exit: pass a return value to the target
+ asm (
+-    ".align 16;"
++    ".p2align 4\n"
+ #if defined(__linux__) || defined(__FreeBSD__)
+-    ".global co_switch_stack;"
+-    ".type co_switch_stack, @function;"
++    ".global co_switch_stack\n"
++    ".type co_switch_stack, @function\n"
+     "co_switch_stack:"
+ #elif defined(__APPLE__) && defined(__MACH__)
+-    ".global _co_switch_stack;"
++    ".global _co_switch_stack\n"
+     "_co_switch_stack:"
+ #else
+ #error Supported platforms: Linux/FreeBSD/Apple
+ #endif // OS
+-    "push %rbp; push %rbx; push %r12;"
+-    "push %r13; push %r14; push %r15;"
+-    "mov  %rsp, (%rdi);"
+-    "mov  %rsi, %rsp;"
+-    "pop  %r15; pop  %r14; pop  %r13;"
+-    "pop  %r12; pop  %rbx; pop  %rbp;"
+-    "mov  %rdx, %rax;"
+-    "retq;"
++    "push %rbp\n push %rbx\n push %r12\n"
++    "push %r13\n push %r14\n push %r15\n"
++    "mov  %rsp, (%rdi)\n"
++    "mov  %rsi, %rsp\n"
++    "pop  %r15\n pop  %r14\n pop  %r13\n"
++    "pop  %r12\n pop  %rbx\n pop  %rbp\n"
++    "mov  %rdx, %rax\n"
++    "retq\n"
+     );
+ 
+ #elif defined(__aarch64__)
+ // number pushes in co_switch_stack
+ #define CO_CONTEXT_SIZE ((20))
+ asm (
+-    ".align 16;"
++    ".p2align 4\n"
+ #if defined(__linux__) || defined(__FreeBSD__)
+-    ".global co_switch_stack;"
+-    ".type co_switch_stack, @function;"
++    ".global co_switch_stack\n"
++    ".type co_switch_stack, @function\n"
+     "co_switch_stack:"
+ #elif defined(__APPLE__) && defined(__MACH__)
+-    ".global _co_switch_stack;"
++    ".global _co_switch_stack\n"
+     "_co_switch_stack:"
+ #else
+ #error supported platforms: Linux/FreeBSD/Apple
+ #endif // OS
+-    "sub  x8, sp, 160;"
+-    "str  x8, [x0];"
+-    "stp x30, x19, [x8];      ldp x30, x19, [x1];"
+-    "stp x20, x21, [x8, 16];  ldp x20, x21, [x1, 16];"
+-    "stp x22, x23, [x8, 32];  ldp x22, x23, [x1, 32];"
+-    "stp x24, x25, [x8, 48];  ldp x24, x25, [x1, 48];"
+-    "stp x26, x27, [x8, 64];  ldp x26, x27, [x1, 64];"
+-    "stp x28, x29, [x8, 80];  ldp x28, x29, [x1, 80];"
+-    "stp  d8,  d9, [x8, 96];  ldp  d8,  d9, [x1, 96];"
+-    "stp d10, d11, [x8, 112]; ldp d10, d11, [x1, 112];"
+-    "stp d12, d13, [x8, 128]; ldp d12, d13, [x1, 128];"
+-    "stp d14, d15, [x8, 144]; ldp d14, d15, [x1, 144];"
+-    "add  sp, x1, 160;"
+-    "mov  x0, x2;"
+-    "br  x30;"
++    "sub  x8, sp, 160\n"
++    "str  x8, [x0]\n"
++    "stp x30, x19, [x8]\n      ldp x30, x19, [x1]\n"
++    "stp x20, x21, [x8, 16]\n  ldp x20, x21, [x1, 16]\n"
++    "stp x22, x23, [x8, 32]\n  ldp x22, x23, [x1, 32]\n"
++    "stp x24, x25, [x8, 48]\n  ldp x24, x25, [x1, 48]\n"
++    "stp x26, x27, [x8, 64]\n  ldp x26, x27, [x1, 64]\n"
++    "stp x28, x29, [x8, 80]\n  ldp x28, x29, [x1, 80]\n"
++    "stp  d8,  d9, [x8, 96]\n  ldp  d8,  d9, [x1, 96]\n"
++    "stp d10, d11, [x8, 112]\n ldp d10, d11, [x1, 112]\n"
++    "stp d12, d13, [x8, 128]\n ldp d12, d13, [x1, 128]\n"
++    "stp d14, d15, [x8, 144]\n ldp d14, d15, [x1, 144]\n"
++    "add  sp, x1, 160\n"
++    "mov  x0, x2\n"
++    "br  x30\n"
+     );
+ 
+ extern void co_entry_aarch64(void);
+ asm (
+-    ".align 16;"
++    ".p2align 4\n"
+ #if defined(__linux__) || defined(__FreeBSD__)
+-    ".global co_entry_aarch64;"
+-    ".type co_entry_aarch64, @function;"
++    ".global co_entry_aarch64\n"
++    ".type co_entry_aarch64, @function\n"
+     "co_entry_aarch64:"
+ #elif defined(__APPLE__) && defined(__MACH__)
+-    ".global _co_entry_aarch64;"
++    ".global _co_entry_aarch64\n"
+     "_co_entry_aarch64:"
+ #else
+ #error supported platforms: Linux/FreeBSD/Apple
+ #endif // OS
+-    "ldr x8, [sp, 0];"
+-    "blr x8;"
+-    "ldr x8, [sp, 8];"
+-    "blr x8;"
+-    "ldr x8, [sp, 16];"
+-    "blr x8;"
++    "ldr x8, [sp, 0]\n"
++    "blr x8\n"
++    "ldr x8, [sp, 8]\n"
++    "blr x8\n"
++    "ldr x8, [sp, 16]\n"
++    "blr x8\n"
+     );
+ #else
+ #error supported CPUs: x86_64 or AArch64

@@ -1,0 +1,18 @@
+{
+  "formal_processes": 270,
+  "phase_rows": 810,
+  "adapter_checksum_groups": 90,
+  "cross_length_seek_checksum_groups": 6,
+  "distinct_corpora": 6,
+  "source_archive_files": 45,
+  "excluded_warmups": 9,
+  "latency_samples_per_phase": 16,
+  "counter_missing": {
+    "cycles_per_op": 0,
+    "instructions_per_op": 0,
+    "l1d_miss_per_op": 0,
+    "llc_miss_per_op": 0,
+    "branch_miss_per_op": 0,
+    "dtlb_miss_per_op": 0
+  }
+}

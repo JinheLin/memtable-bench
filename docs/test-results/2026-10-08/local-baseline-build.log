@@ -1,0 +1,8 @@
+[ 60%] Built target memtable_bench_index
+[100%] Built target memtable_bench
+[ 60%] Built target memtable_bench_index
+[ 80%] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[100%] Linking CXX executable adapter_contract
+[100%] Built target adapter_contract
+[ 60%] Built target memtable_bench_index
+[100%] Built target key_dataset_contract

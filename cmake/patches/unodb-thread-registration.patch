@@ -1,0 +1,18 @@
+diff --git a/qsbr.hpp b/qsbr.hpp
+index 7bf447a..e39c4ec 100644
+--- a/qsbr.hpp
++++ b/qsbr.hpp
+@@ -712,6 +712,13 @@ class [[nodiscard]] qsbr_per_thread final {
+   /// Construct a new thread-local QSBR structure and register with global QSBR.
+   qsbr_per_thread();
+ 
++  /// Register an externally created std::thread on its first ART operation.
++  /// Reuse the main thread instance installed by the upstream library.
++  static void ensure_registered() {
++    if (!current_thread_instance)
++      set_instance(std::make_unique<qsbr_per_thread>());
++  }
++
+   /// Unregister the current thread from global QSBR on thread exist.
+   UNODB_DETAIL_DISABLE_MSVC_WARNING(26447)
+   ~qsbr_per_thread() noexcept {

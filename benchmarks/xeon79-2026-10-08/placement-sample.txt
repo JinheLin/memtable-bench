@@ -1,0 +1,21 @@
+PID 3305630 command: /DATA/disk1/jinhelin/github/memtable-bench/build-linux/memtable_bench --stage 2 --index rocksdb_inlineskiplist --internal-key --keys 1000000 --ops 1000000 --key-size 24 --value-size 64 --scan-length 100 --read-percent 80 --distribution uniform --threads 16 --cpu-list 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 --numa-node 0 --seed 43 --output /DATA/disk1/jinhelin/github/memtable-bench/results/xeon79-2026-10-08-r2/runs/091-mixed_t16-rocksdb_inlineskiplist-r2.csv 
+thread 3305630: Cpus_allowed_list:	2; Mems_allowed_list:	0-1
+mapping 00bd8000 bind:0 file=/DATA/disk1/jinhelin/github/memtable-bench/build-linux/memtable_bench anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 00bd9000 bind:0 file=/DATA/disk1/jinhelin/github/memtable-bench/build-linux/memtable_bench anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 00bda000 bind:0 anon=43 dirty=43 active=0 N0=43 kernelpagesize_kB=4
+mapping 01ffb000 bind:0 heap anon=14963 dirty=14963 active=0 N0=14963 kernelpagesize_kB=4
+mapping 7f24e0ca8000 bind:0 anon=1959 dirty=1959 active=0 N0=1959 kernelpagesize_kB=4
+mapping 7f24e1647000 bind:0 file=/usr/lib64/libc.so.6 anon=4 dirty=4 active=0 N0=4 kernelpagesize_kB=4
+mapping 7f24e164b000 bind:0 file=/usr/lib64/libc.so.6 anon=2 dirty=2 active=0 N0=2 kernelpagesize_kB=4
+mapping 7f24e164d000 bind:0 anon=5 dirty=5 active=0 N0=5 kernelpagesize_kB=4
+mapping 7f24e1673000 bind:0 file=/usr/lib64/libgcc_s-11-20220421.so.1 anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 7f24e1674000 bind:0 file=/usr/lib64/libgcc_s-11-20220421.so.1 anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 7f24e174e000 bind:0 file=/usr/lib64/libm.so.6 anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 7f24e174f000 bind:0 file=/usr/lib64/libm.so.6 anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 7f24e1966000 bind:0 file=/usr/lib64/libstdc++.so.6.0.29 anon=13 dirty=13 active=0 N0=13 kernelpagesize_kB=4
+mapping 7f24e1973000 bind:0 file=/usr/lib64/libstdc++.so.6.0.29 anon=1 dirty=1 active=0 N0=1 kernelpagesize_kB=4
+mapping 7f24e1974000 bind:0 anon=3 dirty=3 active=0 N0=3 kernelpagesize_kB=4
+mapping 7f24e1981000 bind:0 anon=2 dirty=2 active=0 N0=2 kernelpagesize_kB=4
+mapping 7f24e19b7000 bind:0 file=/usr/lib64/ld-linux-x86-64.so.2 anon=2 dirty=2 active=0 N0=2 kernelpagesize_kB=4
+mapping 7f24e19b9000 bind:0 file=/usr/lib64/ld-linux-x86-64.so.2 anon=2 dirty=2 active=0 N0=2 kernelpagesize_kB=4
+mapping 7ffeec724000 bind:0 stack anon=12 dirty=12 active=1 N0=12 kernelpagesize_kB=4

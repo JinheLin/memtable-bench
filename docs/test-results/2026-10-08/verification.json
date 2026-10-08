@@ -1,0 +1,74 @@
+{
+  "native_tested_source_files": {
+    "src/adapter_common.h": "ecdd295e52e8925edb744bbfae3994c809fcc0b4b205cefcfd6a1edd7126ca08",
+    "src/btreeolc_index.cc": "62b5abcad50a3b8ea2f23521bebd18df6d2a09534da44022a56c7a0c9d082016",
+    "src/hot_index.cc": "062e026c0e4d03884f64be03d966dc81b65152219adaf79b2a06ba474d1512cf",
+    "src/index.cc": "b72d8ad5a236b469c370676775a8be9295566eba501ff17126d16ea7e6b80a3e",
+    "src/key_dataset.cc": "e3b047ea3c9a274acf8d3cf82c8d9171bc06f5522061c26daefd316c60102a90",
+    "src/main.cc": "af3b309e0b97bd834e22b1a7dc4641c0b5bb8084e143b161173611ca2c25f1d0",
+    "src/masstree_index.cc": "8813c2aaede24fae6d0211c251eb8084b2f696297bbcd1e59c3f1ece2dcc1cf4",
+    "src/rocksdb_index.cc": "4d78f6650ef3c7727e41587487be7fa06a3f74c08d6e6942a0e2ef14b0495572",
+    "src/unodb_index.cc": "f8b1dac73dd4920305d585092020c6bda7fae0cbff97cfd8f6950e6f4b238a6a",
+    "src/wormhole_index.cc": "d46ee0ba9ab03bb91df26b069ee9e4cae13271b53c4061d88add23ae836435ea",
+    "include/memtable_bench/index.h": "5fa361129127a2e824ee97ad6ae317b9b2ea2dd3349fdfd9a999d8e55c73c35c",
+    "include/memtable_bench/key_dataset.h": "2d56cbd0c82f79fdc46373b73fd98c39d70f9273aaab0ac0d0e9f894ec28da6d",
+    "tests/adapter_contract.cc": "7c38fc30b913cf650d10d40f98ff64ed5bbab0c6778ef35aaea2002a4386bbd1",
+    "tests/harness_integration.py": "c382ebdcbb928dbddc324c78b757594c5fcaf356796890cdb8c9b0a948353bec",
+    "tests/key_dataset_contract.cc": "cc77b012ffb658ded1779817c2ff62006a649c95e01186045fd2f9a732984414",
+    "cmake/BTreeOLC.cmake": "fd7af4561e412d22e8cb21e118a84dcca822db7fd103da67ddab30ca4395fb49",
+    "cmake/FetchBoost.cmake": "51bddf5836ead7b9cfd4f80fa451f27d19253b44f999c0c1acc2b563a5b8af5b",
+    "cmake/FetchGit.cmake": "22c204cb833e90cb78a1ad3cae4d7d3efe2c0316a2b45f45408ba5235c4ef981",
+    "cmake/FetchRocksDB.cmake": "dc4c429fe75083be5e1066ab6adf91736e0a6da6310937f9aab210839b2d6a06",
+    "cmake/HOT.cmake": "0885e56dd88121ada4ad1f5d45357c5b5dfda7db86239ab2e0ffa93b712eb4f5",
+    "cmake/Masstree.cmake": "4e6a70f135d33688a7097479c8408edd1a615f42dae995164af61c7fb9da86e2",
+    "cmake/RocksDB.cmake": "d712498168195dd9035b3bbbe5badc198a0e165f0fa11c0ff73224aa932631a8",
+    "cmake/UnoDB.cmake": "1c7ed84421298e60b89f6e6ca80d8d412fad338f439c43bc20f511a25242f7a1",
+    "cmake/Vendor.cmake": "9a14a1f06532dd10cd28d4af0cb4e33b83d85ac67673f57a9060f376abbc5e61",
+    "cmake/Wormhole.cmake": "b9fbbbbe3a9f368fae6b2b2fad5fad20539a3042fed9fe00e7f4631047e7f690",
+    "cmake/masstree_config.h.in": "a2c7b60d6feccda8243dbe467b8686e7598f2c4d30e02264c44092bc251d6e1a",
+    "cmake/patches/btreeolc.patch": "3da3daafcb0d56573348ef8387a4b8c5c5c847dccdf501e179e70b29ee6cba1d",
+    "cmake/patches/hot-clang.patch": "1fd88f637186b2a461cdd4027b17c432926dd9f99bab87ccaeb03ba562eee3ce",
+    "cmake/patches/masstree-arm64.patch": "f6fc6bc51815560c775a30eb809b94ac49d128d7b37426f4c1ec4d77e51c061f",
+    "cmake/patches/masstree-permutation.patch": "d57e5372082f2a56624fc33fe8b9d17e96f1753a9927f9e4ca33cd52ba2d6193",
+    "cmake/patches/unodb-thread-registration.patch": "172fcb8ecb76cfa0d21a3c95f7f8b1355b3322a322b8c28a389b5dea5af172a4",
+    "cmake/patches/wormhole-asm.patch": "de8b42d45d388641a4d309bfc7e49ccbc1e8bb1041ee6346048f3d375ffdb115",
+    "cmake/patches/wormhole-unaligned.patch": "cee8cf6847796f1535030483bdb4970bf1fe756d5ca08b8034fa01a14d49522e",
+    "CMakeLists.txt": "59d48433cad6b3fcec2672507fed170b1e045e03aaa00639e6983311891bcbe7"
+  },
+  "native_and_local_sources_match": true,
+  "native_binary_sha256": "1b201f79e1efd972840ae4dbe599f3fd21e42e1a194100862577e5f1f494577f",
+  "wormhole_patched_lib_sha256": "eafa65225a76a687e457e9f83452b5028ee1b4a6ecfc50eab982926fdceb7e01",
+  "local_baseline_binary_sha256": "d96c791088a3c2295194b36eb8bfdea18dbb3567d09a798187eedc4238b86dc2",
+  "local_research_binary_sha256": "38d51e5027d06f4b0a66dd2dd48a157f3b4d4ce538e9e0eefe9f8f56ffc5b6c2",
+  "native_tests": {
+    "passed": 11,
+    "failed": 0,
+    "hot_required": true,
+    "numa_node": 0,
+    "cpu_list": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "baseline_asan_ubsan_tests": {
+    "passed": 4,
+    "failed": 0
+  },
+  "research_asan_ubsan_tests": {
+    "passed": 9,
+    "failed": 0,
+    "indexes": [
+      "std_map",
+      "btreeolc",
+      "unodb_art",
+      "masstree",
+      "wormhole"
+    ]
+  },
+  "build_proxy_environment": "HTTP_PROXY, HTTPS_PROXY, ALL_PROXY and lowercase variants unset",
+  "benchmark_wormhole_source_predates_unaligned_patch": true,
+  "packaged_per_process_files_verified": 3978,
+  "range_cost_csv_reproduced_exactly": true
+}

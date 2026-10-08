@@ -1,0 +1,24 @@
+Internal ctest changing into directory: /Users/jinhelin/github/memtable-bench/build-research-asan
+Test project /Users/jinhelin/github/memtable-bench/build-research-asan
+    Start 1: key_dataset_contract
+1/9 Test #1: key_dataset_contract .............   Passed    0.53 sec
+    Start 2: adapter_contract
+2/9 Test #2: adapter_contract .................   Passed    5.29 sec
+    Start 3: smoke
+3/9 Test #3: smoke ............................   Passed    0.40 sec
+    Start 4: btreeolc_smoke
+4/9 Test #4: btreeolc_smoke ...................   Passed    0.11 sec
+    Start 5: unodb_art_smoke
+5/9 Test #5: unodb_art_smoke ..................   Passed    0.36 sec
+    Start 6: masstree_smoke
+6/9 Test #6: masstree_smoke ...................   Passed    0.09 sec
+    Start 7: wormhole_smoke
+7/9 Test #7: wormhole_smoke ...................   Passed    0.08 sec
+    Start 8: unodb_reject_upsert
+8/9 Test #8: unodb_reject_upsert ..............   Passed    0.03 sec
+    Start 9: harness_integration
+9/9 Test #9: harness_integration ..............   Passed    7.24 sec
+
+100% tests passed, 0 tests failed out of 9
+
+Total Test time (real) =  14.13 sec

@@ -1,0 +1,4 @@
+# Preserve measured files and patch context byte-for-byte across platforms.
+benchmarks/** -text
+docs/test-results/** -text
+cmake/patches/*.patch -text

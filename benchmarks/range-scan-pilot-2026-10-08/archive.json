@@ -1,0 +1,11 @@
+{
+  "kind": "pilot",
+  "original_directory": "results/range-scan-pilot-2026-10-08",
+  "formal_processes": 90,
+  "phase_rows": 270,
+  "raw_csv_columns": 61,
+  "adapter_checksum_groups_verified": 30,
+  "per_process_files": 297,
+  "runs_archive_sha256": "89e7a05a652fe9b5dfad188483fd138366a2c625c60995d9055997e4abdfad57",
+  "note": "Top-level measured files are byte-for-byte copies. Per-process files are packed in runs.tar.gz; extract it to restore the original runs/ tree."
+}
