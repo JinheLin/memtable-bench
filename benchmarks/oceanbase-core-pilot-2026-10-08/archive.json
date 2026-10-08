@@ -1,0 +1,18 @@
+{
+  "status": "verified",
+  "model": "mvcc-v1",
+  "purpose": "functional_integration_pilot",
+  "processes": 176,
+  "phase_rows": 576,
+  "comparison_groups": 52,
+  "pmu_cycle_rows": 576,
+  "source_matches_current_inputs": true,
+  "binary_sha256": "511ab4289e35d3a17d4ba738631533f5914d5ad0e5f4d2e5343d97a1e6a398bd",
+  "oceanbase_scope": "ported_keybtree_index_core",
+  "files": {
+    "raw.csv": "c6057c8f8b84ee7110c13faad5465bebd0d7b0d687587378c61e1d1973d9664d",
+    "metadata.json": "fe1437186c9c38450a9fa1e40a68790b57ba2ad3f5ef04f3e8a465c5d8aaaa99",
+    "source-snapshot.tar.gz": "b27e1f67e6fce9dd7ccc25fd94ab77033c5e8891fe709188bc2a93f7a06c542f",
+    "process-records.tar.gz": "9c2e9f47e5ec06556537b89ce86c91ea2c1ad8d6e8146c920d9610c50de57420"
+  }
+}

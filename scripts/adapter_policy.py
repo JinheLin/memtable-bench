@@ -6,8 +6,11 @@ import os
 
 INDEXES = ['std_map', 'abseil_btree', 'tlx_btree', 'rocksdb_inlineskiplist',
            'btreeolc', 'unodb_art', 'masstree', 'hot', 'wormhole']
+# Keep the historical default cohort stable. New index cores can be selected
+# explicitly in sensitivity_matrix; mvcc_matrix discovers the binary's list.
+KNOWN_INDEXES = frozenset([*INDEXES, 'oceanbase_keybtree'])
 NATIVE_CONCURRENT = frozenset({'rocksdb_inlineskiplist', 'btreeolc', 'unodb_art',
-                               'masstree', 'wormhole'})
+                               'masstree', 'wormhole', 'oceanbase_keybtree'})
 POLICY = 'native-concurrency-v1'
 
 
@@ -64,7 +67,7 @@ def select_rows(rows, source, destination):
     """Keep legacy raw data intact; report discarded wrapper-concurrency rows."""
     included, excluded = [], []
     for row in rows:
-        assert row['index'] in INDEXES, f'unknown adapter: {row["index"]}'
+        assert row['index'] in KNOWN_INDEXES, f'unknown adapter: {row["index"]}'
         allowed = row['index'] in eligible_indexes([row['index']], int(row['threads']))
         if allowed and int(row['threads']) > 1:
             assert row['adapter_mode'].startswith('native_'), 'native adapter uses a wrapper concurrency mode'
@@ -81,7 +84,7 @@ def select_rows(rows, source, destination):
                      included_phase_rows=len(included), excluded_phase_rows=len(excluded),
                      included_processes=len({identity(row) for row in included}),
                      excluded_processes=len({identity(row) for row in excluded}),
-                     native_concurrent_indexes=sorted(NATIVE_CONCURRENT),
+                     native_concurrent_indexes=sorted(NATIVE_CONCURRENT.intersection(row['index'] for row in rows)),
                      exclusion_reason='threads > 1 without native concurrency in the integrated implementation',
                      measurement_rerun=False)
     (destination / 'selection.json').write_text(json.dumps(selection, indent=2) + '\n')

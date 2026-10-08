@@ -19,6 +19,7 @@ option(MEMTABLE_BENCH_FETCH_UNODB "Build the UnoDB OLC ART adapter" OFF)
 option(MEMTABLE_BENCH_FETCH_MASSTREE "Build the Masstree adapter" OFF)
 option(MEMTABLE_BENCH_FETCH_HOT "Build the HOT adapter (x86_64 AVX2/BMI2)" OFF)
 option(MEMTABLE_BENCH_FETCH_WORMHOLE "Build the Wormhole adapter" OFF)
+option(MEMTABLE_BENCH_FETCH_OCEANBASE "Build the pinned OceanBase KeyBtree core port" OFF)
 set(MEMTABLE_BENCH_CSE_SOURCE_DIR "" CACHE PATH "Pinned CSE MemTable export directory")
 
 set(CMAKE_CXX_STANDARD 20)
@@ -87,6 +88,9 @@ endif()
 if(MEMTABLE_BENCH_CSE_SOURCE_DIR)
   include(cmake/CSE.cmake)
 endif()
+if(MEMTABLE_BENCH_FETCH_OCEANBASE)
+  include(cmake/OceanBase.cmake)
+endif()
 
 enable_testing()
 add_executable(mvcc_contract tests/mvcc_contract.cc)
@@ -135,6 +139,15 @@ if(MEMTABLE_BENCH_FETCH_UNODB)
 endif()
 
 find_package(Python3 QUIET COMPONENTS Interpreter)
+if(MEMTABLE_BENCH_FETCH_OCEANBASE)
+  add_test(NAME oceanbase_smoke COMMAND memtable_bench --stage all
+    --index oceanbase_keybtree --internal-key --keys 5000 --ops 10000 --threads 4
+    --key-size 24 --value-size 64 --output ${CMAKE_CURRENT_BINARY_DIR}/oceanbase-smoke-v3.csv)
+  add_test(NAME oceanbase_reject_upsert COMMAND memtable_bench --stage 2
+    --index oceanbase_keybtree --keys 10 --ops 10 --read-percent 0
+    --output ${CMAKE_CURRENT_BINARY_DIR}/oceanbase-rejected.csv)
+  set_tests_properties(oceanbase_reject_upsert PROPERTIES WILL_FAIL TRUE)
+endif()
 if(Python3_Interpreter_FOUND)
   add_test(NAME mvcc_integration COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/mvcc_integration.py $<TARGET_FILE:mvcc_bench>)

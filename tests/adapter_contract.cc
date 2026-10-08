@@ -263,9 +263,13 @@ void VerifyActiveCursorWithWrites(const mb::AdapterInfo& info) {
   // Holding an active cursor must not hold a native read latch that deadlocks
   // this caller's Insert or Freeze. Native frozen cursors are tested separately.
   assert(index->Insert("b", "middle"));
-  assert(cursor->Next() && cursor->Key() == "b");
-  assert(cursor->Next() && cursor->Key() == "c");
+  // Native batch iterators may have already cached "c" before "b" arrived.
+  // The cursor contract allows this; a new Seek must see the completed insert.
+  assert(cursor->Next());
+  if (cursor->Key() == "b") assert(cursor->Next());
+  assert(cursor->Key() == "c");
   assert(!cursor->Next());
+  assert(cursor->Seek("b") && cursor->Key() == "b" && cursor->Value() == "middle");
   index->Freeze();
 }
 }  // namespace

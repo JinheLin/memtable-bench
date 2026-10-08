@@ -4,6 +4,38 @@ Current support is **native Linux x86-64 with GCC/Clang**. The build now rejects
 other platforms. Earlier macOS/ARM entries below describe historical verification
 and do not imply current platform support.
 
+## OceanBase KeyBtree core integration
+
+Linux x86-64 / GCC 11.3.1, on 2026-10-08:
+
+- All twelve runnable MVCC candidates, including the new `oceanbase_keybtree`:
+  **17/17 CTest tests passed**. The [test and pilot log](test-results/2026-10-08/oceanbase/all-candidates-pilot.log)
+  records this run and all 176 pilot processes.
+- Standalone std::map + OceanBase core build: **10/10 passed**;
+  [build/test log](test-results/2026-10-08/oceanbase/standalone-build-tests.log).
+- Dependency-free baseline: **8/8 passed**;
+  [baseline and integrity log](test-results/2026-10-08/oceanbase/baseline-integrity-tests.log).
+- Four-worker MVCC operations and lifecycle under Valgrind 3.19:
+  **zero memory errors, zero bytes retained at process exit**;
+  [memory-check log](test-results/2026-10-08/oceanbase/valgrind.log).
+- Original or generated source tampering is rejected by the verifier. Both
+  unavailable full-MemTable slots reject execution without creating CSV output;
+  evidence is in the baseline/integrity log.
+
+The [functional pilot](../benchmarks/oceanbase-core-pilot-2026-10-08/README.md)
+completed **176 processes / 576 rows**, across four profiles and 1/4 workers.
+All 52 comparison groups match counts and contents; all rows have PMU cycles.
+Measured source and binary hashes were verified when archiving. This does not
+establish a performance ranking or measure native OceanBase transaction MVCC.
+
+The host lacks the GCC compiler's required `libasan.so.6.0.0`, so the ASan
+configuration did not compile and no ASan success is claimed;
+[compiler diagnostic](test-results/2026-10-08/oceanbase/asan-unavailable.log).
+The memory check used the available Valgrind runtime. All builds cleared proxy
+variables and no formatting target was run. See [scope and TODOs](oceanbase.md).
+
+## Prior Linux platform validation
+
 The final platform cleanup was rebuilt and verified on the Linux host; the
 [Linux-only validation log](test-results/2026-10-08/mvcc/linux-only-validation.log)
 includes the 15/15 test run and a fresh all-eleven, 1/4-worker MVCC runner check.

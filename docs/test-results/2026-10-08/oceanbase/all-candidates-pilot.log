@@ -1,0 +1,216 @@
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+      Start  1: mvcc_contract
+ 1/17 Test  #1: mvcc_contract ....................   Passed    0.08 sec
+      Start  2: mvcc_smoke
+ 2/17 Test  #2: mvcc_smoke .......................   Passed    0.04 sec
+      Start  3: key_dataset_contract
+ 3/17 Test  #3: key_dataset_contract .............   Passed    0.02 sec
+      Start  4: adapter_contract
+ 4/17 Test  #4: adapter_contract .................   Passed    0.55 sec
+      Start  5: smoke
+ 5/17 Test  #5: smoke ............................   Passed    0.01 sec
+      Start  6: rocksdb_smoke
+ 6/17 Test  #6: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  7: rocksdb_reject_upsert
+ 7/17 Test  #7: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  8: btreeolc_smoke
+ 8/17 Test  #8: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  9: unodb_art_smoke
+ 9/17 Test  #9: unodb_art_smoke ..................   Passed    0.02 sec
+      Start 10: masstree_smoke
+10/17 Test #10: masstree_smoke ...................   Passed    0.01 sec
+      Start 11: wormhole_smoke
+11/17 Test #11: wormhole_smoke ...................   Passed    0.02 sec
+      Start 12: unodb_reject_upsert
+12/17 Test #12: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 13: oceanbase_smoke
+13/17 Test #13: oceanbase_smoke ..................   Passed    0.02 sec
+      Start 14: oceanbase_reject_upsert
+14/17 Test #14: oceanbase_reject_upsert ..........   Passed    0.00 sec
+      Start 15: mvcc_integration
+15/17 Test #15: mvcc_integration .................   Passed    0.58 sec
+      Start 16: benchmark_policy
+16/17 Test #16: benchmark_policy .................   Passed    0.42 sec
+      Start 17: harness_integration
+17/17 Test #17: harness_integration ..............   Passed    1.60 sec
+
+100% tests passed, 0 tests failed out of 17
+
+Total Test time (real) =   3.41 sec
+1/176 value-s1-t1-abseil_btree-r1
+2/176 base-s3-t1-hot-r1
+3/176 value-s2-t4-rocksdb_inlineskiplist-r1
+4/176 base-s2-t1-masstree-r1
+5/176 value-s1-t1-wormhole-r1
+6/176 value-s2-t1-abseil_btree-r1
+7/176 deep-s2-t1-std_map-r1
+8/176 deep-s1-t1-abseil_btree-r1
+9/176 base-s2-t1-abseil_btree-r1
+10/176 value-s2-t4-cse_arena-r1
+11/176 prefix-s1-t1-std_map-r1
+12/176 value-s3-t1-cse_crossbeam-r1
+13/176 base-s2-t4-oceanbase_keybtree-r1
+14/176 deep-s2-t1-btreeolc-r1
+15/176 value-s2-t4-masstree-r1
+16/176 value-s1-t1-rocksdb_inlineskiplist-r1
+17/176 deep-s3-t1-rocksdb_inlineskiplist-r1
+18/176 value-s2-t1-std_map-r1
+19/176 base-s1-t1-abseil_btree-r1
+20/176 base-s3-t1-cse_arena-r1
+21/176 base-s2-t1-std_map-r1
+22/176 prefix-s3-t1-btreeolc-r1
+23/176 prefix-s2-t1-rocksdb_inlineskiplist-r1
+24/176 value-s2-t1-hot-r1
+25/176 value-s1-t1-cse_arena-r1
+26/176 base-s1-t1-std_map-r1
+27/176 value-s2-t1-rocksdb_inlineskiplist-r1
+28/176 prefix-s2-t4-oceanbase_keybtree-r1
+29/176 value-s1-t1-oceanbase_keybtree-r1
+30/176 base-s3-t1-wormhole-r1
+31/176 value-s1-t1-hot-r1
+32/176 value-s1-t1-unodb_art-r1
+33/176 prefix-s2-t4-cse_arena-r1
+34/176 deep-s1-t1-unodb_art-r1
+35/176 base-s3-t1-oceanbase_keybtree-r1
+36/176 deep-s2-t1-cse_arena-r1
+37/176 value-s2-t1-cse_arena-r1
+38/176 deep-s3-t1-masstree-r1
+39/176 prefix-s1-t1-cse_arena-r1
+40/176 prefix-s2-t1-std_map-r1
+41/176 base-s2-t1-unodb_art-r1
+42/176 deep-s3-t1-std_map-r1
+43/176 base-s1-t1-btreeolc-r1
+44/176 base-s1-t1-cse_crossbeam-r1
+45/176 value-s2-t1-masstree-r1
+46/176 base-s2-t1-cse_arena-r1
+47/176 deep-s1-t1-cse_arena-r1
+48/176 base-s2-t4-btreeolc-r1
+49/176 prefix-s3-t1-masstree-r1
+50/176 base-s1-t1-rocksdb_inlineskiplist-r1
+51/176 deep-s2-t1-rocksdb_inlineskiplist-r1
+52/176 base-s1-t1-unodb_art-r1
+53/176 prefix-s1-t1-rocksdb_inlineskiplist-r1
+54/176 deep-s2-t1-tlx_btree-r1
+55/176 base-s2-t4-wormhole-r1
+56/176 deep-s2-t4-cse_arena-r1
+57/176 prefix-s2-t1-hot-r1
+58/176 prefix-s1-t1-masstree-r1
+59/176 base-s3-t1-cse_crossbeam-r1
+60/176 base-s1-t1-oceanbase_keybtree-r1
+61/176 prefix-s2-t1-masstree-r1
+62/176 base-s3-t1-unodb_art-r1
+63/176 base-s1-t1-tlx_btree-r1
+64/176 base-s2-t1-rocksdb_inlineskiplist-r1
+65/176 value-s2-t4-btreeolc-r1
+66/176 prefix-s2-t1-cse_arena-r1
+67/176 prefix-s2-t4-cse_crossbeam-r1
+68/176 value-s2-t4-oceanbase_keybtree-r1
+69/176 value-s2-t1-wormhole-r1
+70/176 deep-s2-t1-wormhole-r1
+71/176 value-s3-t1-abseil_btree-r1
+72/176 value-s3-t1-cse_arena-r1
+73/176 value-s1-t1-btreeolc-r1
+74/176 deep-s2-t1-oceanbase_keybtree-r1
+75/176 base-s2-t4-masstree-r1
+76/176 prefix-s1-t1-abseil_btree-r1
+77/176 deep-s3-t1-btreeolc-r1
+78/176 deep-s2-t4-oceanbase_keybtree-r1
+79/176 base-s2-t4-rocksdb_inlineskiplist-r1
+80/176 prefix-s3-t1-tlx_btree-r1
+81/176 base-s2-t1-btreeolc-r1
+82/176 prefix-s3-t1-wormhole-r1
+83/176 deep-s2-t4-masstree-r1
+84/176 base-s1-t1-cse_arena-r1
+85/176 deep-s1-t1-btreeolc-r1
+86/176 base-s3-t1-abseil_btree-r1
+87/176 base-s2-t4-cse_crossbeam-r1
+88/176 base-s2-t4-unodb_art-r1
+89/176 value-s2-t1-btreeolc-r1
+90/176 prefix-s1-t1-hot-r1
+91/176 deep-s1-t1-rocksdb_inlineskiplist-r1
+92/176 value-s3-t1-rocksdb_inlineskiplist-r1
+93/176 prefix-s2-t4-wormhole-r1
+94/176 deep-s2-t4-unodb_art-r1
+95/176 deep-s3-t1-oceanbase_keybtree-r1
+96/176 deep-s3-t1-hot-r1
+97/176 prefix-s2-t1-cse_crossbeam-r1
+98/176 value-s3-t1-hot-r1
+99/176 base-s1-t1-hot-r1
+100/176 value-s3-t1-tlx_btree-r1
+101/176 base-s3-t1-btreeolc-r1
+102/176 value-s3-t1-unodb_art-r1
+103/176 prefix-s3-t1-std_map-r1
+104/176 value-s3-t1-btreeolc-r1
+105/176 deep-s1-t1-wormhole-r1
+106/176 value-s3-t1-oceanbase_keybtree-r1
+107/176 value-s2-t4-wormhole-r1
+108/176 deep-s3-t1-unodb_art-r1
+109/176 base-s1-t1-masstree-r1
+110/176 base-s2-t4-cse_arena-r1
+111/176 prefix-s3-t1-unodb_art-r1
+112/176 deep-s3-t1-abseil_btree-r1
+113/176 deep-s2-t4-wormhole-r1
+114/176 base-s3-t1-rocksdb_inlineskiplist-r1
+115/176 deep-s2-t1-masstree-r1
+116/176 prefix-s1-t1-unodb_art-r1
+117/176 base-s2-t1-hot-r1
+118/176 deep-s1-t1-masstree-r1
+119/176 base-s2-t1-cse_crossbeam-r1
+120/176 base-s3-t1-std_map-r1
+121/176 value-s3-t1-masstree-r1
+122/176 value-s3-t1-std_map-r1
+123/176 value-s2-t4-unodb_art-r1
+124/176 prefix-s3-t1-abseil_btree-r1
+125/176 deep-s2-t4-btreeolc-r1
+126/176 prefix-s2-t1-abseil_btree-r1
+127/176 base-s3-t1-masstree-r1
+128/176 prefix-s3-t1-rocksdb_inlineskiplist-r1
+129/176 prefix-s3-t1-cse_arena-r1
+130/176 value-s2-t1-oceanbase_keybtree-r1
+131/176 prefix-s1-t1-oceanbase_keybtree-r1
+132/176 base-s2-t1-tlx_btree-r1
+133/176 deep-s3-t1-wormhole-r1
+134/176 value-s2-t4-cse_crossbeam-r1
+135/176 value-s1-t1-tlx_btree-r1
+136/176 prefix-s3-t1-hot-r1
+137/176 deep-s1-t1-oceanbase_keybtree-r1
+138/176 prefix-s3-t1-cse_crossbeam-r1
+139/176 deep-s3-t1-cse_crossbeam-r1
+140/176 base-s1-t1-wormhole-r1
+141/176 deep-s2-t4-rocksdb_inlineskiplist-r1
+142/176 deep-s2-t1-unodb_art-r1
+143/176 deep-s2-t1-cse_crossbeam-r1
+144/176 prefix-s2-t1-btreeolc-r1
+145/176 value-s1-t1-std_map-r1
+146/176 deep-s1-t1-cse_crossbeam-r1
+147/176 base-s3-t1-tlx_btree-r1
+148/176 value-s3-t1-wormhole-r1
+149/176 prefix-s1-t1-btreeolc-r1
+150/176 prefix-s2-t4-unodb_art-r1
+151/176 value-s2-t1-cse_crossbeam-r1
+152/176 prefix-s2-t4-btreeolc-r1
+153/176 deep-s1-t1-hot-r1
+154/176 value-s2-t1-unodb_art-r1
+155/176 base-s2-t1-oceanbase_keybtree-r1
+156/176 prefix-s2-t4-masstree-r1
+157/176 deep-s1-t1-tlx_btree-r1
+158/176 prefix-s2-t1-oceanbase_keybtree-r1
+159/176 base-s2-t1-wormhole-r1
+160/176 prefix-s2-t1-unodb_art-r1
+161/176 prefix-s1-t1-wormhole-r1
+162/176 prefix-s1-t1-tlx_btree-r1
+163/176 deep-s2-t4-cse_crossbeam-r1
+164/176 deep-s2-t1-hot-r1
+165/176 deep-s3-t1-cse_arena-r1
+166/176 value-s1-t1-masstree-r1
+167/176 prefix-s3-t1-oceanbase_keybtree-r1
+168/176 deep-s1-t1-std_map-r1
+169/176 prefix-s2-t1-tlx_btree-r1
+170/176 deep-s3-t1-tlx_btree-r1
+171/176 deep-s2-t1-abseil_btree-r1
+172/176 prefix-s2-t4-rocksdb_inlineskiplist-r1
+173/176 value-s2-t1-tlx_btree-r1
+174/176 value-s1-t1-cse_crossbeam-r1
+175/176 prefix-s1-t1-cse_crossbeam-r1
+176/176 prefix-s2-t1-wormhole-r1

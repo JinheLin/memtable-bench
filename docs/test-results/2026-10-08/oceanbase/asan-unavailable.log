@@ -1,0 +1,34 @@
+-- The CXX compiler identification is GNU 11.3.1
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - failed
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ - broken
+-- Configuring incomplete, errors occurred!
+CMake Error at /usr/share/cmake/Modules/CMakeTestCXXCompiler.cmake:60 (message):
+  The C++ compiler
+
+    "/usr/bin/c++"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: /DATA/disk1/jinhelin/github/memtable-bench/build-oceanbase-asan/CMakeFiles/CMakeScratch/TryCompile-dEEUdL
+    
+    Run Build Command(s):/usr/bin/ninja-build -v cmTC_ebd58 && [1/2] /usr/bin/c++   -fsanitize=address -fno-omit-frame-pointer -o CMakeFiles/cmTC_ebd58.dir/testCXXCompiler.cxx.o -c /DATA/disk1/jinhelin/github/memtable-bench/build-oceanbase-asan/CMakeFiles/CMakeScratch/TryCompile-dEEUdL/testCXXCompiler.cxx
+    [2/2] : && /usr/bin/c++ -fsanitize=address -fno-omit-frame-pointer  CMakeFiles/cmTC_ebd58.dir/testCXXCompiler.cxx.o -o cmTC_ebd58   && :
+    FAILED: cmTC_ebd58 
+    : && /usr/bin/c++ -fsanitize=address -fno-omit-frame-pointer  CMakeFiles/cmTC_ebd58.dir/testCXXCompiler.cxx.o -o cmTC_ebd58   && :
+    /usr/bin/ld: cannot find /usr/lib64/libasan.so.6.0.0
+    collect2: error: ld returned 1 exit status
+    ninja: build stopped: subcommand failed.
+    
+    
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:2 (project)
+
+

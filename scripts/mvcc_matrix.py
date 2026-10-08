@@ -82,7 +82,7 @@ def main():
     root.mkdir(parents=True, exist_ok=False)
     (root/'runs').mkdir()
     repo = Path(__file__).resolve().parents[1]
-    files = [p for folder in ('src', 'include', 'cmake', 'rust', 'scripts', 'tests')
+    files = [p for folder in ('src', 'include', 'cmake', 'rust', 'scripts', 'tests', 'vendor/oceanbase-port')
              for p in (repo/folder).rglob('*') if p.is_file() and
              p.suffix in {'.cc', '.h', '.cmake', '.rs', '.json', '.toml', '.lock', '.py', '.patch', '.in', '.sh'} and
              '__pycache__' not in p.parts and 'target' not in p.parts]
@@ -96,6 +96,9 @@ def main():
     if cse_manifest.exists():
         dependencies['cse'] = json.loads(cse_manifest.read_text())
         dependencies['rust_toolchain'] = output(['rustc', '+stable', '-vV'])
+    oceanbase_manifest = repo/'vendor/oceanbase-keybtree/source-manifest.json'
+    if oceanbase_manifest.exists():
+        dependencies['oceanbase_keybtree'] = json.loads(oceanbase_manifest.read_text())
     metadata = dict(status='running', model='mvcc-v1', started_at=time.time(),
                     binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                     source_files=manifest, dependencies=dependencies, adapter_listing=listing,

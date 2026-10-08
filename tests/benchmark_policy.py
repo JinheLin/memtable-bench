@@ -44,7 +44,7 @@ for data in (original_plan, representative_plan):
     assert data['scenario_indexes']['mixed_t1'] == INDEXES
     for name, indexes in data['scenario_indexes'].items():
         if name.startswith('mixed_t') and name != 'mixed_t1':
-            assert set(indexes) == NATIVE_CONCURRENT
+            assert set(indexes) == NATIVE_CONCURRENT.intersection(INDEXES)
 for script in ('benchmark_matrix.py', 'sensitivity_matrix.py'):
     extra = ['--suite', 'representative'] if script.startswith('sensitivity') else []
     data = plan(script, *extra, '--threads', '4,16')
@@ -52,6 +52,9 @@ for script in ('benchmark_matrix.py', 'sensitivity_matrix.py'):
 subset = plan('sensitivity_matrix.py', '--suite', 'representative', '--indexes', 'std_map,hot')
 assert subset['formal_processes'] == 48
 assert subset['scenario_indexes']['mixed_t4'] == subset['scenario_indexes']['mixed_t16'] == []
+subset = plan('sensitivity_matrix.py', '--suite', 'representative', '--indexes', 'std_map,oceanbase_keybtree')
+assert subset['scenario_indexes']['mixed_t1'] == ['std_map', 'oceanbase_keybtree']
+assert subset['scenario_indexes']['mixed_t4'] == subset['scenario_indexes']['mixed_t16'] == ['oceanbase_keybtree']
 
 source = REPO / 'benchmarks' / 'xeon79-2026-10-08'
 meta = json.loads((source / 'metadata.json').read_text())

@@ -1,0 +1,43 @@
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline
+[1/9] Building CXX object CMakeFiles/memtable_bench_index.dir/src/mvcc.cc.o
+[2/9] Building CXX object CMakeFiles/memtable_bench_index.dir/src/index.cc.o
+[3/9] Linking CXX static library libmemtable_bench_index.a
+[4/9] Linking CXX executable mvcc_contract
+[5/9] Linking CXX executable memtable_bench
+[6/9] Linking CXX executable mvcc_bench
+[7/9] Linking CXX executable key_dataset_contract
+[8/9] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[9/9] Linking CXX executable adapter_contract
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline
+    Start 1: mvcc_contract
+1/8 Test #1: mvcc_contract ....................   Passed    0.00 sec
+    Start 2: mvcc_smoke
+2/8 Test #2: mvcc_smoke .......................   Passed    0.05 sec
+    Start 3: key_dataset_contract
+3/8 Test #3: key_dataset_contract .............   Passed    0.01 sec
+    Start 4: adapter_contract
+4/8 Test #4: adapter_contract .................   Passed    0.01 sec
+    Start 5: smoke
+5/8 Test #5: smoke ............................   Passed    0.01 sec
+    Start 6: mvcc_integration
+6/8 Test #6: mvcc_integration .................   Passed    0.06 sec
+    Start 7: benchmark_policy
+7/8 Test #7: benchmark_policy .................   Passed    0.42 sec
+    Start 8: harness_integration
+8/8 Test #8: harness_integration ..............   Passed    0.18 sec
+
+100% tests passed, 0 tests failed out of 8
+
+Total Test time (real) =   0.74 sec
+Verified OceanBase KeyBtree core at 0fa1778765483295e844f0465938b831ee56fe4b
+Verified OceanBase KeyBtree core at 0fa1778765483295e844f0465938b831ee56fe4b
+Rejected modified upstream/src/storage/memtable/mvcc/ob_keybtree.cpp
+RuntimeError: OceanBase source checksum mismatch: src/storage/memtable/mvcc/ob_keybtree.cpp
+Rejected modified include/ob_keybtree.cpp
+RuntimeError: OceanBase generated port differs: src/storage/memtable/mvcc/ob_keybtree.cpp
+oceanbase_memtable_btree rejected without CSV: error: TODO: full ObMemtable requires native tenant/transaction/tablet/freezer runtime; use oceanbase_keybtree for index core
+oceanbase_memtable_hash_btree rejected without CSV: error: TODO: native ObMemtable MVCC runtime and hash index are not integrated
+Source integrity and unavailable-candidate checks passed

@@ -79,6 +79,9 @@ def main():
     pins = {}
     for name in ('abseil-cpp', 'tlx', 'rocksdb', 'btreeolc', 'unodb', 'masstree', 'hot', 'wormhole'):
         pins[name] = output(['git', '-C', str(repo / 'vendor' / name), 'rev-parse', 'HEAD'])
+    oceanbase = repo / 'vendor/oceanbase-keybtree/source-manifest.json'
+    if oceanbase.exists():
+        pins['oceanbase_keybtree'] = json.loads(oceanbase.read_text())
     manifest_path = repo / 'source-manifest.json'
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else None
     if manifest:

@@ -12,7 +12,7 @@ import subprocess
 import time
 
 from benchmark_matrix import ENV, now, output
-from adapter_policy import INDEXES, POLICY, eligible_indexes, validate_listing
+from adapter_policy import INDEXES, KNOWN_INDEXES, POLICY, eligible_indexes, validate_listing
 
 
 def configuration(name, key=64, value=64, layout='random', prefix=0, groups=1):
@@ -80,7 +80,7 @@ def main():
             parser.error(f'unknown configs: {sorted(missing)}')
         configs = [c for c in configs if c['config_id'] in wanted]
     indexes = args.indexes.split(',')
-    if len(indexes) != len(set(indexes)) or set(indexes) - set(INDEXES):
+    if len(indexes) != len(set(indexes)) or set(indexes) - KNOWN_INDEXES:
         parser.error('indexes must be a unique subset of known adapters')
     threads = [int(t) for t in args.threads.split(',')]
     if len(threads) != len(set(threads)) or min(args.keys, args.ops, args.repeats, *threads) < 1:
@@ -131,6 +131,9 @@ def main():
     pins = {name: output(['git', '-C', str(repo / 'vendor' / name), 'rev-parse', 'HEAD'])
             for name in ('abseil-cpp', 'tlx', 'rocksdb', 'btreeolc', 'unodb', 'masstree', 'hot', 'wormhole')
             if (repo / 'vendor' / name).exists()}
+    oceanbase = repo / 'vendor/oceanbase-keybtree/source-manifest.json'
+    if oceanbase.exists():
+        pins['oceanbase_keybtree'] = json.loads(oceanbase.read_text())
     meta = dict(status='running', suite=args.suite, started_at=now(), source=source,
                 binary=str(binary), binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                 compiler=output(['g++', '--version']).splitlines()[0], kernel=output(['uname', '-a']),

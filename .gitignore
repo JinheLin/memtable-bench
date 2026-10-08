@@ -6,4 +6,7 @@
 .DS_Store
 __pycache__/
 /vendor/cse-memtable/
+/vendor/oceanbase/
+/vendor/oceanbase-keybtree/
+/vendor/oceanbase-*.tar.gz
 /rust/cse_memtable/target/

@@ -3,14 +3,18 @@
 A C++20 harness for comparing ordered in-memory indexes as LSM MemTable candidates.
 Supported environment: **native Linux x86-64 with GCC or Clang**. CMake rejects
 other operating systems, architectures and cross builds before fetching dependencies.
-The reference `std::map` adapter has no external dependencies. Eight optional
+The reference `std::map` adapter has no external dependencies. Nine optional
 index adapters are implemented with pinned upstream sources. The actual binary's
 `--list-indexes` output is authoritative, including CPU restrictions and key limits.
 
 For MVCC databases, use **`mvcc_bench`**. It adds `cse_arena` and `cse_crossbeam`
-from cloud-storage-engine, and runs all eleven candidates with snapshot reads,
+from cloud-storage-engine, and runs twelve candidates with snapshot reads,
 tombstones, visible-row range scans, batched writes and complete-version flushes.
 See [MVCC workloads, CSE build instructions and CSV schema](docs/mvcc.md).
+The new `oceanbase_keybtree` is a port of OceanBase's actual MemTable ordered
+index core. Its MVCC workload uses the common InternalKey adapter; full native
+OceanBase transaction/MVCC MemTable candidates remain explicitly unavailable.
+See [OceanBase scope, build and remaining work](docs/oceanbase.md).
 The original `memtable_bench` remains the exact-key structural diagnostic;
 its `--internal-key` option alone does not implement snapshot visibility.
 
@@ -27,6 +31,7 @@ its `--internal-key` option alone does not implement snapshot visibility.
 | `masstree` | `MASSTREE` | Native Masstree locks + deferred node/value reclamation | 1 and multiple | 1024 bytes |
 | `hot` | `HOT` | HOTSingleThreaded + coarse reader/writer lock | 1 only | 127 bytes |
 | `wormhole` | `WORMHOLE` | Native `whsafe` API + parked thread references | 1 and multiple | 65535 bytes |
+| `oceanbase_keybtree` | `OCEANBASE` | KeyBtree core port; native COW/epoch algorithms; append-only | 1 and multiple | Allocation limits |
 | `cse_arena` (`mvcc_bench`) | `CSE_SOURCE_DIR` | Native version chains, concurrent reads, serialized batch writer | 1 and SWMR | 65535-byte user key |
 | `cse_crossbeam` (`mvcc_bench`) | `CSE_SOURCE_DIR` | Native version chains, concurrent reads, serialized batch writer | 1 and SWMR | 65535-byte user key |
 
@@ -38,7 +43,7 @@ HOT ROWEX is not integrated. `--list-indexes` publishes `native_concurrent=0/1`;
 the runners check this capability before executing a matrix, and the harness
 rejects an ineligible thread count before creating CSV or dataset output.
 
-The eight optional index switches are named `MEMTABLE_BENCH_FETCH_<SUFFIX>` and
+The nine optional index switches are named `MEMTABLE_BENCH_FETCH_<SUFFIX>` and
 default to OFF. CSE uses `MEMTABLE_BENCH_CSE_SOURCE_DIR`, an optional path to the
 verified local export; its two candidates are listed by `mvcc_bench`.
 These adapters use the actual upstream index; unavailable adapters fail before
@@ -46,7 +51,8 @@ creating a result file. HOT requires x86-64 with AVX2, BMI, BMI2, POPCNT and LZC
 The compiled binary checks HOT CPU features before entering its translation unit.
 
 **Native Linux validation (2026-10-08):** GCC 11.3.1 on Xeon Gold 6240:
-all eleven MVCC candidates, including HOT and both CSE backends, passed 15/15
+all twelve runnable MVCC candidates, including OceanBase KeyBtree, HOT and both
+CSE backends, passed 17/17 contract/workload/policy tests. The prior eleven-candidate run passed 15/15
 contract/workload/policy tests. The existing exact-key harness remains covered.
 The MVCC pilot completed 160 processes / 524 phase rows with matching contents;
 see [verification](docs/testing.md) and [pilot records](benchmarks/mvcc-pilot-2026-10-08/README.md).
@@ -77,6 +83,7 @@ include/memtable_bench/  Index/cursor contracts and dataset definitions
 src/                    Harness, datasets and concrete index adapters
 cmake/                  Pinned dependency setup and explicit upstream patches
 rust/                   Standalone CSE bridge, locked Rust dependencies and source pins
+vendor/oceanbase-port/  Pinned source digests and standalone runtime glue
 tests/                  Adapter, dataset and workload checks
 scripts/                Build, experiment, summary and plotting tools
 benchmarks/             Published measurements and compressed per-process records
@@ -597,6 +604,10 @@ include/memtable_bench/mvcc.h   MVCC table, version cursor and visibility contra
 src/mvcc_main.cc               MVCC workloads and CSV mvcc-v1
 src/mvcc.cc                    InternalKey MVCC wrappers and visible scans
 src/cse_index.cc               CSE native version-chain C ABI adapter
+src/oceanbase_index.cc          OceanBase KeyBtree core port with binary keys
+vendor/oceanbase-port/          Runtime glue and pinned upstream source digests
+scripts/vendor_oceanbase.py     Verified source subset and include isolation
+docs/oceanbase.md               Runnable core boundary and full MemTable TODOs
 rust/cse_memtable/             Pinned Rust bridge and source digests
 scripts/mvcc_matrix.py          MVCC screening matrix and validation
 scripts/export_cse_memtable.py  Verified local CSE source export

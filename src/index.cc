@@ -43,6 +43,9 @@ bool HOTSupported() {
 #ifdef MEMTABLE_BENCH_HAVE_WORMHOLE
 std::unique_ptr<Index> MakeWormhole();
 #endif
+#ifdef MEMTABLE_BENCH_HAVE_OCEANBASE
+std::unique_ptr<Index> MakeOceanBaseKeyBtree();
+#endif
 
 std::size_t Index::Scan(std::string_view start, std::size_t limit,
                         std::uint64_t* checksum) const {
@@ -228,6 +231,11 @@ std::vector<AdapterInfo> ListAdapters() {
 #else
       {"wormhole", false, "configure -DMEMTABLE_BENCH_FETCH_WORMHOLE=ON", true, true, 65535},
 #endif
+#ifdef MEMTABLE_BENCH_HAVE_OCEANBASE
+      {"oceanbase_keybtree", true, "OceanBase KeyBtree core port; binary comparator; append-only; not ObMemtable", true, false},
+#else
+      {"oceanbase_keybtree", false, "configure -DMEMTABLE_BENCH_FETCH_OCEANBASE=ON; KeyBtree core only", true, false},
+#endif
   };
 }
 
@@ -250,6 +258,9 @@ std::unique_ptr<Index> MakeIndex(std::string_view name) {
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_WORMHOLE
   if (name == "wormhole") return MakeWormhole();
+#endif
+#ifdef MEMTABLE_BENCH_HAVE_OCEANBASE
+  if (name == "oceanbase_keybtree") return MakeOceanBaseKeyBtree();
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_ABSEIL
   if (name == "abseil_btree") {

@@ -3,7 +3,8 @@
 The repository's [MIT LICENSE](LICENSE) applies to its original harness and
 adapter code. Optional upstream code keeps its own license and notices.
 Pins below are part of the benchmark configuration; keep them fixed for a series.
-Fetched checkouts stay in build directories and are not copied into this repository.
+Fetched sources stay in ignored build/vendor directories and are not committed
+to this repository. Source pins, patches and standalone glue are tracked.
 
 | Dependency | Pinned revision | Upstream license / source |
 | --- | --- | --- |
@@ -18,6 +19,7 @@ Fetched checkouts stay in build directories and are not copied into this reposit
 | Boost fallback headers | `1.86.0` | [Boost Software License 1.0](https://www.boost.org/LICENSE_1_0.txt); an installed Boost can be used instead |
 | CSE MemTable core (optional local export) | `80b0309f23f387ff5835a8153263f0d00fbfdaa0` | Preserve the source notices and checkout's `COMMERCIAL-LICENSE` / `THIRD-PARTY-LICENSE`; no engine source is redistributed here. See [integration scope](docs/mvcc.md). |
 | Crossbeam for CSE | `c4abd1b93149108dfa13c0cd42c878657c618bad` | MIT OR Apache-2.0; CSE's patched revision, locked by Cargo |
+| OceanBase KeyBtree core | `0fa1778765483295e844f0465938b831ee56fe4b` | [Apache-2.0](https://github.com/oceanbase/oceanbase/blob/0fa1778765483295e844f0465938b831ee56fe4b/LICENSE); vendoring preserves upstream LICENSE and NOTICE |
 
 The standalone CSE bridge also uses byteorder 1.5.0, bytes 1.11.1, and rand
 0.8.5 (MIT OR Apache-2.0). Their transitive versions and checksums are pinned
@@ -55,6 +57,14 @@ recorded separately from license clearance.
 Upstream modifications are explicit, version-pinned patches. Some patch files
 retain dormant upstream platform branches to preserve their original hashes;
 current build support is Linux x86-64 only:
+
+OceanBase's source subset is verified by `scripts/vendor_oceanbase.py` against
+tracked SHA-256 digests. Its generated port isolates includes, qualifies typedefs
+for GCC and replaces a database-specific layout assertion with the same assertion
+on the byte-key instantiation. Algorithm method bodies remain upstream code.
+The standalone runtime glue, comparator, backing allocator and scope limitations
+are described in [docs/oceanbase.md](docs/oceanbase.md). The original and generated
+source hashes are preserved in the ignored export's manifest.
 
 | Patch | Purpose |
 | --- | --- |

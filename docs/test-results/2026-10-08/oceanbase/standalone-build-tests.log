@@ -1,0 +1,43 @@
+Verified OceanBase KeyBtree core at 0fa1778765483295e844f0465938b831ee56fe4b
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-oceanbase
+[1/12] Verify pinned OceanBase sources and generated include isolation
+Verified OceanBase KeyBtree core at 0fa1778765483295e844f0465938b831ee56fe4b
+[2/12] Building CXX object CMakeFiles/memtable_oceanbase_core.dir/vendor/oceanbase-keybtree/include/ob_tsi_utils.cpp.o
+[3/12] Building CXX object CMakeFiles/memtable_bench_index.dir/src/mvcc.cc.o
+[4/12] Building CXX object CMakeFiles/memtable_oceanbase_core.dir/src/oceanbase_index.cc.o
+[5/12] Linking CXX static library libmemtable_oceanbase_core.a
+[6/12] Linking CXX static library libmemtable_bench_index.a
+[7/12] Linking CXX executable mvcc_bench
+[8/12] Linking CXX executable memtable_bench
+[9/12] Linking CXX executable mvcc_contract
+[10/12] Linking CXX executable key_dataset_contract
+[11/12] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[12/12] Linking CXX executable adapter_contract
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-oceanbase
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-oceanbase
+      Start  1: oceanbase_smoke
+ 1/10 Test  #1: oceanbase_smoke ..................   Passed    0.04 sec
+      Start  2: oceanbase_reject_upsert
+ 2/10 Test  #2: oceanbase_reject_upsert ..........   Passed    0.00 sec
+      Start  3: mvcc_contract
+ 3/10 Test  #3: mvcc_contract ....................   Passed    0.00 sec
+      Start  4: mvcc_smoke
+ 4/10 Test  #4: mvcc_smoke .......................   Passed    0.02 sec
+      Start  5: key_dataset_contract
+ 5/10 Test  #5: key_dataset_contract .............   Passed    0.01 sec
+      Start  6: adapter_contract
+ 6/10 Test  #6: adapter_contract .................   Passed    0.03 sec
+      Start  7: smoke
+ 7/10 Test  #7: smoke ............................   Passed    0.01 sec
+      Start  8: mvcc_integration
+ 8/10 Test  #8: mvcc_integration .................   Passed    0.10 sec
+      Start  9: benchmark_policy
+ 9/10 Test  #9: benchmark_policy .................   Passed    0.38 sec
+      Start 10: harness_integration
+10/10 Test #10: harness_integration ..............   Passed    0.33 sec
+
+100% tests passed, 0 tests failed out of 10
+
+Total Test time (real) =   0.93 sec

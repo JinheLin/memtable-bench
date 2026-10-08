@@ -48,6 +48,12 @@ measured; see [verification notes](../docs/testing.md#wormhole-alignment-regress
 
 ## Functional pilots
 
+The [OceanBase KeyBtree integration pilot](oceanbase-core-pilot-2026-10-08/README.md)
+adds the runnable core port: twelve candidates, 176 processes / 576 phase rows,
+four profiles and 1/4 workers. All counts, contents and retained-version checks
+match. It measures the common InternalKey MVCC wrapper on KeyBtree, not full
+native OceanBase transaction MemTable operation paths.
+
 The [MVCC/CSE pilot](mvcc-pilot-2026-10-08/README.md) uses the new `mvcc-v1`
 model: eleven implementations, 10,000 present user keys with 4/16 versions,
 four profiles, one repeat, 160 processes and 524 phase rows. Seven native
@@ -97,7 +103,7 @@ The plot needs Matplotlib and NumPy; validation and CSV summaries use the Python
 standard library. Captured generator scripts preserve older postprocessing
 versions. New measurements belong in the ignored `results/` directory.
 
-## Measurement boundaries
+## Legacy exact-key measurement boundaries
 
 - Reads use exact encoded keys; snapshot-visible filtering is not implemented.
 - Range scans use frozen indexes and uniform existing-key start points. The row

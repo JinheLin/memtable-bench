@@ -10,10 +10,11 @@ Results from these two workload models must be analyzed separately.
 | --- | --- | --- |
 | std::map, Abseil B-tree, TLX B+tree, HOTSingleThreaded | One ordered InternalKey per version | One worker only |
 | RocksDB InlineSkipList, BTreeOLC, UnoDB ART, Masstree, Wormhole | One ordered InternalKey per version | One worker; native concurrent readers; SWMR |
+| `oceanbase_keybtree` | One ordered InternalKey per version; actual KeyBtree core port | One worker; native concurrent readers; SWMR |
 | `cse_arena` | One Arena skiplist node per user key; native older-version links | Native concurrent reads; internally serialized batch writer |
 | `cse_crossbeam` | One Crossbeam SkipMap entry per user key; native immutable Arc version chains | Native concurrent reads; internally serialized batch writer |
 
-The first nine use `user_key || BE(~timestamp) || type`, with deletion type 0
+The ten ordered-index candidates use `user_key || BE(~timestamp) || type`, with deletion type 0
 and put type 1. User keys are fixed width in one experiment. `GetAt` seeks the
 first version at or below the snapshot, then checks the user key. It returns a
 copy of the payload. Each lookup includes cursor creation and key encoding.
@@ -26,6 +27,12 @@ This is an operation-path comparison; it is not an isolated measurement of
 the underlying tree traversal instructions. UnoDB/HOT retain their additional
 terminated nibble encoding. The CSE cursor bridge performs C ABI calls per
 navigation step and metadata refresh; this cost is included in scans and flush.
+
+OceanBase KeyBtree uses its native 225-entry buffered iterator and a binary
+comparator. Point `GetAt` includes filling the first native iterator batch.
+This candidate does not use native OceanBase version chains or transaction
+services. The two full OceanBase MemTable slots are unavailable; see
+[the precise integration boundary and TODOs](oceanbase.md).
 
 ### CSE source boundary
 
