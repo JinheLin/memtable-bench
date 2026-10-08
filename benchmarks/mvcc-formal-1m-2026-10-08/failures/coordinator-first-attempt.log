@@ -1,0 +1,9 @@
+START base-1m 156 processes
+DONE base-1m
+START deep-1m 156 processes
+Traceback (most recent call last):
+  File "/DATA/disk1/jinhelin/github/memtable-bench/results/mvcc-formal-1m-2026-10-08/run_formal.py", line 39, in <module>
+    subprocess.run(item['command'],cwd=REPO,env=ENV,stdout=log,stderr=subprocess.STDOUT,check=True)
+  File "/usr/lib64/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '-u', 'scripts/mvcc_matrix.py', '--binary', '/DATA/disk1/jinhelin/github/memtable-bench/build-linux/mvcc_bench', '--output', '/DATA/disk1/jinhelin/github/memtable-bench/results/mvcc-formal-1m-2026-10-08/deep-1m', '--keys', '1000000', '--ops', '1000000', '--repeats', '3', '--profiles', 'deep', '--threads', '1,4,8', '--cpus', '2,3,4,5,6,7,8,9', '--numa-node', '0', '--indexes', 'std_map,abseil_btree,tlx_btree,rocksdb_inlineskiplist,btreeolc,unodb_art,masstree,hot,wormhole,oceanbase_keybtree,cse_arena,cse_crossbeam']' returned non-zero exit status 1.

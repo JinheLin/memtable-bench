@@ -1,0 +1,213 @@
+{
+  "status": "complete",
+  "model": "mvcc-v1",
+  "started_at": 1791489038.2557812,
+  "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+  "source_files": {
+    "src/adapter_common.h": "ecdd295e52e8925edb744bbfae3994c809fcc0b4b205cefcfd6a1edd7126ca08",
+    "src/btreeolc_index.cc": "62b5abcad50a3b8ea2f23521bebd18df6d2a09534da44022a56c7a0c9d082016",
+    "src/hot_index.cc": "8e8d77245d3672faf63e1caaaac833b4cc1c5ee6671a7f9f802987968be2c963",
+    "src/index.cc": "6c1cc074f88f9e54b1e2a339a785c8f311480dc84f1278a32aaa11e033c5b562",
+    "src/key_dataset.cc": "e3b047ea3c9a274acf8d3cf82c8d9171bc06f5522061c26daefd316c60102a90",
+    "src/main.cc": "98e161f716b5dff4dc2b7aa57f6db83638a13b772a51e79da349f583ed2bac99",
+    "src/masstree_index.cc": "8813c2aaede24fae6d0211c251eb8084b2f696297bbcd1e59c3f1ece2dcc1cf4",
+    "src/rocksdb_index.cc": "4d78f6650ef3c7727e41587487be7fa06a3f74c08d6e6942a0e2ef14b0495572",
+    "src/unodb_index.cc": "f8b1dac73dd4920305d585092020c6bda7fae0cbff97cfd8f6950e6f4b238a6a",
+    "src/wormhole_index.cc": "d46ee0ba9ab03bb91df26b069ee9e4cae13271b53c4061d88add23ae836435ea",
+    "src/cse_index.cc": "69aa704fe97e2b1f1a49dda75f35f67aa400cb8ca5aac18ae1692bc07520ce98",
+    "src/mvcc.cc": "5799ad1c54663071845e3a0553e96cabaebcda5ac5694b05d5501e5786fcca27",
+    "src/mvcc_main.cc": "eff9229661a21b35f2b601acc1745bf0ed46f03b71530b912c1cd5ffe8ba0371",
+    "src/oceanbase_index.cc": "a5d14d9be1d70605642b8ee3fb116c27af97a4fb4c5a5844d3d3079ccde1d6ad",
+    "include/memtable_bench/index.h": "567836a43d3a725ec9b54a1907ce9feaf2ee59ac6d3fac8a1f87977a95440ff5",
+    "include/memtable_bench/key_dataset.h": "2d56cbd0c82f79fdc46373b73fd98c39d70f9273aaab0ac0d0e9f894ec28da6d",
+    "include/memtable_bench/measurement.h": "bc6c898d718d8f8197011c6b24ba87a4fc9612a37255aa958bf672a3476b5798",
+    "include/memtable_bench/mvcc.h": "6a6ebad5d0f0b686cbf6367129bc43295bbb4eabe7ec19876b4034c1023f7e61",
+    "cmake/BTreeOLC.cmake": "3308fe3c4ff67a1c443495568551addb110812c2360555731bc8154436a45ae9",
+    "cmake/FetchBoost.cmake": "51bddf5836ead7b9cfd4f80fa451f27d19253b44f999c0c1acc2b563a5b8af5b",
+    "cmake/FetchGit.cmake": "22c204cb833e90cb78a1ad3cae4d7d3efe2c0316a2b45f45408ba5235c4ef981",
+    "cmake/FetchRocksDB.cmake": "dc4c429fe75083be5e1066ab6adf91736e0a6da6310937f9aab210839b2d6a06",
+    "cmake/HOT.cmake": "087bbff3083646036c7627b5885c940a3f3a2a440cbe0151c95b214887b353ac",
+    "cmake/Masstree.cmake": "8f5a4c702f500e99d673dfdc0e62860cc091bcde331d98e8447aad45a5c52fdb",
+    "cmake/RocksDB.cmake": "d712498168195dd9035b3bbbe5badc198a0e165f0fa11c0ff73224aa932631a8",
+    "cmake/UnoDB.cmake": "c0f1914d8c77e1eb8c84a35d1dbc253234741281c447143dee8647f00cffe6eb",
+    "cmake/Vendor.cmake": "9a14a1f06532dd10cd28d4af0cb4e33b83d85ac67673f57a9060f376abbc5e61",
+    "cmake/Wormhole.cmake": "0472b2488d48a5d770dce3476021a11292e116fcb85b3b310c238c85dbd8d304",
+    "cmake/masstree_config.h.in": "a2c7b60d6feccda8243dbe467b8686e7598f2c4d30e02264c44092bc251d6e1a",
+    "cmake/CSE.cmake": "28843a6376af1265083e41ad4885e8892f63b87314d09c4f7eb91d6c115b7fb1",
+    "cmake/OceanBase.cmake": "974f3198df298750b68815af325b128d9bf69e4d4899928140714881f7750b2b",
+    "cmake/patches/btreeolc.patch": "3da3daafcb0d56573348ef8387a4b8c5c5c847dccdf501e179e70b29ee6cba1d",
+    "cmake/patches/hot-clang.patch": "1fd88f637186b2a461cdd4027b17c432926dd9f99bab87ccaeb03ba562eee3ce",
+    "cmake/patches/masstree-arm64.patch": "f6fc6bc51815560c775a30eb809b94ac49d128d7b37426f4c1ec4d77e51c061f",
+    "cmake/patches/masstree-permutation.patch": "d57e5372082f2a56624fc33fe8b9d17e96f1753a9927f9e4ca33cd52ba2d6193",
+    "cmake/patches/unodb-thread-registration.patch": "172fcb8ecb76cfa0d21a3c95f7f8b1355b3322a322b8c28a389b5dea5af172a4",
+    "cmake/patches/wormhole-asm.patch": "de8b42d45d388641a4d309bfc7e49ccbc1e8bb1041ee6346048f3d375ffdb115",
+    "cmake/patches/wormhole-unaligned.patch": "cee8cf6847796f1535030483bdb4970bf1fe756d5ca08b8034fa01a14d49522e",
+    "cmake/patches/unodb-iterator-restart.patch": "69fae63d79fbe65bd4b3b801109ff7d9336ebaad5f69df954ba992bf8db919cf",
+    "cmake/patches/hot-leaf-bound.patch": "1c80e6ceec8d8a248e378e29edecb7c8736d8d7b3958481db4c812a53e02a947",
+    "rust/cse_memtable/Cargo.lock": "652346b2fbc8ea68f95f472b46dc4c3ca22fbd5cc18b4f78ae8b0dcf897bd88b",
+    "rust/cse_memtable/Cargo.toml": "fd4e2c136927364c9e182653ee3bca02a942e2bccdc07e00211c1a601872c7f6",
+    "rust/cse_memtable/build.rs": "70f29f75022502bf9b75840ff533d83173d3ac08e70984407ccb2619ea247af0",
+    "rust/cse_memtable/source-pin.json": "f7b4699f9b9a99bfa557b14581685714dad10ad564a4318e68bd19bd3d5ea87e",
+    "rust/cse_memtable/src/ffi.rs": "207bc1f7ff0f91bf6d16bd73d382f49ea410ebe1791186a6e307871ecba13b05",
+    "rust/cse_memtable/src/lib.rs": "bf2ff313db1db4752cad1a457f4c114cc6faa5cbd14e3eb80a022be46b166385",
+    "scripts/benchmark_matrix.py": "03a532e53f2d6891463d0ea3e678ca09f902e119103118607c5130b394e56ca0",
+    "scripts/build_all.sh": "ade9f882dfeb048cb58c7aa1f90db539c3d98b81fc39f5475cdbe569d2a30c66",
+    "scripts/plot_range_scan.py": "41de2605704ef61a8b01dd430bedad0d8af5688190277a7bd30d71085bda4a82",
+    "scripts/plot_sensitivity.py": "eb787f01b0b30520bc023e0c56d38a7c7c8c8b380f2990c8533972c76bf6ea0b",
+    "scripts/sensitivity_matrix.py": "996a3c49e42bd5345c27441e30d47737b3f84e7b18440925712cc6e9e9bb1c52",
+    "scripts/summarize_benchmark.py": "acddde8f697710c5f238039249d568d2bce7f5228be688096116f572fdea3c1d",
+    "scripts/summarize_sensitivity.py": "73dcc70a9f359d4a14993cb861314878f72deeaa0470adf9c714d65c317b3af1",
+    "scripts/adapter_policy.py": "d9ba05ac1c40f829a5b5b821b6988a694f08817f8bd1a6789ae652074e825e87",
+    "scripts/diagnose_range_scan.py": "f32315f9ac9097f8ff9da938fad73ab708e4a627c30c8b5a87501dc31199c9e6",
+    "scripts/plot_benchmark.py": "7eeabbaac2a14dcc74bb633bbf75fefd908ba7b785facd0e85d9d3924e7e3d0e",
+    "scripts/export_cse_memtable.py": "11172ae8defbbe906de836b424ec120ec015cddd38477ac9cbb01cbcc93c3140",
+    "scripts/mvcc_matrix.py": "f03be34f2e7b17d5f319f6f495356836f231f62642da281bf45dc269926a39e2",
+    "scripts/vendor_oceanbase.py": "19bbc8f747b2867e2097fecfbb13a38f9fc9dd1db8c069fbcef616c9192663b1",
+    "tests/adapter_contract.cc": "c7ec68517d8e9bc2e8204654d28ed23da14cb64b011c3d7d317395acf74f74c4",
+    "tests/harness_integration.py": "0dfa1f4532d860d6fd4ca28df363f8c2f846cad0c173eb0fba99b6d1e1c87e4e",
+    "tests/key_dataset_contract.cc": "cc77b012ffb658ded1779817c2ff62006a649c95e01186045fd2f9a732984414",
+    "tests/benchmark_policy.py": "1e7cf7103dc1dfabc77bbfa8a52e531105bba2510c76b381a7f006f2453b9f71",
+    "tests/mvcc_contract.cc": "a11c4778809eec23b223d32abc66e0c4b3a685640082598714a929d6d975deb9",
+    "tests/mvcc_integration.py": "04372bd3698a039ba953704ae3f40e726c4e24337f97f56f1caed33409f46dd9",
+    "vendor/oceanbase-port/oceanbase_compat.h": "eabf8ebdcd2f9dccabd6ead1f3135e1308d6803d0010ff67b0f624cffeba4b93",
+    "vendor/oceanbase-port/oceanbase_macros.h": "4eeb8b06f581065a67489a12d34a3f69c981f32cf1848a1a3be669a2e5a4032b",
+    "vendor/oceanbase-port/source-pin.json": "7be4a75c0f10cc991862cab7c371c5a302841b489fdaa3cfe8986aa592f7449d",
+    "CMakeLists.txt": "d9a273cf370fbcffb49893dc6cc5bc1861fa1384da75df3228e76c86490777a3"
+  },
+  "dependencies": {
+    "tlx": "b6af589954fafd334f2f373b057a8886e1c6abc8",
+    "abseil-cpp": "76bb24329e8bf5f39704eb10d21b9a80befa7c81",
+    "rocksdb": "ae8fb3e5000e46d8d4c9dbf3a36019c0aaceebff",
+    "unodb": "89f52799743ec2093426bdcf7a7cbaaa95ca848c",
+    "btreeolc": "74cafa57d74798f209d8fcbce8c4f317ce066eae",
+    "wormhole": "31dfd2b1e67e5f709c78b018cf4abaecadad8b72",
+    "masstree": "11198427a1170654ca646dd20d96c8f349bca2bd",
+    "hot": "96bf6fb7103b27e50e16a6026db8974c090ee84a",
+    "oceanbase": "0fa1778765483295e844f0465938b831ee56fe4b",
+    "cse": {
+      "commit": "80b0309f23f387ff5835a8153263f0d00fbfdaa0",
+      "files": {
+        "components/kvengine/src/table/memtable/arena.rs": "64d0a88768f7e6171169c1c2ab7746c39cc7b14e7365b5788f18d7c5cd171001",
+        "components/kvengine/src/table/memtable/skl.rs": "97cc894dfd7beeb8108f2b0109cdab937489672edf58e2577c17b642d5ef07b2",
+        "components/kvengine/src/table/memtable/crossbeam_skl.rs": "d2102193370260efeeb41b4171bdf80d27a80b0392d3f64ad936fd2fd99a7612",
+        "components/kvengine/src/table/table.rs": "998af7d73f642d2addaa07a7f2015c9a2fe962bf9df562a024a7183b5029487a"
+      },
+      "crossbeam_commit": "c4abd1b93149108dfa13c0cd42c878657c618bad"
+    },
+    "rust_toolchain": "rustc 1.92.0 (ded5c06cf 2025-12-08)\nbinary: rustc\ncommit-hash: ded5c06cf21d2b93bffd5d884aa6e96934ee4234\ncommit-date: 2025-12-08\nhost: x86_64-unknown-linux-gnu\nrelease: 1.92.0\nLLVM version: 21.1.3",
+    "oceanbase_keybtree": {
+      "repository": "https://github.com/oceanbase/oceanbase",
+      "commit": "0fa1778765483295e844f0465938b831ee56fe4b",
+      "scope": "ported_keybtree_index_core",
+      "files": {
+        "LICENSE": {
+          "upstream_sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+          "port_sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+        },
+        "NOTICE": {
+          "upstream_sha256": "ed30a0780c54a32c96bd04281295d3f6f3c041211261ed6bf5d6ddce594a8487",
+          "port_sha256": "ed30a0780c54a32c96bd04281295d3f6f3c041211261ed6bf5d6ddce594a8487"
+        },
+        "src/storage/memtable/mvcc/ob_keybtree.h": {
+          "upstream_sha256": "509b248eb782fad596bf9f2565256bbd0aca5782d21cb647191e89747a1cf65a",
+          "port_sha256": "c3f672c7ed470ae0804378573c16613d855a15889a37d2bdd2a70339f6a1fbf0"
+        },
+        "src/storage/memtable/mvcc/ob_keybtree.cpp": {
+          "upstream_sha256": "457762ded50f6f10ea535ea2e9142bc012f470941eaa2bbca4a99c93e32d082e",
+          "port_sha256": "06e015f2bc79e11c3c7a20b591541114ab6b19848f8c486d0f100da40cb4849b"
+        },
+        "src/storage/memtable/mvcc/ob_keybtree_deps.h": {
+          "upstream_sha256": "df639f58a128e30732aa4c2b536e690330df9533d5aae8ef7a9eafed36e3e0fa",
+          "port_sha256": "bf85a1fb1099ba866b79d033dc6395458fff6893b0b3c15ce03e8f358f5bf63a"
+        },
+        "deps/oblib/src/lib/allocator/ob_retire_station.h": {
+          "upstream_sha256": "39152488b8c1085cb96bcf7f2d70863a69318fdbb24942d708fe3e412b3ddcb0",
+          "port_sha256": "eb9b228016da1d5a622812289114c63c6bc50cb0bd99bdfa05f3b9999f17f80e"
+        },
+        "deps/oblib/src/lib/allocator/ob_qsync.h": {
+          "upstream_sha256": "1904d6e965a0b1afbae7e07fda92fe6b51a9c301e4d03bd673073356940191ec",
+          "port_sha256": "ab87896c894d90743e1fca9768bf3e0d3f313a37ed92489425886e3d592e822e"
+        },
+        "deps/oblib/src/lib/metrics/ob_counter.h": {
+          "upstream_sha256": "a743c7b20e9db5e0f545e86d4a93f72b9a2a2568835f8e075915d8a9264da9a2",
+          "port_sha256": "349bec5055b515940e171cc75b1c4b657f895d6ee06e5f4ccfc7fada337591bf"
+        },
+        "deps/oblib/src/lib/atomic/ob_atomic.h": {
+          "upstream_sha256": "534dd326266bfc91717b0bd22af2b501aaaccb65126713ff8a1dc2a1b6124d25",
+          "port_sha256": "9d208e9c7a2c7567e91475d263c9bea1c066a39d067d17038c8ff5e4d8e2b65f"
+        },
+        "deps/oblib/src/lib/queue/ob_link.h": {
+          "upstream_sha256": "3569b204f6cef917458e8e06c7834861bf8b6b78d0452239bc5f63321cef19ae",
+          "port_sha256": "97e134f2a90d6f69832ab14d58b1a9dc69ef64d86423937312b576b22f8f10c7"
+        },
+        "deps/oblib/src/lib/thread_local/ob_tsi_utils.h": {
+          "upstream_sha256": "3e2bdd995a7f81f1721f6f36075df01d9f1ad8c4832dfe51fc6c938f3260c251",
+          "port_sha256": "6877fee0bf32831e444d06a385dcc227a40b1536501919cf8a2af5db24d2d182"
+        },
+        "deps/oblib/src/lib/thread_local/ob_tsi_utils.cpp": {
+          "upstream_sha256": "d0929d32de5967bef531b552252202d2ea85aea8bfedaa28d5412d21bf23d573",
+          "port_sha256": "a1e58866615bcc769f33d900ecf23809870ee5e9f5a2b6f1e56e89be27d74c4c"
+        },
+        "deps/oblib/src/lib/ob_errno.h": {
+          "upstream_sha256": "75ade5a7a44fb1173b9d9b3e9517092bab259e8fd29cb817b8e2b21a458b94d7",
+          "port_sha256": "75ade5a7a44fb1173b9d9b3e9517092bab259e8fd29cb817b8e2b21a458b94d7"
+        }
+      }
+    }
+  },
+  "adapter_listing": "std_map\tavailable\treference baseline; coarse reader/writer lock\tnative_concurrent=0\tkey_encoding=binary\nabseil_btree\tavailable\tAbseil btree_map; coarse reader/writer lock\tnative_concurrent=0\tkey_encoding=binary\ntlx_btree\tavailable\tTLX btree_map; coarse reader/writer lock\tnative_concurrent=0\tkey_encoding=binary\nrocksdb_inlineskiplist\tavailable\tRocksDB InlineSkipList + ConcurrentArena; append-only\tnative_concurrent=1\tkey_encoding=binary\nbtreeolc\tavailable\tBTreeOLC; native OLC with per-key stripes for exact size/upsert\tnative_concurrent=1\tkey_encoding=binary\nunodb_art\tavailable\tUnoDB olc_db + QSBR; append-only; terminated nibble keys\tnative_concurrent=1\tkey_encoding=nibble_terminated\nmasstree\tavailable\tMasstree; native concurrency; deferred node/value reclamation\tnative_concurrent=1\tkey_encoding=binary\nhot\tavailable\tHOTSingleThreaded; coarse reader/writer lock; terminated nibble keys\tnative_concurrent=0\tkey_encoding=nibble_terminated\nwormhole\tavailable\tWormhole; native whsafe API with parked per-thread references\tnative_concurrent=1\tkey_encoding=binary\noceanbase_keybtree\tavailable\tOceanBase KeyBtree core port; binary comparator; append-only; not ObMemtable\tnative_concurrent=1\tkey_encoding=binary\ncse_arena\tavailable\tCSE native version chains; serialized batch writer; Rust FFI\tnative_concurrent=1\tkey_encoding=user_key_chain\ncse_crossbeam\tavailable\tCSE native version chains; serialized batch writer; Rust FFI\tnative_concurrent=1\tkey_encoding=user_key_chain",
+  "arguments": {
+    "binary": "/DATA/disk1/jinhelin/github/memtable-bench/build-linux/mvcc_bench",
+    "output": "/DATA/disk1/jinhelin/github/memtable-bench/results/mvcc-formal-1m-2026-10-08/deep-500k",
+    "indexes": "std_map,abseil_btree,tlx_btree,rocksdb_inlineskiplist,btreeolc,unodb_art,masstree,hot,wormhole,oceanbase_keybtree,cse_arena,cse_crossbeam",
+    "profiles": "deep",
+    "threads": "1,4,8",
+    "keys": 500000,
+    "ops": 1000000,
+    "repeats": 3,
+    "cpus": "2,3,4,5,6,7,8,9",
+    "numa_node": 0,
+    "list_plan": false
+  },
+  "profiles": {
+    "deep": {
+      "key_size": 16,
+      "value_size": 32,
+      "versions": 16,
+      "snapshot_lag": 15,
+      "batch_size": 32
+    }
+  },
+  "planned_processes": 156,
+  "completed_processes": 156,
+  "host": "Linux 10-2-12-79 5.14.0-162.6.1.el9_1.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Nov 18 02:06:38 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux",
+  "method": "Fresh process per profile/stage/index/repeat; randomized serial order; fixed snapshots; full independent oracle validation; no disk I/O; no warmup",
+  "cmake_configuration": [
+    "CMAKE_BUILD_TYPE:STRING=Release",
+    "CMAKE_CXX_COMPILER:STRING=/usr/bin/g++",
+    "CMAKE_CXX_FLAGS:STRING=",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING=-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG",
+    "MEMTABLE_BENCH_CSE_SOURCE_DIR:PATH=/DATA/disk1/jinhelin/github/memtable-bench/vendor/cse-memtable",
+    "MEMTABLE_BENCH_FETCH_ABSEIL:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_BTREEOLC:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_HOT:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_MASSTREE:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_OCEANBASE:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_ROCKSDB:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_TLX:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_UNODB:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_WORMHOLE:BOOL=ON",
+    "MEMTABLE_BENCH_OCEANBASE_CORE_DIR:PATH=/DATA/disk1/jinhelin/github/memtable-bench/vendor/oceanbase-keybtree",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1"
+  ],
+  "perf_event_paranoid": "2",
+  "topology": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nAddress sizes:                   46 bits physical, 48 bits virtual\nByte Order:                      Little Endian\nCPU(s):                          72\nOn-line CPU(s) list:             0-71\nVendor ID:                       GenuineIntel\nModel name:                      Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz\nCPU family:                      6\nModel:                           85\nThread(s) per core:              2\nCore(s) per socket:              18\nSocket(s):                       2\nStepping:                        7\nCPU(s) scaling MHz:              85%\nCPU max MHz:                     3900.0000\nCPU min MHz:                     1000.0000\nBogoMIPS:                        5200.00\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts pku ospke avx512_vnni md_clear flush_l1d arch_capabilities\nVirtualization:                  VT-x\nL1d cache:                       1.1 MiB (36 instances)\nL1i cache:                       1.1 MiB (36 instances)\nL2 cache:                        36 MiB (36 instances)\nL3 cache:                        49.5 MiB (2 instances)\nNUMA node(s):                    2\nNUMA node0 CPU(s):               0-17,36-53\nNUMA node1 CPU(s):               18-35,54-71\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Mmio stale data:   Mitigation; Clear CPU buffers; SMT vulnerable\nVulnerability Retbleed:          Mitigation; Enhanced IBRS\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling, PBRSB-eIBRS SW sequence\nVulnerability Srbds:             Not affected\nVulnerability Tsx async abort:   Mitigation; TSX disabled",
+  "finished_at": 1791495322.1267705
+}

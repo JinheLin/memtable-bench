@@ -58,6 +58,16 @@ The MVCC pilot completed 160 processes / 524 phase rows with matching contents;
 see [verification](docs/testing.md) and [pilot records](benchmarks/mvcc-pilot-2026-10-08/README.md).
 The workload tests also run with node 0 memory binding and pinned physical cores.
 
+**Completed MVCC matrix (2026-10-09):** six cohorts, three repetitions each,
+**906 processes / 2,928 phase rows**, with matching counts and contents in all
+288 comparisons. Four cohorts with one million user keys cover base, deep history,
+shared prefix and 1 KiB values. CSE Arena reaches its native capacity limits in
+the deep-history and large-value cases; separate matched
+500k/100k-key cohorts include all twelve candidates. Single-thread-only indexes
+do not enter multithreaded runs. See the
+[protocol and findings](benchmarks/mvcc-formal-1m-2026-10-08/README.md) and
+[complete tables](benchmarks/mvcc-formal-1m-2026-10-08/summary/report.md).
+
 **Measured on that server:** the original 1M-record matrix has five repetitions.
 The [current comparison view](benchmarks/native-concurrency-2026-10-08/README.md)
 keeps nine single-thread indexes and five native concurrent indexes at
@@ -610,6 +620,8 @@ scripts/vendor_oceanbase.py     Verified source subset and include isolation
 docs/oceanbase.md               KeyBtree core scope and build instructions
 rust/cse_memtable/             Pinned Rust bridge and source digests
 scripts/mvcc_matrix.py          MVCC screening matrix and validation
+scripts/summarize_mvcc.py       MVCC cohort validation and median/quartile report
+scripts/plot_mvcc.py            Optional MVCC operation and SWMR figures
 scripts/export_cse_memtable.py  Verified local CSE source export
 docs/mvcc.md                    CSE scope, workload semantics, schema and examples
 src/adapter_common.h           Write admission, immutable records, nibble codec

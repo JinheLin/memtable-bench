@@ -4,6 +4,14 @@
 `memtable_bench` and its CSV v3 archives remain exact-key index diagnostics.
 Results from these two workload models must be analyzed separately.
 
+The [completed formal matrix](../benchmarks/mvcc-formal-1m-2026-10-08/README.md)
+contains six cohorts and three repetitions: **906 processes / 2,928 phase rows**,
+with 288 matching count/content comparison groups. The million-user-key
+base/deep/prefix/value cohorts use 1/4/8 workers where native concurrency permits.
+CSE Arena's deep and large-value capacity exclusions are recorded separately;
+matched 500k/100k-user-key supplements include all twelve implementations.
+See [all cohort tables](../benchmarks/mvcc-formal-1m-2026-10-08/summary/report.md).
+
 ## Implementations
 
 | Candidates | Physical representation | Multiworker participation |
@@ -184,7 +192,7 @@ build-all/mvcc_bench --index rocksdb_inlineskiplist --stage 3 \
 
 Common-prefix layouts and distributions reuse the controlled key generator.
 Uniform, sequential and Zipf(theta=1.1) choose user keys; history depth varies
-independently. Native key limits apply to encoded keys for the nine indexes,
+independently. Native key limits apply to encoded keys for the ten ordered indexes,
 and user key width for CSE. Arena limits encoded values to 16 MiB-1 and rejects
 workload bounds that could overflow its uint32 allocation counter. This guard
 is deliberately conservative; it is not a claim of exact allocation size.
@@ -198,8 +206,8 @@ records commands, raw per-process CSV/logs, binary SHA-256, source file hashes,
 dependency revisions and topology. All phase counts and cross-adapter contents
 are checked; missing phases, mismatches or process errors fail the run.
 
-Default profiles vary one factor from the base (16-byte key, 32-byte payload,
-4 versions, lag 2, batch 32):
+Default profiles select representative changes from the base (16-byte key,
+32-byte payload, 4 versions, lag 2, batch 32):
 
 | Profile | Change |
 | --- | --- |
@@ -212,12 +220,44 @@ This is a screening design; timestamp retention, contention, key distribution,
 batch size and read/scan mix can then be explored in focused CLI runs. It avoids
 exhausting the Cartesian product before identifying expensive cases.
 
+CSE Arena has both a uint32 allocation counter and an encoded block-index
+limit. The harness checks the counter before constructing inputs; the native
+block-index limit can still reject smaller allocations during loading. With
+these small record sizes, the pinned growth schedule provides about 656 MiB
+per node/value segment, before alignment and unused block tails. At one million
+user keys, base/prefix fit, while deep/value exceed native capacity. Record
+these cases as unsupported; do not change the pinned allocator or compare a
+smaller Arena population against million-key peers. Separate 500,000-key deep
+and 100,000-key value cohorts fit all twelve candidates, including stage 2 with
+a one-million-operation budget. Keep their statistics separate.
+
 ```sh
 python3 scripts/mvcc_matrix.py --binary build-all/mvcc_bench \
   --output results/mvcc-screening --keys 100000 --ops 100000 --repeats 3 \
   --profiles base,deep,prefix,value --threads 1,4,8 \
   --cpus 2,3,4,5,6,7,8,9 --numa-node 0
 ```
+
+### Result validation and summaries
+
+The summarizer checks the complete declared process/phase matrix, native
+multiworker participation, dataset/profile fields and cross-adapter
+counts/checksums before producing median, quartile, min/max and sample-count
+statistics. It requires completed runs and leaves measured input files alone.
+Multiple input directories are distinct cohorts; their populations are never
+pooled. The output directory must differ from each input directory.
+
+```sh
+python3 scripts/summarize_mvcc.py results/mvcc-screening \
+  --output results/mvcc-screening-summary
+# Optional figures require Matplotlib and NumPy.
+python3 scripts/plot_mvcc.py results/mvcc-screening-summary
+```
+
+`report.md` includes single-thread operation rates, retained RSS per version,
+SWMR total/readers/writer service rates and lifecycle timings. `summary.csv`
+also retains latency, PMU and overlap-duration statistics. `validation.json`
+records process/phase counts, raw-file and binary hashes, and PMU availability.
 
 ## CSV schema: `mvcc-v1`
 
@@ -260,6 +300,12 @@ Stage-all can retain allocator pages from earlier tables. CSE Arena accounting
 counts arena allocation charges; Crossbeam estimates retained object charges,
 excluding allocator overhead. They are not interchangeable with each other or
 RSS. Destroy may leave resident allocator pages even after all objects retire.
+
+Phase wall duration includes PMU start/stop and sampling setup. For the one-call
+Freeze phase, these controls dominate the recorded duration. The report also
+shows the sampled call duration, which excludes PMU control but includes clock
+and call instrumentation. These small samples do not establish native-only
+Freeze latency rankings. Bulk operation phases amortize this setup overhead.
 
 Contract tests cover historical reads, deleted/absent/empty values, resurrection,
 version navigation, visible scans, native concurrent readers with newer writes,

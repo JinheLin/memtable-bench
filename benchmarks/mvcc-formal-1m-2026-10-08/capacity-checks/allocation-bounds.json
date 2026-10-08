@@ -1,0 +1,12 @@
+{
+  "cse_commit": "80b0309f23f387ff5835a8153263f0d00fbfdaa0",
+  "max_block_index": 254,
+  "usable_data_blocks": 254,
+  "nominal_segment_capacity_bytes": 687861760,
+  "nominal_segment_capacity_mib": 655.99609375,
+  "alignment_bytes": 8,
+  "value_metadata_bytes": 10,
+  "value_100k_max_live_allocation_bytes": 624000000,
+  "deep_500k_max_live_allocation_bytes": 393600000,
+  "note": "Capacity follows the pinned small-record block growth schedule; larger allocation minimums can increase individual block sizes. Alignment and unused tails consume capacity. Probes are recorded separately and excluded from comparative performance counts."
+}

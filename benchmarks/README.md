@@ -8,8 +8,16 @@ measurement source snapshots are recorded separately for each experiment.
 
 ## Current comparison policy
 
+For snapshot-visible database workloads, use the
+[completed MVCC matrix](mvcc-formal-1m-2026-10-08/README.md): **906 processes /
+2,928 phase rows**, six cohorts and three repetitions. It includes twelve
+candidates, with eight native concurrent implementations eligible for SWMR;
+CSE Arena's two capacity exclusions have separate matched smaller cohorts.
+The [tables](mvcc-formal-1m-2026-10-08/summary/report.md) keep populations separate.
+
 Use the [native-concurrency comparison view](native-concurrency-2026-10-08/README.md)
-for tables and scaling curves. All nine indexes participate at one worker;
+for legacy exact-key tables and scaling curves. All nine indexes participate
+at one worker;
 RocksDB InlineSkipList, BTreeOLC, UnoDB ART, Masstree and Wormhole participate
 above one worker. std::map, Abseil, TLX and the integrated HOTSingleThreaded
 implementation are excluded from multithreaded comparisons.
@@ -28,9 +36,10 @@ below keep the historical protocol and original data unchanged.
 | [Original comparison](xeon79-2026-10-08/report.md) | 1,000,000 | 5 | 360 | 675 | Single-thread uniform/Zipf, 1/2/4/8/16-thread mixed workload, MemTable lifecycle |
 | [Key/prefix/value screening](sensitivity-screening-2026-10-08/report.md) | 1,000,000 | 3 | 540 | 2,700 | 20 configurations, LookupOnly/GetCopy, cursor/payload scans, memory and PMU counters |
 | [Range scan lengths](range-scan-1m-2026-10-08/report.md) | 1,000,000 | 3 | 270 | 810 | Random keys and 56 B common prefix; limits 1/10/100/1,000/10,000; SeekOnly, cursor and payload scans |
+| [MVCC operations and lifecycle](mvcc-formal-1m-2026-10-08/README.md) | 1M user keys (4/16 versions); matched 500k/100k supplements | 3 | 906 | 2,928 | Base/deep/prefix/value; latest/historical Get and scans; 1/4/8-worker mixed/SWMR; all-version flush and Destroy |
 
-All three cover nine adapters. There are **1,170 formal processes and 4,185 phase
-rows**. Counts and checksums agree across adapters within each comparison.
+The first three cover nine adapters. There are **1,170 legacy exact-key formal
+processes and 4,185 phase rows**. Counts and checksums agree across adapters within each comparison.
 Three-repeat medians and quartiles are screening statistics, not confidence
 intervals. The range suite has only 16 latency samples per phase/repeat; its
 sampled p99 is not a stable tail estimate.
@@ -41,9 +50,10 @@ different key sizes and measurement/validation order. Compare indexes within
 each experiment; throughput values across these experiment rounds are not
 directly comparable.
 
-The archives also precede the Wormhole unaligned-load sanitizer fix in the
-current source. Formal performance measurements have not been rerun after that
-patch. Their source snapshots and binary hashes identify the versions actually
+The three legacy archives also precede the Wormhole unaligned-load sanitizer
+fix in the current source. These exact-key suites have not been rerun after
+that patch. The new MVCC matrix includes the fix and uses a different workload.
+Their source snapshots and binary hashes identify the versions actually
 measured; see [verification notes](../docs/testing.md#wormhole-alignment-regression).
 
 ## Functional pilots
@@ -65,8 +75,9 @@ across candidates. Its times are not comparable to the legacy exact-key suites.
 | [Range scan pilot](range-scan-pilot-2026-10-08/report.md) | 10,000 | 1 | 90 | 270 | Validate scan lengths, row counts and checksums |
 | [Representative workload pilot](representative-pilot-2026-10-08/report.md) | 10,000 | 1 | 144 | 288 | Validate four profiles at 1/4/16 threads and lifecycle |
 
-Pilot timings are not used for formal performance rankings. The million-record
-representative-profile concurrency/lifecycle experiment is still pending.
+Pilot timings are not used for formal performance rankings. The legacy
+exact-key million-record representative-profile concurrency/lifecycle experiment
+is still pending. The separate formal MVCC experiment is complete.
 
 ## Archive layout and verification
 

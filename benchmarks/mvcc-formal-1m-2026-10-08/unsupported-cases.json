@@ -1,0 +1,25 @@
+[
+  {
+    "profile": "deep",
+    "index": "cse_arena",
+    "user_keys": 1000000,
+    "versions": 16,
+    "value_size": 32,
+    "reason": "native ArenaSegment block index exhausted at 254 during prefill",
+    "excluded_processes": 15,
+    "matched_comparison": "deep-500k",
+    "evidence": "failures/deep-1m-cse-arena/runs/deep-s2-t1-cse_arena-r3.log",
+    "returncode": 1
+  },
+  {
+    "profile": "value",
+    "index": "cse_arena",
+    "user_keys": 1000000,
+    "versions": 4,
+    "value_size": 1024,
+    "reason": "error: CSE Arena workload may overflow its uint32 allocation counter",
+    "excluded_processes": 15,
+    "matched_comparison": "value-100k",
+    "returncode": 1
+  }
+]

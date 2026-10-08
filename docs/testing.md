@@ -4,6 +4,30 @@ Current support is **native Linux x86-64 with GCC/Clang**. The build now rejects
 other platforms. Earlier macOS/ARM entries below describe historical verification
 and do not imply current platform support.
 
+## Formal MVCC matrix completion
+
+Completed on Linux x86-64 / GCC 11.3.1 on 2026-10-09:
+
+- **906 processes / 2,928 phase rows** across six cohorts, with three fresh-process
+  repetitions each. Completeness, native concurrency participation and all
+  **288** count/content comparison groups passed independent archive validation.
+- All cohorts used the same binary SHA-256 and the same 69 source/build/test
+  inputs. The final remote integrity check verified all 75 files in the measured
+  public source snapshot, including its documentation, plus the binary hash.
+- **17/17 CTest tests passed** after performance runs finished; see
+  [test log](../benchmarks/mvcc-formal-1m-2026-10-08/ctest.log).
+- CSE Arena's million-key deep prefill exhausted its native block index; the
+  million-key 1 KiB value case is rejected by its allocation guard. The archive
+  preserves exclusions and failure evidence. All twelve candidates completed
+  separate matched deep-500k/value-100k cohorts without changing native sources.
+- Cycles, instructions, L1/LLC and branch fields are available in all 2,928 rows;
+  DTLB fields in 2,709. Empty PMU fields remain empty.
+
+See [protocol, findings and evidence](../benchmarks/mvcc-formal-1m-2026-10-08/README.md)
+and [validation](../benchmarks/mvcc-formal-1m-2026-10-08/summary/validation.json).
+The reporting scripts were added after measurement; their separate source
+snapshot does not replace the measured c306312 source snapshot.
+
 ## OceanBase KeyBtree core integration
 
 Linux x86-64 / GCC 11.3.1, on 2026-10-08:
@@ -116,7 +140,8 @@ The [runner log](test-results/2026-10-08/native-concurrency-policy/linux-matrix-
 captured raw CSV/metadata/commands and measurement source manifest accompany
 the tests. The [current comparison view](../benchmarks/native-concurrency-2026-10-08/README.md)
 uses existing million-record measurements with wrapper concurrency excluded;
-the formal performance experiment has not been rerun after this change.
+this legacy exact-key experiment has not been rerun after this change. The
+completed formal MVCC matrix above applies the current concurrency policy.
 
 ## Verification before the concurrency policy update (2026-10-08)
 

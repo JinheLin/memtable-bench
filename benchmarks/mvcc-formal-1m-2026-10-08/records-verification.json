@@ -1,0 +1,44 @@
+{
+  "base-1m": {
+    "processes": 156,
+    "phase_rows": 504,
+    "process_files": 468,
+    "raw_matches_process_csv": true,
+    "packed_bytes_match": true
+  },
+  "deep-1m": {
+    "processes": 141,
+    "phase_rows": 456,
+    "process_files": 423,
+    "raw_matches_process_csv": true,
+    "packed_bytes_match": true
+  },
+  "prefix-1m": {
+    "processes": 156,
+    "phase_rows": 504,
+    "process_files": 468,
+    "raw_matches_process_csv": true,
+    "packed_bytes_match": true
+  },
+  "value-1m": {
+    "processes": 141,
+    "phase_rows": 456,
+    "process_files": 423,
+    "raw_matches_process_csv": true,
+    "packed_bytes_match": true
+  },
+  "deep-500k": {
+    "processes": 156,
+    "phase_rows": 504,
+    "process_files": 468,
+    "raw_matches_process_csv": true,
+    "packed_bytes_match": true
+  },
+  "value-100k": {
+    "processes": 156,
+    "phase_rows": 504,
+    "process_files": 468,
+    "raw_matches_process_csv": true,
+    "packed_bytes_match": true
+  }
+}

@@ -1,0 +1,3 @@
+cse_arena swmr_total: 66087.292 requests/s, 200000 written versions, 8830362 items
+cse_arena swmr_writer_batch: 13006.295 requests/s, 200000 written versions, 200000 items
+cse_arena swmr_readers: 65574.987 requests/s, 0 written versions, 8630362 items
