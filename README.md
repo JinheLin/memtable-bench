@@ -248,7 +248,7 @@ non-cryptographic FNV-1a dataset digest. Quantiles use the lower rank
   --key-preparation precomputed --key-layout group-prefix \
   --key-size 64 --prefix-bytes 24 --prefix-groups 1024 --value-size 1024 \
   --insert-order random --distribution zipf --hotspot-placement clustered \
-  --measure-detail --keys 100000 --ops 100000 --threads 4 \
+  --measure-detail --keys 100000 --ops 100000 --threads 1 \
   --dataset-output dataset.json --output detail.csv
 ```
 
@@ -375,7 +375,7 @@ are needed for tail latency (one-in-64 sampling); short pilots are functional
 checks. These are start-plus-row-limit scans. Explicit end-key bounds, concurrent
 scan/write mixtures and snapshot-visible version filtering are not implemented.
 
-**Measured (2026-10-08):** all nine native Xeon adapters completed the million-record
+**Measured (2026-10-08):** all nine adapters on the native Xeon completed the million-record
 sweep: 1,000 calls per length, three repeats, 270 processes and 810 phase rows.
 All adapter row counts/checksums agree; all six PMU events were available.
 See the [full report](benchmarks/range-scan-1m-2026-10-08/report.md),
@@ -561,8 +561,11 @@ across gaps and leaves, full scans, duplicate/upsert policy, concurrent readers,
 writers, scans and Freeze, key limits, and active cursors retained across writes.
 The BTreeOLC case forces a tree with multiple inner levels. CTest also exercises
 all three workload stages for enabled adapters. If Python 3 is available,
-`harness_integration` compares checksums and row counts against `std_map`, validates
-55-column CSV metadata, controlled layouts and split phases and checks rejection before output creation. Unavailable
+`harness_integration` compares single-thread checksums and row counts against
+`std_map`, then compares native concurrent adapters at four workers. It validates
+55-column CSV metadata, controlled layouts and split phases, and checks rejection
+of non-native multithreaded workloads before output creation. `benchmark_policy`
+checks plans and completeness of the selected matrices. Unavailable
 indexes are tested as unavailable; `MEMTABLE_BENCH_REQUIRE_HOT=1` makes missing HOT
 CPU support a test failure, as used by the Linux x86 CI job.
 
