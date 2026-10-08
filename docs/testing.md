@@ -18,9 +18,10 @@ Linux x86-64 / GCC 11.3.1, on 2026-10-08:
 - Four-worker MVCC operations and lifecycle under Valgrind 3.19:
   **zero memory errors, zero bytes retained at process exit**;
   [memory-check log](test-results/2026-10-08/oceanbase/valgrind.log).
-- Original or generated source tampering is rejected by the verifier. Both
-  unavailable full-MemTable slots reject execution without creating CSV output;
-  evidence is in the baseline/integrity log.
+- Original or generated source tampering is rejected by the verifier;
+  evidence is in the baseline/integrity log. Captured logs and pilot source
+  snapshots preserve the measured revision, which included two subsequently
+  removed placeholder candidates.
 
 The [functional pilot](../benchmarks/oceanbase-core-pilot-2026-10-08/README.md)
 completed **176 processes / 576 rows**, across four profiles and 1/4 workers.
@@ -32,7 +33,7 @@ The host lacks the GCC compiler's required `libasan.so.6.0.0`, so the ASan
 configuration did not compile and no ASan success is claimed;
 [compiler diagnostic](test-results/2026-10-08/oceanbase/asan-unavailable.log).
 The memory check used the available Valgrind runtime. All builds cleared proxy
-variables and no formatting target was run. See [scope and TODOs](oceanbase.md).
+variables and no formatting target was run. See [KeyBtree scope](oceanbase.md).
 
 ## Prior Linux platform validation
 

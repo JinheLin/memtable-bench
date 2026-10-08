@@ -1,18 +1,17 @@
-# OceanBase integration
+# OceanBase KeyBtree integration
 
 ## Availability and boundary
 
 | Candidate | Status | What it measures |
 | --- | --- | --- |
 | `oceanbase_keybtree` | Runnable on Linux x86-64 | Port of the actual MemTable KeyBtree index core, with binary keys and benchmark-owned records |
-| `oceanbase_memtable_btree` | Unavailable; TODO | Full native ObMemtable MVCC with its B-tree lookup path |
-| `oceanbase_memtable_hash_btree` | Unavailable; TODO | Full native ObMemtable MVCC with hash point lookups and ordered B-tree scans |
 
 The runnable candidate is **an index core port**. It does not execute
 `ObMemtable::set/get/scan`, native transaction version chains, row locks,
 transaction cleanout, row compaction, tenant services or SST generation.
-It must not be reported as full OceanBase MemTable performance. The two reserved
-full-MemTable candidates are always listed as unavailable and reject execution.
+It must not be reported as full OceanBase MemTable performance.
+OceanBase integration is limited to KeyBtree; supporting `ObMemtable` is outside
+the project's scope.
 
 The fixed source revision is
 [`0fa1778765483295e844f0465938b831ee56fe4b`](https://github.com/oceanbase/oceanbase/tree/0fa1778765483295e844f0465938b831ee56fe4b/src/storage/memtable).
@@ -120,33 +119,7 @@ python3 scripts/vendor_oceanbase.py --source /path/to/pinned/oceanbase \
 python3 scripts/vendor_oceanbase.py --output vendor/oceanbase-keybtree --verify
 ```
 
-## Full native MemTable TODO
-
-The pinned [`ObMemtable`](https://github.com/oceanbase/oceanbase/blob/0fa1778765483295e844f0465938b831ee56fe4b/src/storage/memtable/ob_memtable.h)
-initialization needs a TableKey, LS handle, freezer, Tablet MemTable manager,
-schema version and freeze clock, plus the hash-index switch. Its write/read
-paths also require storage access contexts, schema/read-info and transaction
-services. Linking the header or inventing replacement visibility logic would
-not provide this implementation.
-
-Remaining work for the two unavailable candidates:
-
-1. Build/link the pinned upstream oblib/storage code with its official dependency
-   toolchain; initialize a real test tenant, LS/Tablet, freezer and transaction context.
-2. Submit writes through the native transaction path and commit at controlled
-   SCNs; retain snapshot history and tombstones required by the benchmark.
-3. Adapt native snapshot reads and visible range scans. Expose complete retained
-   versions for the existing flush oracle, without silently enabling compaction
-   that drops benchmark-required history.
-4. Use native freezing and release paths; validate tombstones, resurrection,
-   snapshot boundaries, concurrent readers, retained versions and both hash modes.
-5. Advertise availability and benchmark participation only after those paths
-   compile and pass the MVCC contract on Linux x86-64.
-
-Upstream `test_memtable_basic` is commented out in the pinned unit-test build;
-it should not be treated as a ready standalone integration target. The current
-query-engine and multiversion scan tests are useful references, but do not alone
-provide a full transaction fixture.
+## License
 
 The subset preserves OceanBase Apache-2.0 LICENSE and NOTICE. The harness's MIT
 license does not relicense upstream files. See [THIRD_PARTY.md](../THIRD_PARTY.md).

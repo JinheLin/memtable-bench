@@ -31,8 +31,8 @@ navigation step and metadata refresh; this cost is included in scans and flush.
 OceanBase KeyBtree uses its native 225-entry buffered iterator and a binary
 comparator. Point `GetAt` includes filling the first native iterator batch.
 This candidate does not use native OceanBase version chains or transaction
-services. The two full OceanBase MemTable slots are unavailable; see
-[the precise integration boundary and TODOs](oceanbase.md).
+services. OceanBase integration is limited to the KeyBtree index core; see
+[the integration boundary](oceanbase.md).
 
 ### CSE source boundary
 

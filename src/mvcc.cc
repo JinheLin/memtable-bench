@@ -93,12 +93,6 @@ std::vector<AdapterInfo> ListMvccAdapters() {
 #endif
   adapters.push_back({"cse_arena", available, reason, true, false, 65535, "user_key_chain"});
   adapters.push_back({"cse_crossbeam", available, reason, true, false, 65535, "user_key_chain"});
-  adapters.push_back({"oceanbase_memtable_btree", false,
-      "TODO: full ObMemtable requires native tenant/transaction/tablet/freezer runtime; use oceanbase_keybtree for index core",
-      false, false, 0, "user_key_chain"});
-  adapters.push_back({"oceanbase_memtable_hash_btree", false,
-      "TODO: native ObMemtable MVCC runtime and hash index are not integrated",
-      false, false, 0, "user_key_chain"});
   return adapters;
 }
 std::unique_ptr<MvccTable> MakeMvccTable(std::string_view name, std::size_t key_size) {

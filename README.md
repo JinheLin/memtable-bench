@@ -12,9 +12,9 @@ from cloud-storage-engine, and runs twelve candidates with snapshot reads,
 tombstones, visible-row range scans, batched writes and complete-version flushes.
 See [MVCC workloads, CSE build instructions and CSV schema](docs/mvcc.md).
 The new `oceanbase_keybtree` is a port of OceanBase's actual MemTable ordered
-index core. Its MVCC workload uses the common InternalKey adapter; full native
-OceanBase transaction/MVCC MemTable candidates remain explicitly unavailable.
-See [OceanBase scope, build and remaining work](docs/oceanbase.md).
+index core. Its MVCC workload uses the common InternalKey adapter.
+OceanBase integration is limited to KeyBtree; `ObMemtable` is outside the project's scope.
+See [OceanBase KeyBtree scope and build instructions](docs/oceanbase.md).
 The original `memtable_bench` remains the exact-key structural diagnostic;
 its `--internal-key` option alone does not implement snapshot visibility.
 
@@ -607,7 +607,7 @@ src/cse_index.cc               CSE native version-chain C ABI adapter
 src/oceanbase_index.cc          OceanBase KeyBtree core port with binary keys
 vendor/oceanbase-port/          Runtime glue and pinned upstream source digests
 scripts/vendor_oceanbase.py     Verified source subset and include isolation
-docs/oceanbase.md               Runnable core boundary and full MemTable TODOs
+docs/oceanbase.md               KeyBtree core scope and build instructions
 rust/cse_memtable/             Pinned Rust bridge and source digests
 scripts/mvcc_matrix.py          MVCC screening matrix and validation
 scripts/export_cse_memtable.py  Verified local CSE source export
