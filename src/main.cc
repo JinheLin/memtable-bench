@@ -100,7 +100,7 @@ void PrintHelp() {
             << "  --measure-detail         Add lookup-only and cursor-only phases\n"
             << "  --value-size N           Value bytes (default 32)\n"
             << "  --distribution uniform|sequential|zipf\n"
-            << "  --threads N              Stage 2 workers (default 1)\n"
+            << "  --threads N              Stage 2 workers; non-native adapters require 1\n"
             << "  --read-percent N         Stage 2 read share, 0..100 (default 80)\n"
             << "  --scan-length N          Stage 1 scan limit (default 100)\n"
             << "  --scan-only              Stage 1: untimed prefill, then Seek/scan phases\n"
@@ -120,7 +120,8 @@ Options ParseOptions(int argc, char** argv) {
     if (arg == "--list-indexes") {
       for (const auto& info : mb::ListAdapters()) {
         std::cout << info.name << "\t" << (info.available ? "available" : "unavailable")
-                  << "\t" << info.reason << "\tkey_encoding=" << info.key_encoding;
+                  << "\t" << info.reason << "\tkey_encoding=" << info.key_encoding
+                  << "\tnative_concurrent=" << (info.native_concurrent ? 1 : 0);
         if (info.max_key_size) std::cout << "\tmax_key_bytes=" << info.max_key_size;
         std::cout << '\n';
       }
@@ -823,6 +824,9 @@ int main(int argc, char** argv) {
     if (selected == adapters.end() || !selected->available)
       throw std::invalid_argument("adapter unavailable: " + o.index +
                                   "; run --list-indexes for details");
+    if (o.threads > 1 && !selected->native_concurrent)
+      throw std::invalid_argument(o.index + " has no native concurrency in this adapter; "
+                                  "use --threads 1");
     if (!selected->supports_upsert && !o.internal_key && o.read_percent < 100 &&
         (o.stage == "2" || o.stage == "all"))
       throw std::invalid_argument(o.index + " is append-only; stage 2 writes require "

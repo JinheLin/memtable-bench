@@ -12,8 +12,7 @@ import subprocess
 import time
 from zoneinfo import ZoneInfo
 
-INDEXES = ['std_map', 'abseil_btree', 'tlx_btree', 'rocksdb_inlineskiplist',
-           'btreeolc', 'unodb_art', 'masstree', 'hot', 'wormhole']
+from adapter_policy import INDEXES, POLICY, eligible_indexes, validate_listing
 ENV = {k: v for k, v in os.environ.items()
        if k.lower() not in {'http_proxy', 'https_proxy', 'all_proxy'}}
 
@@ -28,21 +27,39 @@ def output(command):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--binary', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--binary', type=Path)
+    parser.add_argument('--output', type=Path)
     parser.add_argument('--keys', type=int, default=1000000)
     parser.add_argument('--ops', type=int, default=1000000)
     parser.add_argument('--repeats', type=int, default=5)
     parser.add_argument('--threads', default='1,2,4,8,16')
-    parser.add_argument('--cpus', required=True, help='One logical CPU per physical core, comma separated')
+    parser.add_argument('--cpus', help='One logical CPU per physical core, comma separated')
     parser.add_argument('--numa-node', type=int, default=0)
+    parser.add_argument('--list-plan', action='store_true')
     args = parser.parse_args()
+    threads = [int(t) for t in args.threads.split(',')]
+    if len(threads) != len(set(threads)) or min(args.keys, args.ops, args.repeats, *threads) < 1:
+        parser.error('positive counts and unique thread counts required')
+    if 1 not in threads:
+        threads.insert(0, 1)
+    scenarios = [('single_uniform', 1, 'uniform', 1), ('single_zipf', 1, 'zipf', 1),
+                 ('lifecycle_uniform', 3, 'uniform', 1),
+                 *[(f'mixed_t{t}', 2, 'uniform', t) for t in threads]]
+    scenario_indexes = {name: eligible_indexes(INDEXES, workers)
+                        for name, _, _, workers in scenarios}
+    planned = sum(map(len, scenario_indexes.values())) * args.repeats
+    if args.list_plan:
+        print(json.dumps(dict(scenarios=scenarios, indexes=INDEXES, repeats=args.repeats,
+                              concurrency_policy=POLICY, scenario_indexes=scenario_indexes,
+                              formal_processes=planned), indent=2))
+        return
+    if not args.binary or not args.output or not args.cpus:
+        parser.error('--binary, --output and --cpus required to run')
     binary = args.binary.resolve()
     root = args.output.resolve()
-    threads = [int(t) for t in args.threads.split(',')]
     cpus = [int(c) for c in args.cpus.split(',')]
-    if min(args.keys, args.ops, args.repeats, *threads) < 1 or max(threads) > len(cpus):
-        parser.error('positive counts and at least one distinct CPU per worker are required')
+    if max(threads) > len(cpus):
+        parser.error('at least one distinct CPU per worker required')
     topology = {}
     for line in output(['lscpu', '-p=CPU,CORE,SOCKET,NODE']).splitlines():
         if not line.startswith('#'):
@@ -55,14 +72,7 @@ def main():
     if len({topology[c][:2] for c in cpus}) != len(cpus):
         parser.error('CPU list must not contain SMT siblings')
     listing = output([str(binary), '--list-indexes'])
-    available = {line.split('\t')[0] for line in listing.splitlines()
-                 if line.split('\t')[1] == 'available'}
-    missing = set(INDEXES) - available
-    if missing:
-        raise RuntimeError(f'missing required adapters: {sorted(missing)}\n{listing}')
-    scenarios = [('single_uniform', 1, 'uniform', 1), ('single_zipf', 1, 'zipf', 1),
-                 ('lifecycle_uniform', 3, 'uniform', 1),
-                 *[(f'mixed_t{t}', 2, 'uniform', t) for t in threads]]
+    validate_listing(listing, INDEXES)
     root.mkdir(parents=True, exist_ok=False)
     (root / 'runs').mkdir()
     repo = binary.parent.parent
@@ -92,8 +102,9 @@ def main():
         'value_bytes': 64, 'internal_key': True, 'scan_length': 100, 'read_percent': 80,
         'repeats': args.repeats, 'seeds': list(range(42, 42 + args.repeats)),
         'scenarios': scenarios, 'indexes': INDEXES, 'adapter_listing': listing,
+        'concurrency_policy': POLICY, 'scenario_indexes': scenario_indexes,
         'dependencies': pins, 'boost_headers': '1.86.0',
-        'planned_processes': len(scenarios) * len(INDEXES) * args.repeats,
+        'planned_processes': planned,
         'completed_processes': 0,
         'method': 'Fresh process per stage/index/repeat; serial execution; randomized interleaved order; '
                   '100k-key warmup per adapter excluded; same seeds within each comparison; '
@@ -167,7 +178,7 @@ def main():
                 scenario_order = list(scenarios)
                 order_rng.shuffle(scenario_order)
                 for scenario, stage, distribution, worker_count in scenario_order:
-                    adapter_order = list(INDEXES)
+                    adapter_order = list(scenario_indexes[scenario])
                     order_rng.shuffle(adapter_order)
                     for index in adapter_order:
                         rows = run(index, scenario, stage, distribution, worker_count, repeat, ordinal)

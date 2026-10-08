@@ -1,0 +1,91 @@
+Warmup 1/9 std_map
+Warmup 2/9 abseil_btree
+Warmup 3/9 tlx_btree
+Warmup 4/9 rocksdb_inlineskiplist
+Warmup 5/9 btreeolc
+Warmup 6/9 unodb_art
+Warmup 7/9 masstree
+Warmup 8/9 hot
+Warmup 9/9 wormhole
+1/46 single_zipf wormhole repeat 1
+2/46 single_zipf std_map repeat 1
+3/46 single_zipf rocksdb_inlineskiplist repeat 1
+4/46 single_zipf masstree repeat 1
+5/46 single_zipf tlx_btree repeat 1
+6/46 single_zipf hot repeat 1
+7/46 single_zipf unodb_art repeat 1
+8/46 single_zipf abseil_btree repeat 1
+9/46 single_zipf btreeolc repeat 1
+10/46 mixed_t4 unodb_art repeat 1
+11/46 mixed_t4 btreeolc repeat 1
+12/46 mixed_t4 rocksdb_inlineskiplist repeat 1
+13/46 mixed_t4 masstree repeat 1
+14/46 mixed_t4 wormhole repeat 1
+15/46 mixed_t2 wormhole repeat 1
+16/46 mixed_t2 masstree repeat 1
+17/46 mixed_t2 rocksdb_inlineskiplist repeat 1
+18/46 mixed_t2 btreeolc repeat 1
+19/46 mixed_t2 unodb_art repeat 1
+20/46 mixed_t1 unodb_art repeat 1
+21/46 mixed_t1 masstree repeat 1
+22/46 mixed_t1 rocksdb_inlineskiplist repeat 1
+23/46 mixed_t1 tlx_btree repeat 1
+24/46 mixed_t1 btreeolc repeat 1
+25/46 mixed_t1 wormhole repeat 1
+26/46 mixed_t1 abseil_btree repeat 1
+27/46 mixed_t1 std_map repeat 1
+28/46 mixed_t1 hot repeat 1
+29/46 single_uniform masstree repeat 1
+30/46 single_uniform abseil_btree repeat 1
+31/46 single_uniform btreeolc repeat 1
+32/46 single_uniform tlx_btree repeat 1
+33/46 single_uniform unodb_art repeat 1
+34/46 single_uniform std_map repeat 1
+35/46 single_uniform rocksdb_inlineskiplist repeat 1
+36/46 single_uniform wormhole repeat 1
+37/46 single_uniform hot repeat 1
+38/46 lifecycle_uniform tlx_btree repeat 1
+39/46 lifecycle_uniform rocksdb_inlineskiplist repeat 1
+40/46 lifecycle_uniform wormhole repeat 1
+41/46 lifecycle_uniform std_map repeat 1
+42/46 lifecycle_uniform hot repeat 1
+43/46 lifecycle_uniform btreeolc repeat 1
+44/46 lifecycle_uniform masstree repeat 1
+45/46 lifecycle_uniform unodb_art repeat 1
+46/46 lifecycle_uniform abseil_btree repeat 1
+Complete: /DATA/disk1/jinhelin/github/memtable-bench/results/native-policy-standard-pilot-2026-10-08
+Validated 109 phase rows; 1617 metric summaries; report: /DATA/disk1/jinhelin/github/memtable-bench/results/native-policy-standard-pilot-2026-10-08/report.md
+Warmup 1/9 std_map
+Warmup 2/9 abseil_btree
+Warmup 3/9 tlx_btree
+Warmup 4/9 rocksdb_inlineskiplist
+Warmup 5/9 btreeolc
+Warmup 6/9 unodb_art
+Warmup 7/9 masstree
+Warmup 8/9 hot
+Warmup 9/9 wormhole
+1/23 random lifecycle_uniform unodb_art repeat 1
+2/23 random lifecycle_uniform btreeolc repeat 1
+3/23 random lifecycle_uniform wormhole repeat 1
+4/23 random lifecycle_uniform masstree repeat 1
+5/23 random lifecycle_uniform std_map repeat 1
+6/23 random lifecycle_uniform tlx_btree repeat 1
+7/23 random lifecycle_uniform abseil_btree repeat 1
+8/23 random lifecycle_uniform rocksdb_inlineskiplist repeat 1
+9/23 random lifecycle_uniform hot repeat 1
+10/23 random mixed_t1 wormhole repeat 1
+11/23 random mixed_t1 tlx_btree repeat 1
+12/23 random mixed_t1 hot repeat 1
+13/23 random mixed_t1 std_map repeat 1
+14/23 random mixed_t1 rocksdb_inlineskiplist repeat 1
+15/23 random mixed_t1 unodb_art repeat 1
+16/23 random mixed_t1 btreeolc repeat 1
+17/23 random mixed_t1 abseil_btree repeat 1
+18/23 random mixed_t1 masstree repeat 1
+19/23 random mixed_t4 rocksdb_inlineskiplist repeat 1
+20/23 random mixed_t4 unodb_art repeat 1
+21/23 random mixed_t4 masstree repeat 1
+22/23 random mixed_t4 wormhole repeat 1
+23/23 random mixed_t4 btreeolc repeat 1
+Complete: /DATA/disk1/jinhelin/github/memtable-bench/results/native-policy-representative-pilot-2026-10-08
+Validated 59 rows; 874 summaries; 1 distinct datasets: /DATA/disk1/jinhelin/github/memtable-bench/results/native-policy-representative-pilot-2026-10-08/report.md

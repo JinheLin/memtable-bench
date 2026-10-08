@@ -8,6 +8,7 @@ from pathlib import Path
 import statistics
 
 from summarize_benchmark import LABEL, METRICS
+from adapter_policy import NATIVE_CONCURRENT, select_rows, validate_rows
 
 METRICS = dict(METRICS, payload_gb_s='logical GB/s')
 
@@ -15,22 +16,23 @@ METRICS = dict(METRICS, payload_gb_s='logical GB/s')
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('directory', type=Path)
-    root = parser.parse_args().directory.resolve()
+    parser.add_argument('--output', type=Path, help='Write a derived view without changing the measured archive')
+    args = parser.parse_args()
+    root = args.directory.resolve()
+    destination = args.output.resolve() if args.output else root
     meta = json.loads((root/'metadata.json').read_text())
     assert meta['status']=='complete' and meta['completed_processes']==meta['planned_processes']
     with (root/'raw.csv').open(newline='') as stream:
         rows=list(csv.DictReader(stream))
-    phase_count={1:3 if meta['suite']=='range-scan' else 5,2:1,3:5}
-    assert len(rows)==len(meta['configs'])*len(meta['indexes'])*meta['repeats']*sum(
-        phase_count[w[1]] for w in meta['workloads'])
-    groups, checks, datasets = defaultdict(list), defaultdict(list), {}
+    phases = {1: ['seek_only', 'scan_iterate', 'scan'] if meta['suite'] == 'range-scan' else
+                  ['insert', 'lookup_only', 'get', 'scan_iterate', 'scan'],
+              2: ['mixed'], 3: ['insert', 'freeze', 'ordered_traverse', 'ordered_flush', 'destroy']}
+    validate_rows(meta, rows, meta['workloads'], phases, [c['config_id'] for c in meta['configs']])
+    rows, excluded, selection = select_rows(rows, root, destination)
+    groups, datasets = defaultdict(list), {}
     for row in rows:
         assert row['schema_version']=='3' and row['key_preparation']=='precomputed'
         groups[(row['config_id'],row['scenario'],row['phase'],row['index'])].append(row)
-        checks[(row['config_id'],row['scenario'],row['phase'],row['repeat'])].append(
-            tuple(row[f] for f in ('ops','items_scanned','checksum','dataset_hash')))
-    assert all(len(group)==meta['repeats'] for group in groups.values())
-    assert all(len(group)==len(meta['indexes']) and len(set(group))==1 for group in checks.values())
     for path in sorted((root/'runs').glob('*-dataset.json')):
         info=json.loads(path.read_text())
         if '-warmup-' in path.name:
@@ -40,6 +42,12 @@ def main():
             assert datasets[identity]==info
         datasets[identity]=info
         assert sum(info['lcp_histogram'])==meta['keys']-1
+    if not datasets and (root / 'dataset-summary.csv').exists():
+        with (root / 'dataset-summary.csv').open(newline='') as stream:
+            for info in csv.DictReader(stream):
+                identity = tuple(info[f] for f in ('layout', 'user_key_bytes', 'prefix_bytes', 'prefix_groups', 'seed'))
+                assert int(info['keys']) == meta['keys'] and int(info['lcp_pairs']) == meta['keys'] - 1
+                datasets[identity] = info
     stats={}
     for key,samples in groups.items():
         for metric in METRICS:
@@ -49,14 +57,14 @@ def main():
             q1,_,q3=statistics.quantiles(values,n=4,method='inclusive') if len(values)>1 else [values[0]]*3
             stats[(*key,metric)]=dict(samples=len(values),median=statistics.median(values),
                                      q1=q1,q3=q3,min=min(values),max=max(values))
-    with (root/'summary.csv').open('w',newline='') as stream:
+    with (destination/'summary.csv').open('w',newline='') as stream:
         writer=csv.DictWriter(stream,fieldnames=['config_id','scenario','phase','index','metric','unit',
                                                 'samples','median','q1','q3','min','max'])
         writer.writeheader()
         for (config,scenario,phase,index,metric),values in sorted(stats.items()):
             writer.writerow(dict(config_id=config,scenario=scenario,phase=phase,index=index,
                                  metric=metric,unit=METRICS[metric],**values))
-    with (root/'dataset-summary.csv').open('w',newline='') as stream:
+    with (destination/'dataset-summary.csv').open('w',newline='') as stream:
         fields=['layout','user_key_bytes','prefix_bytes','prefix_groups','seed','keys','logical_key_bytes',
                 'dataset_hash_fnv1a64','lcp_pairs','lcp_min','lcp_p50','lcp_p95','lcp_p99','lcp_max','lcp_mean']
         writer=csv.DictWriter(stream,fieldnames=fields)
@@ -162,11 +170,15 @@ def main():
                         '\n\n这些是 Freeze 后的只读扫描；未实现显式 end-key、并发 scan/write 或 snapshot-visible 去重。'
                         '扫描延迟每 64 次调用采样一次；少量调用的 p99 不足以判断尾延迟。')
     else:
+        native_indexes = [i for i in indexes if i in NATIVE_CONCURRENT]
+        mixed = [w for w in meta['workloads'] if w[1] == 2]
         for config in configs:
-            mixed=[w for w in meta['workloads'] if w[1]==2]
-            sections.append('## '+config+'：并发混合吞吐 Mops/s\n\n'+table(
-                ['实现',*[str(w[2])+' 线程' for w in mixed]],
-                [[LABEL[i],*[cell(config,i,'mixed',scenario=w[0]) for w in mixed]] for i in indexes]))
+            sections.append('## '+config+'：单线程混合吞吐 Mops/s\n\n'+table(
+                ['实现', '1 线程'], [[LABEL[i], cell(config,i,'mixed',scenario='mixed_t1')] for i in indexes]))
+            if native_indexes and any(w[2] > 1 for w in mixed):
+                sections.append('## '+config+'：原生并发实现的混合吞吐 Mops/s\n\n'+table(
+                    ['实现', *[str(w[2])+' 线程' for w in mixed]],
+                    [[LABEL[i], *[cell(config,i,'mixed',scenario=w[0]) for w in mixed]] for i in native_indexes]))
             sections.append('## '+config+'：生命周期阶段耗时 ms\n\n'+table(
                 ['实现','Insert','Freeze','游标遍历','完整 Flush','Destroy'],
                 [[LABEL[i],*[cell(config,i,p,'elapsed_ns',scenario='lifecycle_uniform')
@@ -192,8 +204,13 @@ def main():
     report=f'''# memtable-bench：{'Range scan 长度实验' if meta['suite']=='range-scan' else 'Key / 前缀 / Value 敏感性实验'}
 
 Suite：`{meta['suite']}`；时间：{meta['started_at']} — {meta['finished_at']}。
-完成 {meta['completed_processes']} 个正式进程、{len(rows)} 条 phase 记录；每组 {meta['repeats']} 次重复。
-{meta['checksum_groups_verified']} 个配置/workload/repeat 组合的全部 adapter checksum、操作数和行数一致。
+原始测量完成 {meta['completed_processes']} 个正式进程；每组 {meta['repeats']} 次重复。
+按 `native-concurrency-v1` 纳入 {selection['included_processes']} 个进程、{len(rows)} 条 phase 记录；
+排除 {selection['excluded_processes']} 个 wrapper 多线程进程、{len(excluded)} 条记录。
+全部原始记录先通过完整性、同配置/workload/repeat 的 checksum、操作数和行数核对。
+全部实现参加单线程；只有 RocksDB、BTreeOLC、UnoDB、Masstree、Wormhole 进入多线程表。
+`selection.json` 记录来源和 raw.csv 哈希；`excluded.csv` 保留被排除的历史 wrapper 记录。
+这是从已有 raw.csv 生成的报告，没有重新运行性能测量；版本以原始源码快照和二进制哈希为准。
 表中数值为中位数 [Q1,Q3]；四分位范围描述波动，不是置信区间。
 
 ## 方法
@@ -232,8 +249,8 @@ LCP 统计的是排序后相邻不同 user key，排除 MVCC trailer；分组之
 - 本轮固定记录数；固定 MemTable 内存预算、外置 value handle、长 key 扩展组尚未实现。
 - 不做 snapshot-visible Get、SSTable 压缩或磁盘 I/O；hash 一致性不能替代正确性测试。
 '''
-    (root/'report.md').write_text(report)
-    print(f'Validated {len(rows)} rows; {len(stats)} summaries; {len(datasets)} distinct datasets: {root/"report.md"}')
+    (destination/'report.md').write_text(report)
+    print(f'Validated {len(rows)} rows; {len(stats)} summaries; {len(datasets)} distinct datasets: {destination/"report.md"}')
 
 
 if __name__=='__main__':

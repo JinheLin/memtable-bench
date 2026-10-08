@@ -23,6 +23,7 @@ adapters = {}
 for line in invoke("--list-indexes").splitlines():
     fields = line.split("\t")
     metadata = dict(field.split("=", 1) for field in fields[3:])
+    assert metadata["native_concurrent"] in ("0", "1")
     adapters[fields[0]] = (fields[1] == "available", metadata)
 if os.environ.get("MEMTABLE_BENCH_REQUIRE_HOT") == "1" and not adapters["hot"][0]:
     raise AssertionError("HOT runtime validation requires a CPU with its advertised ISA features")
@@ -37,7 +38,7 @@ with tempfile.TemporaryDirectory(prefix="memtable-contract-") as directory:
             assert not output.exists(), name
             continue
         invoke("--stage", "all", "--index", name, "--internal-key", "--keys", 2500,
-               "--ops", 5000, "--threads", 4, "--key-size", 24, "--value-size", 64,
+               "--ops", 5000, "--threads", 1, "--key-size", 24, "--value-size", 64,
                "--scan-length", 37, "--distribution", "zipf", "--output", output)
         with output.open(newline="") as stream:
             reader = csv.DictReader(stream)
@@ -57,6 +58,18 @@ with tempfile.TemporaryDirectory(prefix="memtable-contract-") as directory:
             reference = observed
         assert observed == reference, f"workload/checksum mismatch: {name}"
         print(f"{name}: all stages, CSV and checksums match std_map")
+
+        if metadata["native_concurrent"] == "0":
+            for stage in ("1", "2", "3", "all"):
+                rejected = root / (name + "-non-native.csv")
+                rejected_dataset = root / (name + "-non-native.json")
+                result = subprocess.run([binary, "--stage", stage, "--index", name,
+                                         "--threads", "2", "--read-percent", "100",
+                                         "--key-preparation", "precomputed", "--key-layout", "random",
+                                         "--output", str(rejected), "--dataset-output", str(rejected_dataset)],
+                                        text=True, capture_output=True, timeout=10)
+                assert result.returncode != 0 and "no native concurrency" in result.stderr, result.stderr
+                assert not rejected.exists() and not rejected_dataset.exists()
 
         if name in ("unodb_art", "rocksdb_inlineskiplist"):
             rejected = root / (name + "-upsert.csv")
@@ -79,7 +92,7 @@ with tempfile.TemporaryDirectory(prefix="memtable-contract-") as directory:
             output = root / (layout + "-" + name + ".csv")
             dataset = root / (layout + "-" + name + ".json")
             invoke("--stage", "all", "--index", name, "--internal-key", "--keys", 2500,
-                   "--ops", 5000, "--threads", 4, "--key-size", 64, "--value-size", 1024,
+                   "--ops", 5000, "--threads", 1, "--key-size", 64, "--value-size", 1024,
                    "--scan-length", 37, "--distribution", "zipf", "--measure-detail",
                    "--key-layout", layout, "--prefix-bytes", prefix, "--prefix-groups", groups,
                    "--key-preparation", "precomputed", "--insert-order", "reverse",
@@ -111,6 +124,29 @@ with tempfile.TemporaryDirectory(prefix="memtable-contract-") as directory:
                 reference = observed
             assert observed == reference, (layout, name)
         print(layout + ": precomputed keys, split metrics and all-adapter checksums agree")
+
+    for layout, prefix, groups in [("legacy", 0, 1), ("random", 0, 1),
+                                   ("global-prefix", 24, 1), ("group-prefix", 24, 16)]:
+        reference = None
+        for name, (available, metadata) in adapters.items():
+            if not available or metadata["native_concurrent"] != "1":
+                continue
+            output = root / (layout + "-concurrent-" + name + ".csv")
+            invoke("--stage", 2, "--index", name, "--internal-key", "--keys", 2500,
+                   "--ops", 5000, "--threads", 4, "--key-size", 64, "--value-size", 64,
+                   "--key-layout", layout, "--prefix-bytes", prefix, "--prefix-groups", groups,
+                   "--key-preparation", "inline" if layout == "legacy" else "precomputed",
+                   "--output", output)
+            with output.open(newline="") as stream:
+                rows = list(csv.DictReader(stream))
+            assert len(rows) == 1 and rows[0]["threads"] == "4"
+            assert rows[0]["adapter_mode"].startswith("native_")
+            observed = tuple(rows[0][f] for f in ("ops", "items_scanned", "checksum"))
+            if reference is None:
+                reference = observed
+            assert observed == reference, (layout, name)
+        if reference is not None:
+            print(layout + ": native concurrent adapters agree at 4 workers")
 
     for length, expected_rows in [(10, 40), (1000, 506)]:
         reference = None

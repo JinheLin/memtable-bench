@@ -302,11 +302,13 @@ int main() {
     VerifyBinaryRecords(info);
     VerifyManyVersions(info);
     VerifyUnalignedInputs(info);
-    VerifyConcurrentInsertAndFreeze(info);
-    VerifyConcurrentDuplicates(info);
-    VerifyConcurrentUpserts(info);
-    VerifyActiveCursorWithWrites(info);
-    VerifyConcurrentOrderedCursor(info);
+    if (info.native_concurrent) {
+      VerifyConcurrentInsertAndFreeze(info);
+      VerifyConcurrentDuplicates(info);
+      VerifyConcurrentUpserts(info);
+      VerifyActiveCursorWithWrites(info);
+      VerifyConcurrentOrderedCursor(info);
+    }
     std::cout << info.name << " contract passed\n";
   }
 }

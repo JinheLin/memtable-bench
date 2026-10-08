@@ -80,7 +80,7 @@ target_link_libraries(adapter_contract PRIVATE memtable_bench_index)
 add_test(NAME adapter_contract COMMAND adapter_contract)
 set_tests_properties(adapter_contract PROPERTIES TIMEOUT 120)
 add_test(NAME smoke COMMAND memtable_bench --stage all --index std_map
-  --keys 1000 --ops 2000 --threads 2 --output ${CMAKE_CURRENT_BINARY_DIR}/smoke-v3.csv)
+  --keys 1000 --ops 2000 --threads 1 --output ${CMAKE_CURRENT_BINARY_DIR}/smoke-v3.csv)
 if(MEMTABLE_BENCH_FETCH_ROCKSDB)
   add_test(NAME rocksdb_smoke COMMAND memtable_bench --stage all
     --index rocksdb_inlineskiplist --internal-key --keys 1000 --ops 2000
@@ -112,6 +112,8 @@ endif()
 
 find_package(Python3 QUIET COMPONENTS Interpreter)
 if(Python3_Interpreter_FOUND)
+  add_test(NAME benchmark_policy COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/benchmark_policy.py $<TARGET_FILE:memtable_bench>)
   add_test(NAME harness_integration COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/harness_integration.py $<TARGET_FILE:memtable_bench>)
   set_tests_properties(harness_integration PROPERTIES TIMEOUT 180)

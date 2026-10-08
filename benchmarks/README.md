@@ -6,7 +6,22 @@ serially with CPU affinity and NUMA binding. Frequency is not locked and CPUs
 are not reserved. Dependency revisions, compiler options, binary hashes and
 measurement source snapshots are recorded separately for each experiment.
 
-## Formal experiments
+## Current comparison policy
+
+Use the [native-concurrency comparison view](native-concurrency-2026-10-08/README.md)
+for tables and scaling curves. All nine indexes participate at one worker;
+RocksDB InlineSkipList, BTreeOLC, UnoDB ART, Masstree and Wormhole participate
+above one worker. std::map, Abseil, TLX and the integrated HOTSingleThreaded
+implementation are excluded from multithreaded comparisons.
+
+That view retains **280 of 360 processes / 595 of 675 phase rows** from the
+original formal matrix, and **112 of 144 processes / 256 of 288 phase rows**
+from the representative pilot. `excluded.csv` preserves historical wrapper
+multithreaded rows; `selection.json` identifies each original raw CSV by SHA256.
+No performance measurements were rerun to create these views. The archives
+below keep the historical protocol and original data unchanged.
+
+## Formal experiment archives
 
 | Experiment | Stored records | Repeats | Processes | Phase rows | Scope |
 | --- | --- | --- | --- | --- | --- |

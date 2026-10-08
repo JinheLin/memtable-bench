@@ -1,0 +1,119 @@
+{
+  "standard": {
+    "status": "complete",
+    "formal_processes": 46,
+    "phase_rows": 109,
+    "excluded_phase_rows": 0,
+    "warmup_processes": 9,
+    "checksum_groups_verified": 6,
+    "binary_sha256": "4b8a81865b63d22773412085509a3251df1dfaf70554ea7659b8f9cfb4806bdd",
+    "keys": 2500,
+    "ops": 5000,
+    "repeats": 1,
+    "scenario_indexes": {
+      "single_uniform": [
+        "std_map",
+        "abseil_btree",
+        "tlx_btree",
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "hot",
+        "wormhole"
+      ],
+      "single_zipf": [
+        "std_map",
+        "abseil_btree",
+        "tlx_btree",
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "hot",
+        "wormhole"
+      ],
+      "lifecycle_uniform": [
+        "std_map",
+        "abseil_btree",
+        "tlx_btree",
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "hot",
+        "wormhole"
+      ],
+      "mixed_t1": [
+        "std_map",
+        "abseil_btree",
+        "tlx_btree",
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "hot",
+        "wormhole"
+      ],
+      "mixed_t2": [
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "wormhole"
+      ],
+      "mixed_t4": [
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "wormhole"
+      ]
+    },
+    "raw_sha256": "ebb5ef691a3ae92dcf9091e0ed0511e1dbeda47ac81e6447754ea2f0b03c8011"
+  },
+  "representative": {
+    "status": "complete",
+    "formal_processes": 23,
+    "phase_rows": 59,
+    "excluded_phase_rows": 0,
+    "warmup_processes": 9,
+    "checksum_groups_verified": 3,
+    "binary_sha256": "4b8a81865b63d22773412085509a3251df1dfaf70554ea7659b8f9cfb4806bdd",
+    "keys": 2500,
+    "ops": 5000,
+    "repeats": 1,
+    "scenario_indexes": {
+      "mixed_t1": [
+        "std_map",
+        "abseil_btree",
+        "tlx_btree",
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "hot",
+        "wormhole"
+      ],
+      "mixed_t4": [
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "wormhole"
+      ],
+      "lifecycle_uniform": [
+        "std_map",
+        "abseil_btree",
+        "tlx_btree",
+        "rocksdb_inlineskiplist",
+        "btreeolc",
+        "unodb_art",
+        "masstree",
+        "hot",
+        "wormhole"
+      ]
+    },
+    "raw_sha256": "2f9157abb85eb46494ef6c449ca40c768898a2edae9f9fc7abb5e752926641b4"
+  }
+}

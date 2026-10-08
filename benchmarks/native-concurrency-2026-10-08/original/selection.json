@@ -1,0 +1,18 @@
+{
+  "concurrency_policy": "native-concurrency-v1",
+  "source_directory": "../../xeon79-2026-10-08",
+  "raw_sha256": "bea476a0327ffa1ecdce30584c17bc4855d1d51967e9c9102c1aad453b9a466a",
+  "included_phase_rows": 595,
+  "excluded_phase_rows": 80,
+  "included_processes": 280,
+  "excluded_processes": 80,
+  "native_concurrent_indexes": [
+    "btreeolc",
+    "masstree",
+    "rocksdb_inlineskiplist",
+    "unodb_art",
+    "wormhole"
+  ],
+  "exclusion_reason": "threads > 1 without native concurrency in the integrated implementation",
+  "measurement_rerun": false
+}

@@ -1,0 +1,16 @@
+Internal ctest changing into directory: /Users/jinhelin/github/memtable-bench/build-dataset-asan
+Test project /Users/jinhelin/github/memtable-bench/build-dataset-asan
+    Start 1: key_dataset_contract
+1/5 Test #1: key_dataset_contract .............   Passed    0.32 sec
+    Start 2: adapter_contract
+2/5 Test #2: adapter_contract .................   Passed    0.18 sec
+    Start 3: smoke
+3/5 Test #3: smoke ............................   Passed    0.08 sec
+    Start 4: benchmark_policy
+4/5 Test #4: benchmark_policy .................   Passed    0.45 sec
+    Start 5: harness_integration
+5/5 Test #5: harness_integration ..............   Passed    1.60 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   2.63 sec

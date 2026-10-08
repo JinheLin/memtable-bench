@@ -198,37 +198,37 @@ std::vector<AdapterInfo> ListAdapters() {
       {"tlx_btree", false, "configure -DMEMTABLE_BENCH_FETCH_TLX=ON"},
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_ROCKSDB
-      {"rocksdb_inlineskiplist", true, "RocksDB InlineSkipList + ConcurrentArena; append-only", false},
+      {"rocksdb_inlineskiplist", true, "RocksDB InlineSkipList + ConcurrentArena; append-only", true, false},
 #else
-      {"rocksdb_inlineskiplist", false, "configure -DMEMTABLE_BENCH_FETCH_ROCKSDB=ON", false},
+      {"rocksdb_inlineskiplist", false, "configure -DMEMTABLE_BENCH_FETCH_ROCKSDB=ON", true, false},
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_BTREEOLC
-      {"btreeolc", true, "BTreeOLC; native OLC with per-key stripes for exact size/upsert"},
+      {"btreeolc", true, "BTreeOLC; native OLC with per-key stripes for exact size/upsert", true},
 #else
-      {"btreeolc", false, "configure -DMEMTABLE_BENCH_FETCH_BTREEOLC=ON"},
+      {"btreeolc", false, "configure -DMEMTABLE_BENCH_FETCH_BTREEOLC=ON", true},
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_UNODB
-      {"unodb_art", true, "UnoDB olc_db + QSBR; append-only; terminated nibble keys", false, 0, "nibble_terminated"},
+      {"unodb_art", true, "UnoDB olc_db + QSBR; append-only; terminated nibble keys", true, false, 0, "nibble_terminated"},
 #else
-      {"unodb_art", false, "configure -DMEMTABLE_BENCH_FETCH_UNODB=ON", false, 0, "nibble_terminated"},
+      {"unodb_art", false, "configure -DMEMTABLE_BENCH_FETCH_UNODB=ON", true, false, 0, "nibble_terminated"},
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_MASSTREE
-      {"masstree", true, "Masstree; native concurrency; deferred node/value reclamation", true, 1024},
+      {"masstree", true, "Masstree; native concurrency; deferred node/value reclamation", true, true, 1024},
 #else
-      {"masstree", false, "configure -DMEMTABLE_BENCH_FETCH_MASSTREE=ON", true, 1024},
+      {"masstree", false, "configure -DMEMTABLE_BENCH_FETCH_MASSTREE=ON", true, true, 1024},
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_HOT
       {"hot", HOTSupported(), HOTSupported() ? "HOTSingleThreaded; coarse reader/writer lock; terminated nibble keys" :
-        "CPU lacks AVX2/BMI/BMI2/POPCNT/LZCNT required by HOT", true, 127, "nibble_terminated"},
+        "CPU lacks AVX2/BMI/BMI2/POPCNT/LZCNT required by HOT", false, true, 127, "nibble_terminated"},
 #elif defined(MEMTABLE_BENCH_HOT_UNSUPPORTED)
-      {"hot", false, "HOT requires x86_64 AVX2/BMI2; this target architecture is unsupported", true, 127, "nibble_terminated"},
+      {"hot", false, "HOT requires x86_64 AVX2/BMI2; this target architecture is unsupported", false, true, 127, "nibble_terminated"},
 #else
-      {"hot", false, "configure -DMEMTABLE_BENCH_FETCH_HOT=ON; requires x86_64 AVX2/BMI2", true, 127, "nibble_terminated"},
+      {"hot", false, "configure -DMEMTABLE_BENCH_FETCH_HOT=ON; requires x86_64 AVX2/BMI2", false, true, 127, "nibble_terminated"},
 #endif
 #ifdef MEMTABLE_BENCH_HAVE_WORMHOLE
-      {"wormhole", true, "Wormhole; native whsafe API with parked per-thread references", true, 65535},
+      {"wormhole", true, "Wormhole; native whsafe API with parked per-thread references", true, true, 65535},
 #else
-      {"wormhole", false, "configure -DMEMTABLE_BENCH_FETCH_WORMHOLE=ON", true, 65535},
+      {"wormhole", false, "configure -DMEMTABLE_BENCH_FETCH_WORMHOLE=ON", true, true, 65535},
 #endif
   };
 }

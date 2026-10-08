@@ -45,6 +45,9 @@ struct AdapterInfo {
   std::string name;
   bool available;
   std::string reason;
+  // True only when the integrated upstream implementation supports concurrent
+  // reads/writes. A coarse adapter lock does not make an index eligible.
+  bool native_concurrent = false;
   bool supports_upsert = true;
   // Limit on the complete logical binary key, including the MVCC trailer.
   // Zero means no adapter-specific limit beyond representable allocation sizes.

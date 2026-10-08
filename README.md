@@ -7,17 +7,25 @@ index adapters are implemented with pinned upstream sources. The actual binary's
 
 ## Status
 
-| Adapter | CMake option suffix | Concurrency in this harness | Complete binary key limit |
-| --- | --- | --- | --- |
-| `std_map` | Default | Coarse reader/writer lock | Allocation limits |
-| `abseil_btree` | `ABSEIL` | Coarse reader/writer lock | Allocation limits |
-| `tlx_btree` | `TLX` | Coarse reader/writer lock | Allocation limits |
-| `rocksdb_inlineskiplist` | `ROCKSDB` | Native concurrent insert; append-only | uint32 record lengths |
-| `btreeolc` | `BTREEOLC` | Native OLC pages + 256 key stripes for exact size/upsert | Allocation limits |
-| `unodb_art` | `UNODB` | UnoDB `olc_db`, QSBR; append-only | Encoded key/value lengths fit uint32 |
-| `masstree` | `MASSTREE` | Native Masstree locks + deferred node/value reclamation | 1024 bytes |
-| `hot` | `HOT` | HOTSingleThreaded + coarse reader/writer lock | 127 bytes |
-| `wormhole` | `WORMHOLE` | Native `whsafe` API + parked thread references | 65535 bytes |
+| Adapter | CMake option suffix | Concurrency in this harness | Benchmark workers | Complete binary key limit |
+| --- | --- | --- | --- | --- |
+| `std_map` | Default | Coarse reader/writer lock | 1 only | Allocation limits |
+| `abseil_btree` | `ABSEIL` | Coarse reader/writer lock | 1 only | Allocation limits |
+| `tlx_btree` | `TLX` | Coarse reader/writer lock | 1 only | Allocation limits |
+| `rocksdb_inlineskiplist` | `ROCKSDB` | Native concurrent insert; append-only | 1 and multiple | uint32 record lengths |
+| `btreeolc` | `BTREEOLC` | Native OLC pages + 256 key stripes for exact size/upsert | 1 and multiple | Allocation limits |
+| `unodb_art` | `UNODB` | UnoDB `olc_db`, QSBR; append-only | 1 and multiple | Encoded key/value lengths fit uint32 |
+| `masstree` | `MASSTREE` | Native Masstree locks + deferred node/value reclamation | 1 and multiple | 1024 bytes |
+| `hot` | `HOT` | HOTSingleThreaded + coarse reader/writer lock | 1 only | 127 bytes |
+| `wormhole` | `WORMHOLE` | Native `whsafe` API + parked thread references | 1 and multiple | 65535 bytes |
+
+Multithreaded workloads are restricted to the integrated implementation's
+**native** read/write concurrency. `std_map`, Abseil, TLX and the current
+HOTSingleThreaded adapter run only with `--threads 1`, including read-only
+workloads. Their compatibility locks remain part of single-thread measurements.
+HOT ROWEX is not integrated. `--list-indexes` publishes `native_concurrent=0/1`;
+the runners check this capability before executing a matrix, and the harness
+rejects an ineligible thread count before creating CSV or dataset output.
 
 Every optional option is named `MEMTABLE_BENCH_FETCH_<SUFFIX>` and defaults to OFF.
 These adapters use the actual upstream index; unavailable adapters fail before
@@ -34,14 +42,16 @@ workflow includes a required HOT runtime check; consult its workflow runs for
 the current remote CI status.
 
 **Native Linux validation (2026-10-08):** GCC 11.3.1 on Xeon Gold 6240:
-all nine adapters, including HOT, passed 11/11 contract/workload tests,
+all nine adapters, including HOT, passed 12/12 contract/workload/policy tests,
 including the controlled dataset and split-measurement checks.
 The workload tests also run with node 0 memory binding and pinned physical cores.
 
-**Measured on that server:** all nine adapters completed a 1M-record matrix,
-five repetitions and 1/2/4/8/16 physical cores. See the archived
-[report](benchmarks/xeon79-2026-10-08/report.md),
-[comparison](benchmarks/xeon79-2026-10-08/comparison.png) and
+**Measured on that server:** the original 1M-record matrix has five repetitions.
+The [current comparison view](benchmarks/native-concurrency-2026-10-08/README.md)
+keeps nine single-thread indexes and five native concurrent indexes at
+1/2/4/8/16 physical cores. See its
+[report](benchmarks/native-concurrency-2026-10-08/original/report.md),
+[comparison](benchmarks/native-concurrency-2026-10-08/original/comparison.png) and
 [raw CSV](benchmarks/xeon79-2026-10-08/raw.csv).
 The report states the workload, synchronization/codec differences and limitations;
 new runs in `results/` are ignored by Git. Selected completed experiments are
@@ -125,7 +135,7 @@ libraries disabled. Pins and license details are in [THIRD_PARTY.md](THIRD_PARTY
 ```sh
 ./build/memtable_bench --stage all --index std_map \
   --keys 100000 --ops 1000000 --key-size 16 --value-size 64 \
-  --distribution uniform --threads 8 --read-percent 80 \
+  --distribution uniform --threads 1 --read-percent 80 \
   --scan-length 100 --output results.csv
 
 ./build/memtable_bench --stage 3 --index std_map --internal-key \
@@ -146,14 +156,14 @@ for index in btreeolc unodb_art masstree wormhole; do
     --keys 100000 --ops 1000000 --threads 8 --key-size 24 --value-size 64 \
     --scan-length 100 --distribution uniform --output "$index.csv"
 done
-# On a supported native x86 machine, the same command accepts --index hot.
+# HOTSingleThreaded uses --threads 1, even on a supported native x86 CPU.
 ```
 
 On Linux, pin worker threads and bind their future allocations to a NUMA node:
 
 ```sh
-./build/memtable_bench --stage 2 --threads 4 --cpu-list 0,2,4,6 \
-  --numa-node 0 --index std_map --output numa.csv
+./build-research/memtable_bench --stage 2 --threads 4 --cpu-list 0,2,4,6 \
+  --numa-node 0 --index btreeolc --internal-key --output numa.csv
 ```
 
 CPU IDs must belong to the process's allowed CPU set. The NUMA option uses Linux
@@ -170,6 +180,7 @@ and contain no SMT siblings. Select CPU IDs from your own machine's topology.
 This example uses 16 physical cores on node 0 of the Xeon test server:
 
 ```sh
+python3 scripts/benchmark_matrix.py --list-plan
 python3 scripts/benchmark_matrix.py --binary build-linux/memtable_bench \
   --output results/new-run --cpus 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 \
   --numa-node 0 --keys 1000000 --ops 1000000 --repeats 5 --threads 1,2,4,8,16
@@ -177,12 +188,16 @@ python3 scripts/summarize_benchmark.py results/new-run
 ```
 
 The output directory must be new. Runs are serial in randomized interleaved
-order, each in a fresh process. Nine excluded warmups precede 360 formal runs:
+order, each in a fresh process. Nine excluded warmups precede **280 formal runs** at defaults:
 uniform/Zipf single-thread, uniform lifecycle, and uniform 80/20 mixed workloads
-at five thread counts. Each scenario uses identical seeds across adapters;
+at five thread counts. Single-thread scenarios (including mixed_t1) use all nine
+indexes; counts above one use only the five native concurrent indexes. Both
+runners add mixed_t1 if --threads omits it. Each scenario uses identical seeds
+across its eligible adapters;
 operation counts, returned row counts and checksums must agree.
 `metadata.json` records CPU topology, affinity, NUMA policy, background load,
-compiler, dependency pins and binary hash. `raw.csv` adds scenario/repeat/seed/
+compiler, dependency pins, binary hash, `concurrency_policy` and per-scenario
+`scenario_indexes`. `raw.csv` adds scenario/repeat/seed/
 run_sequence/process_elapsed_s to the harness schema. The summarizer validates
 completeness and produces `summary.csv` (median/Q1/Q3/min/max/sample count) and
 `report.md`. Retain per-process `runs/` logs and `commands.jsonl` with the report.
@@ -285,7 +300,8 @@ adapters × 3 repeats = 540 formal processes, 2700 phase rows**. User key length
 8/16/32/64/112 B, global prefixes 0/8/24/56 B, values 8/64/1024 B and 16/1024
 balanced prefix groups all fit HOT's current key limit with the MVCC trailer.
 The representative suite has random/global-56/group-1024/large-value profiles,
-three mixed thread counts and lifecycle: **432 formal processes** at defaults.
+three mixed thread counts and lifecycle: **336 formal processes** at defaults
+(`4 profiles × (9 mixed_t1 + 5 mixed_t4 + 5 mixed_t16 + 9 lifecycle) × 3 repeats`).
 It exercises existing stages without multiplying every screening configuration.
 
 **Completed screening (2026-10-08):** all 540 formal processes and 2700 phase
@@ -298,7 +314,10 @@ hardware-counter fields were missing. See the local
 [raw CSV](benchmarks/sensitivity-screening-2026-10-08/raw.csv).
 The archived source and build/test logs accompany the results.
 The representative suite also passed a 10k-record, one-repeat pilot across all
-nine adapters at 1/4/16 workers and lifecycle; its full-size run is pending.
+nine single-thread adapters and five native concurrent adapters at 4/16 workers
+in the [current view](benchmarks/native-concurrency-2026-10-08/representative-pilot/report.md);
+its full-size run is pending. Historical wrapper multithreaded data are excluded
+from that view and preserved in the original archive.
 The dependency-free local baseline passed four ASan/UBSan tests.
 
 Raw sensitivity CSV adds config_id/scenario/repeat/seed/run_sequence/
@@ -386,6 +405,8 @@ the full results.
    prefilled versions so all reads are hits. Without `--internal-key`, writes update
    existing keys. With it, writes insert unique newer versions. The start barrier
    excludes thread creation; throughput uses the wall time until all workers finish.
+   Only native concurrent adapters run with multiple workers; the other adapters
+   run this mixed workload with one worker. This also applies to read-only mixes.
    RocksDB and UnoDB are append-only: stage 2 writes require `--internal-key`. Without it, a
    read-only phase (`--read-percent 100`) is allowed. Incompatible workloads are
    rejected before creating output. Duplicate exact keys return false for these two adapters; the other adapters
@@ -507,8 +528,8 @@ For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
 - **HOT:** uses the upstream `HOTSingleThreaded` trie, C-string key extraction
   over terminated nibble keys, owned original keys/values and a reader/writer
   lock. The upstream process-wide node pool can retain memory after Destroy;
-  run one HOT index at a time per process. This measures wrapper scalability; **native HOTRowex concurrency is not
-  integrated**. Frozen cursors use its native iterator. Upstream's 255-byte key
+  run one HOT index at a time per process. Only single-thread benchmark workloads are permitted; **native HOTRowex
+  concurrency is not integrated**. Frozen cursors use its native iterator. Upstream's 255-byte key
   buffer gives a 127-byte complete logical binary key limit, or a 118-byte user
   key with `--internal-key`. Clang patches fix restrict/alignment declarations,
   template definition ordering/specializations and replace an equivalent MMX

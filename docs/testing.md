@@ -1,6 +1,42 @@
 # Verification results
 
-## Fresh checks on 2026-10-08
+## Native concurrency policy validation
+
+Fresh checks after the participation change, on 2026-10-08:
+
+| Environment | Result | Evidence |
+| --- | --- | --- |
+| Linux x86-64, GCC 11.3.1, all nine adapters; HOT required; CPUs 2/3/4/5, NUMA node 0 | **12/12 passed** | [CTest](test-results/2026-10-08/native-concurrency-policy/linux-ctest.log) |
+| macOS ARM64/M4, dependency-free Debug ASan/UBSan | **5/5 passed** | [CTest](test-results/2026-10-08/native-concurrency-policy/local-baseline-ctest.log) |
+| macOS ARM64/M4, std::map + BTreeOLC/UnoDB/Masstree/Wormhole Debug ASan/UBSan | **10/10 passed** | [CTest](test-results/2026-10-08/native-concurrency-policy/local-research-ctest.log) |
+
+The policy test validates advertised capabilities and both matrix plans,
+including subsets with no concurrent candidates and thread lists omitting 1.
+It checks historical selection and rejection of missing, duplicate, or
+ineligible rows. Harness tests run all adapters at one worker, native concurrent
+adapters at four workers, and reject non-native adapters with multiple workers
+before writing CSV or dataset files. Concurrent contract tests run only for the
+five native concurrent implementations. Proxy variables were unset for builds.
+
+Fresh runner pilots on the same Xeon server use 2,500 keys, 5,000 operations,
+one repeat, pinned physical cores and NUMA memory binding:
+
+| Pilot | Counted processes | Phase rows | Warmup processes | Participants |
+| --- | --- | --- | --- | --- |
+| Standard matrix, 1/2/4 workers | **46** | **109** | 9 | Nine single-thread indexes, five native concurrent indexes |
+| Representative `random` profile, 1/4 workers + lifecycle | **23** | **59** | 9 | Nine single-thread indexes, five native concurrent indexes |
+
+All planned processes completed; contents/counts/checksums agree within every
+eligible comparison. No wrapper multithreaded process was scheduled. These
+pilots verify execution and reporting and are not used for performance rankings.
+The [runner log](test-results/2026-10-08/native-concurrency-policy/linux-matrix-pilots.log),
+[counts and binary hashes](test-results/2026-10-08/native-concurrency-policy/runner-checks.json),
+captured raw CSV/metadata/commands and measurement source manifest accompany
+the tests. The [current comparison view](../benchmarks/native-concurrency-2026-10-08/README.md)
+uses existing million-record measurements with wrapper concurrency excluded;
+the formal performance experiment has not been rerun after this change.
+
+## Verification before the concurrency policy update (2026-10-08)
 
 | Environment | Configuration | Result | Evidence |
 | --- | --- | --- | --- |
@@ -19,12 +55,16 @@ Proxy environment variables were unset during builds.
   histograms, stable access permutations and descending MVCC sequence ordering.
 - `adapter_contract`: empty/prefix/binary keys, misses, lower bounds, ordered
   traversal, byte views at all eight alignments, CRC tail lengths,
-  append-only/upsert policy, native key limits, concurrent readers and
-  writers, Freeze/drain, and retained cursors. BTreeOLC exercises multiple inner
+  append-only/upsert policy, native key limits and retained cursors. Concurrent
+  readers/writers and Freeze/drain races run only for native concurrent adapters. BTreeOLC exercises multiple inner
   tree levels.
 - Smoke tests run all three workload stages for enabled adapters; append-only
   adapters reject unsupported exact-key upsert workloads.
-- `harness_integration`: equivalent contents/checksums against `std_map`, CSV
+- `benchmark_policy`: runner participation/counts, advertised native capability,
+  historical/new matrix completeness, and missing/duplicate/ineligible row rejection.
+- `harness_integration`: single-thread contents/checksums against `std_map`,
+  multithreaded checksums within the native concurrent group, early rejection of
+  non-native multithreaded requests (including read-only workloads), CSV
   schema and parameter checks, controlled key layouts, split measurements,
   range limits and deterministic EOF truncation, and invalid inputs rejected
   before output creation.

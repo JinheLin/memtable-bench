@@ -11,7 +11,8 @@ import random
 import subprocess
 import time
 
-from benchmark_matrix import ENV, INDEXES, now, output
+from benchmark_matrix import ENV, now, output
+from adapter_policy import INDEXES, POLICY, eligible_indexes, validate_listing
 
 
 def configuration(name, key=64, value=64, layout='random', prefix=0, groups=1):
@@ -89,16 +90,21 @@ def main():
     workloads = ([('single_uniform', 1, 1)] if args.suite == 'screening' else
                  [('range_uniform', 1, 1)] if args.suite == 'range-scan' else
                  [*[(f'mixed_t{t}', 2, t) for t in threads], ('lifecycle_uniform', 3, 1)])
-    planned = len(configs) * len(workloads) * len(indexes) * args.repeats
+    # Every adapter gets a one-worker mixed baseline even when --threads omits 1.
+    if args.suite == 'representative' and 1 not in threads:
+        workloads.insert(0, ('mixed_t1', 2, 1))
+    scenario_indexes = {name: eligible_indexes(indexes, workers) for name, _, workers in workloads}
+    planned = len(configs) * sum(map(len, scenario_indexes.values())) * args.repeats
     if args.list_plan:
         print(json.dumps(dict(suite=args.suite, configs=configs, workloads=workloads,
                               repeats=args.repeats, indexes=indexes, formal_processes=planned,
+                              concurrency_policy=POLICY, scenario_indexes=scenario_indexes,
                               scan_calls=args.scan_calls if args.suite=='range-scan' else None), indent=2))
         return
     if not args.binary or not args.output or not args.cpus:
         parser.error('--binary, --output and --cpus required to run')
     cpus = [int(c) for c in args.cpus.split(',')]
-    required_threads = max(w[2] for w in workloads)
+    required_threads = max(w[2] for w in workloads if scenario_indexes[w[0]])
     if required_threads > len(cpus) or len(cpus) != len(set(cpus)):
         parser.error('one distinct physical CPU per worker required')
     topology = {int(fields[0]): tuple(map(int, fields[1:]))
@@ -111,10 +117,7 @@ def main():
     binary = args.binary.resolve()
     repo = binary.parent.parent
     listing = output([str(binary), '--list-indexes'])
-    available = {line.split('\t')[0] for line in listing.splitlines()
-                 if line.split('\t')[1] == 'available'}
-    if set(indexes) - available:
-        raise RuntimeError(f'requested indexes unavailable: {set(indexes)-available}\n{listing}')
+    validate_listing(listing, indexes)
     root = args.output.resolve()
     root.mkdir(parents=True, exist_ok=False)
     (root / 'runs').mkdir()
@@ -140,6 +143,7 @@ def main():
                 repeats=args.repeats, seeds=list(range(42, 42+args.repeats)),
                 scan_calls=args.scan_calls if args.suite=='range-scan' else None,
                 indexes=indexes, adapter_listing=listing, configs=configs, workloads=workloads,
+                concurrency_policy=POLICY, scenario_indexes=scenario_indexes,
                 internal_key=True, key_preparation='precomputed', measure_detail=True,
                 planned_processes=planned, completed_processes=0,
                 method='Serial fresh processes in randomized config/workload/adapter order; '
@@ -154,7 +158,7 @@ def main():
                           'identical start traces and call counts across lengths/adapters for each key layout/seed; '
                           'maximum row limit, actual rows counted at EOF; NUMA binding and physical CPU pinning')
     (root/'build-config.txt').write_text((binary.parent/'CMakeCache.txt').read_text())
-    (root/'plan.json').write_text(json.dumps(dict(configs=configs, workloads=workloads), indent=2)+'\n')
+    (root/'plan.json').write_text(json.dumps(dict(configs=configs, workloads=workloads, scenario_indexes=scenario_indexes, concurrency_policy=POLICY), indent=2)+'\n')
 
     def save():
         target = root/'metadata.json'
@@ -241,7 +245,7 @@ def main():
                 jobs = [(c,w) for c in configs for w in workloads]
                 rng.shuffle(jobs)
                 for config, workload in jobs:
-                    order = list(indexes)
+                    order = list(scenario_indexes[workload[0]])
                     rng.shuffle(order)
                     for index in order:
                         rows, info = run(config,workload,index,repeat,ordinal)

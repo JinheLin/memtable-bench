@@ -1,0 +1,18 @@
+{
+  "concurrency_policy": "native-concurrency-v1",
+  "source_directory": "../../representative-pilot-2026-10-08",
+  "raw_sha256": "287c21cf6b1fbfd061264ce89732119ea3f5d3c5596969b7f568d3a79c2cdc39",
+  "included_phase_rows": 256,
+  "excluded_phase_rows": 32,
+  "included_processes": 112,
+  "excluded_processes": 32,
+  "native_concurrent_indexes": [
+    "btreeolc",
+    "masstree",
+    "rocksdb_inlineskiplist",
+    "unodb_art",
+    "wormhole"
+  ],
+  "exclusion_reason": "threads > 1 without native concurrency in the integrated implementation",
+  "measurement_rerun": false
+}

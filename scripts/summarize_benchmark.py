@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import statistics
 
+from adapter_policy import NATIVE_CONCURRENT, select_rows, validate_rows
+
 LABEL = {'std_map': 'std::map', 'abseil_btree': 'Abseil B-tree', 'tlx_btree': 'TLX B+Tree',
          'rocksdb_inlineskiplist': 'RocksDB InlineSkipList', 'btreeolc': 'BTreeOLC',
          'unodb_art': 'UnoDB ART', 'masstree': 'Masstree', 'hot': 'HOT', 'wormhole': 'Wormhole'}
@@ -21,22 +23,24 @@ METRICS = {'throughput_ops_s': 'operations/s', 'items_per_s': 'rows/s', 'elapsed
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('directory', type=Path)
-    root = parser.parse_args().directory.resolve()
+    parser.add_argument('--output', type=Path, help='Write a derived view without changing the measured archive')
+    args = parser.parse_args()
+    root = args.directory.resolve()
+    destination = args.output.resolve() if args.output else root
     meta = json.loads((root / 'metadata.json').read_text())
     assert meta['status'] == 'complete' and meta['completed_processes'] == meta['planned_processes'], meta['status']
     indexes = meta['indexes']
     repeats = meta['repeats']
     with (root / 'raw.csv').open(newline='') as stream:
         rows = list(csv.DictReader(stream))
-    phase_count = {1: 3, 2: 1, 3: 4}
-    assert len(rows) == len(indexes) * repeats * sum(phase_count[s[1]] for s in meta['scenarios'])
-    groups, checks = defaultdict(list), defaultdict(list)
+    workloads = [(s[0], s[1], s[3]) for s in meta['scenarios']]
+    validate_rows(meta, rows, workloads, {1: ['insert', 'get', 'scan'], 2: ['mixed'],
+                                        3: ['insert', 'freeze', 'ordered_flush', 'destroy']})
+    rows, excluded, selection = select_rows(rows, root, destination)
+    groups = defaultdict(list)
     for row in rows:
         groups[(row['scenario'], row['phase'], row['index'])].append(row)
-        checks[(row['scenario'], row['repeat'], row['phase'])].append(
-            (row['ops'], row['items_scanned'], row['checksum']))
-    assert all(len(values) == repeats for values in groups.values())
-    assert all(len(values) == len(indexes) and len(set(values)) == 1 for values in checks.values())
+    native_indexes = [index for index in indexes if index in NATIVE_CONCURRENT]
     stats = {}
 
     def describe(values):
@@ -57,7 +61,7 @@ def main():
             assert len(phases) == 4
             totals.append(sum(float(r['elapsed_ns']) for r in phases))
         stats[('lifecycle_uniform', 'measured_phase_sum', index, 'elapsed_ns')] = describe(totals)
-    with (root / 'summary.csv').open('w', newline='') as stream:
+    with (destination / 'summary.csv').open('w', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=['scenario', 'phase', 'index', 'metric', 'unit',
                                                     'samples', 'median', 'q1', 'q3', 'min', 'max'])
         writer.writeheader()
@@ -86,7 +90,7 @@ def main():
     maximum = max(threads)
     best_get = max(indexes, key=lambda i: med('single_uniform', 'get', i))
     best_insert = max(indexes, key=lambda i: med('single_uniform', 'insert', i))
-    best_mix = max(indexes, key=lambda i: med(f'mixed_t{maximum}', 'mixed', i))
+    best_mix = max(native_indexes, key=lambda i: med(f'mixed_t{maximum}', 'mixed', i))
     best_flush = max(indexes, key=lambda i: med('lifecycle_uniform', 'ordered_flush', i, 'items_per_s'))
     least_rss = min(indexes, key=lambda i: med('single_uniform', 'insert', i, 'bytes_per_key'))
     least_life = min(indexes, key=lambda i: med('lifecycle_uniform', 'measured_phase_sum', i, 'elapsed_ns'))
@@ -98,9 +102,11 @@ def main():
                  [[LABEL[i], rate('single_zipf', 'get', i), rate('single_zipf', 'scan', i, 'items_per_s'),
                    value('single_zipf', 'get', i, 'latency_p99_ns', 1000),
                    f"{med('single_zipf', 'get', i)/med('single_uniform', 'get', i):.2f}×"] for i in indexes])
+    single_mixed = table(['实现', '单线程 mixed Mops/s [Q1,Q3]'],
+                         [[LABEL[i], rate('mixed_t1', 'mixed', i)] for i in indexes])
     concurrent = table(['实现', *[f'{t} 线程 Mops/s' for t in threads], f'{maximum}/1 加速比'],
                        [[LABEL[i], *[rate(f'mixed_t{t}', 'mixed', i) for t in threads],
-                         f"{med(f'mixed_t{maximum}', 'mixed', i)/med('mixed_t1', 'mixed', i):.2f}×"] for i in indexes])
+                         f"{med(f'mixed_t{maximum}', 'mixed', i)/med('mixed_t1', 'mixed', i):.2f}×"] for i in native_indexes])
     memory = table(['实现', 'RSS 增量 MiB', 'RSS B/key', 'adapter mode', 'key encoding'],
                    [[LABEL[i], value('single_uniform', 'insert', i, 'rss_delta_bytes', 2**20, 1),
                      value('single_uniform', 'insert', i, 'bytes_per_key', 1, 1),
@@ -121,7 +127,7 @@ def main():
                                                        'branch_miss_per_op', 'dtlb_miss_per_op')]] for i in indexes])
     latency = table(['实现', '1 线程 p50/p95/p99 µs', f'{maximum} 线程 p50/p95/p99 µs'],
                     [[LABEL[i], *[' / '.join(value(f'mixed_t{t}', 'mixed', i, f'latency_{p}_ns', 1000)
-                                             for p in ('p50', 'p95', 'p99')) for t in (1, maximum)]] for i in indexes])
+                                             for p in ('p50', 'p95', 'p99')) for t in (1, maximum)]] for i in native_indexes])
     missing_counters = {metric: sum(r[metric] == '' for r in rows) for metric in
                         ('cycles_per_op', 'instructions_per_op', 'ipc', 'l1d_miss_per_op',
                          'llc_miss_per_op', 'branch_miss_per_op', 'dtlb_miss_per_op')}
@@ -129,6 +135,7 @@ def main():
     cpu_name = next(line.split(':', 1)[1].strip() for line in meta['cpu_topology'].splitlines()
                     if line.startswith('Model name:'))
     source_id = meta['source']['source_sha256'] if meta.get('source') else 'not recorded'
+    harness_columns = len(rows[0]) - 5
     report = f'''# memtable-bench：Xeon 6240 / 10.2.12.79 对比结果
 
 运行时间：{meta['started_at']} — {meta['finished_at']}（Asia/Shanghai）。
@@ -167,7 +174,7 @@ def main():
 | 硬件计数器 | perf_event_open 用户态事件；独立计数器按 enabled/running 时间缩放；缺失保留空值 |
 
 源码目录已同步到 `/DATA/disk1/jinhelin/github/memtable-bench`。
-源码 manifest SHA256：`{source_id}`；对应本地工作区的未提交 adapter 接入代码。
+源码 manifest SHA256：`{source_id}`；对应本轮实际测量时保存的源码快照。
 统一二进制 SHA256：`{meta['binary_sha256']}`。
 
 ## 1. 单线程 uniform
@@ -191,7 +198,13 @@ UnoDB 和 HOT 存储 nibble 编码 key：33 B 变成 67 B；HOT 另保留原始 
 BTreeOLC 使用不可变记录、额外查找和 256 个 key 分片锁；Masstree 使用每索引分配上下文、
 延迟到 Destroy 回收；HOT 的进程级节点池可以保留内存。上述选择都会影响 RSS 和生命周期。
 
-## 2. 并发扩展性
+## 2. 混合 workload
+
+### 单线程：全部实现
+
+{single_mixed}
+
+### 原生并发实现的扩展性
 
 {concurrent}
 
@@ -199,6 +212,8 @@ BTreeOLC 使用不可变记录、额外查找和 256 个 key 分片锁；Masstre
 
 std::map、Abseil、TLX 和 HOT 使用整体读写锁；HOT 是 HOTSingleThreaded，未接入 ROWEX。
 RocksDB、BTreeOLC、UnoDB、Masstree、Wormhole 采用各自原生并发路径及已标明的 adapter 辅助机制。
+只有这五个原生并发实现进入多线程表和延迟表。std::map、Abseil、TLX 和当前 HOT
+仅保留单线程数据；已有的 wrapper 多线程记录单独列入 `excluded.csv`。
 这些曲线比较当前接入方式的扩展性。不同线程数会生成相应线程 trace；同一线程数下所有
 adapter 的 trace 一致。核固定在同一个 socket，未使用 SMT，但共享服务器仍可能有干扰。
 
@@ -218,14 +233,19 @@ trace 准备、CSV 输出和阶段间 RSS 采样。单次 Freeze 很短，perf �
 这些是每次操作的事件数，不是 cache/branch miss 百分比；没有相应访问总数可用于分母。
 IPC 来自 instructions/cycles。各 metric 分别对每轮结果取中位数，因此表中三个中位数
 不保证满足精确的除法等式。完整 Insert/Scan/并发计数器均保存在原始和汇总 CSV 中。
-缺失字段计数（全部 {len(rows)} 条 phase 记录）：`{json.dumps(missing_counters)}`。
+缺失字段计数（纳入的 {len(rows)} 条 phase 记录）：`{json.dumps(missing_counters)}`。
 
 ## 可复现性
 
-完成 {meta['completed_processes']} 个正式进程、{len(rows)} 条 phase 记录；另有 {len(indexes)} 个预热进程。
-{meta['checksum_groups_verified']} 个 scenario/repeat 组合中，全部 {len(indexes)} 个 adapter 的操作数、
-返回行数和 checksum 一致；所有全量 flush 返回 {meta['keys']:,} 行且严格有序。
-HOT 已在这台 native x86 机器上参与接口测试和全部 benchmark。
+原始测量完成 {meta['completed_processes']} 个正式进程；另有 {len(indexes)} 个预热进程。
+本报告纳入 {selection['included_processes']} 个进程、{len(rows)} 条 phase 记录；
+排除 {selection['excluded_processes']} 个 wrapper 多线程进程、{len(excluded)} 条记录。
+所有原始记录先核对完整性和同场景 checksum，再按 `native-concurrency-v1` 选择。
+单线程场景覆盖全部 {len(indexes)} 个 adapter，多线程场景只覆盖原生并发 adapter。
+所有全量 flush 返回 {meta['keys']:,} 行且严格有序。HOT 只出现在单线程结果中。
+
+`selection.json` 保存原始 raw.csv 的 SHA256、来源和纳入/排除计数。
+本报告是对已有测量的重整，没有重新运行性能测量；Wormhole 的源码版本以原始快照为准。
 
 起始负载：`{meta['load_before']}`；结束负载：`{meta['load_after']}`。
 没有独占 CPU、关闭后台程序或锁定频率。只测试一组规模、key/value 长度、命中读和 80/20 mix，
@@ -241,7 +261,7 @@ Boost headers 为 1.86.0。`source-manifest.json`、`build-config.txt`、`build-
 
 ### 文件与重跑
 
-- `raw.csv`：36 列 harness schema + scenario/repeat/seed/run_sequence/process_elapsed_s。
+- 原始 `raw.csv`：{harness_columns} 列 harness schema + scenario/repeat/seed/run_sequence/process_elapsed_s。
 - `summary.csv`：各 metric 的 median/Q1/Q3/min/max 和有效样本数。
 - `metadata.json`、`commands.jsonl`：机器、版本、执行顺序、完整命令、负载和退出码。
 - `runs/`：每个进程的 CSV 和日志；预热有明确标记。
@@ -256,8 +276,8 @@ python3 scripts/benchmark_matrix.py --binary build-linux/memtable_bench \\
 python3 scripts/summarize_benchmark.py results/new-run
 ```
 '''
-    (root / 'report.md').write_text(report)
-    print(f'Validated {len(rows)} phase rows; {len(stats)} metric summaries; report: {root / "report.md"}')
+    (destination / 'report.md').write_text(report)
+    print(f'Validated {len(rows)} phase rows; {len(stats)} metric summaries; report: {destination / "report.md"}')
 
 
 if __name__ == '__main__':
