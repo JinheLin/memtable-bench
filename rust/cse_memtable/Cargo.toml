@@ -1,0 +1,20 @@
+[package]
+name = "memtable-bench-cse"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+byteorder = "=1.5.0"
+bytes = "=1.11.1"
+rand = "=0.8.5"
+crossbeam-skiplist = { git = "https://github.com/crossbeam-rs/crossbeam", rev = "c4abd1b93149108dfa13c0cd42c878657c618bad" }
+
+[profile.release]
+debug = 1
+panic = "unwind"
+
+[workspace]

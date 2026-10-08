@@ -2,6 +2,7 @@ function(memtable_unodb)
   memtable_fetch(unodb https://github.com/unodb-dev/unodb.git
     89f52799743ec2093426bdcf7a7cbaaa95ca848c)
   memtable_patch("${unodb_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/cmake/patches/unodb-thread-registration.patch")
+  memtable_patch("${unodb_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/cmake/patches/unodb-iterator-restart.patch")
   # Respect an installed/user-selected Boost. Otherwise fetch only pinned headers.
   find_package(Boost QUIET)
   if(NOT Boost_FOUND)

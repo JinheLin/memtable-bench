@@ -1,13 +1,22 @@
 # memtable-bench
 
 A C++20 harness for comparing ordered in-memory indexes as LSM MemTable candidates.
+Supported environment: **native Linux x86-64 with GCC or Clang**. CMake rejects
+other operating systems, architectures and cross builds before fetching dependencies.
 The reference `std::map` adapter has no external dependencies. Eight optional
 index adapters are implemented with pinned upstream sources. The actual binary's
 `--list-indexes` output is authoritative, including CPU restrictions and key limits.
 
+For MVCC databases, use **`mvcc_bench`**. It adds `cse_arena` and `cse_crossbeam`
+from cloud-storage-engine, and runs all eleven candidates with snapshot reads,
+tombstones, visible-row range scans, batched writes and complete-version flushes.
+See [MVCC workloads, CSE build instructions and CSV schema](docs/mvcc.md).
+The original `memtable_bench` remains the exact-key structural diagnostic;
+its `--internal-key` option alone does not implement snapshot visibility.
+
 ## Status
 
-| Adapter | CMake option suffix | Concurrency in this harness | Benchmark workers | Complete binary key limit |
+| Adapter | CMake option suffix | Concurrency in this harness | Benchmark workers | Key limit |
 | --- | --- | --- | --- | --- |
 | `std_map` | Default | Coarse reader/writer lock | 1 only | Allocation limits |
 | `abseil_btree` | `ABSEIL` | Coarse reader/writer lock | 1 only | Allocation limits |
@@ -18,6 +27,8 @@ index adapters are implemented with pinned upstream sources. The actual binary's
 | `masstree` | `MASSTREE` | Native Masstree locks + deferred node/value reclamation | 1 and multiple | 1024 bytes |
 | `hot` | `HOT` | HOTSingleThreaded + coarse reader/writer lock | 1 only | 127 bytes |
 | `wormhole` | `WORMHOLE` | Native `whsafe` API + parked thread references | 1 and multiple | 65535 bytes |
+| `cse_arena` (`mvcc_bench`) | `CSE_SOURCE_DIR` | Native version chains, concurrent reads, serialized batch writer | 1 and SWMR | 65535-byte user key |
+| `cse_crossbeam` (`mvcc_bench`) | `CSE_SOURCE_DIR` | Native version chains, concurrent reads, serialized batch writer | 1 and SWMR | 65535-byte user key |
 
 Multithreaded workloads are restricted to the integrated implementation's
 **native** read/write concurrency. `std_map`, Abseil, TLX and the current
@@ -27,23 +38,18 @@ HOT ROWEX is not integrated. `--list-indexes` publishes `native_concurrent=0/1`;
 the runners check this capability before executing a matrix, and the harness
 rejects an ineligible thread count before creating CSV or dataset output.
 
-Every optional option is named `MEMTABLE_BENCH_FETCH_<SUFFIX>` and defaults to OFF.
+The eight optional index switches are named `MEMTABLE_BENCH_FETCH_<SUFFIX>` and
+default to OFF. CSE uses `MEMTABLE_BENCH_CSE_SOURCE_DIR`, an optional path to the
+verified local export; its two candidates are listed by `mvcc_bench`.
 These adapters use the actual upstream index; unavailable adapters fail before
 creating a result file. HOT requires x86-64 with AVX2, BMI, BMI2, POPCNT and LZCNT.
-An ARM64 build explicitly leaves it unavailable. A compiled x86 binary checks CPU
-features before entering the HOT translation unit.
-
-**Local validation (2026-10-08):** AppleClang 16, macOS, ARM64/M4: all eight
-available adapters (including `std_map`) passed the combined contract and workload
-tests. BTreeOLC, UnoDB, Masstree and Wormhole also passed ASan/UBSan tests.
-HOT compiled and linked for x86-64 with AppleClang; Rosetta does not expose the
-required ISA, so HOT was **not runtime-tested here**. The Linux x86 GCC/Clang CI
-workflow includes a required HOT runtime check; consult its workflow runs for
-the current remote CI status.
+The compiled binary checks HOT CPU features before entering its translation unit.
 
 **Native Linux validation (2026-10-08):** GCC 11.3.1 on Xeon Gold 6240:
-all nine adapters, including HOT, passed 12/12 contract/workload/policy tests,
-including the controlled dataset and split-measurement checks.
+all eleven MVCC candidates, including HOT and both CSE backends, passed 15/15
+contract/workload/policy tests. The existing exact-key harness remains covered.
+The MVCC pilot completed 160 processes / 524 phase rows with matching contents;
+see [verification](docs/testing.md) and [pilot records](benchmarks/mvcc-pilot-2026-10-08/README.md).
 The workload tests also run with node 0 memory binding and pinned physical cores.
 
 **Measured on that server:** the original 1M-record matrix has five repetitions.
@@ -70,6 +76,7 @@ See the integration notes below before comparing memory or concurrent throughput
 include/memtable_bench/  Index/cursor contracts and dataset definitions
 src/                    Harness, datasets and concrete index adapters
 cmake/                  Pinned dependency setup and explicit upstream patches
+rust/                   Standalone CSE bridge, locked Rust dependencies and source pins
 tests/                  Adapter, dataset and workload checks
 scripts/                Build, experiment, summary and plotting tools
 benchmarks/             Published measurements and compressed per-process records
@@ -80,6 +87,7 @@ results/                Ignored output directory for new experiments
 ## Build
 
 ```sh
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j 4
 ctest --test-dir build --output-on-failure
@@ -92,32 +100,23 @@ with the proxy-free build script:
 ./scripts/build_all.sh build-all -G Ninja
 ```
 
-On macOS, select system compilers in a **new** build directory if needed:
-
-```sh
-./scripts/build_all.sh build-all -G Ninja \
-  -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++
-```
-
 To enable only the five research indexes:
 
 ```sh
-env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
-    -u http_proxy -u https_proxy -u all_proxy \
-  cmake -S . -B build-research -DCMAKE_BUILD_TYPE=Release \
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
+cmake -S . -B build-research -DCMAKE_BUILD_TYPE=Release \
   -DMEMTABLE_BENCH_FETCH_BTREEOLC=ON -DMEMTABLE_BENCH_FETCH_UNODB=ON \
   -DMEMTABLE_BENCH_FETCH_MASSTREE=ON -DMEMTABLE_BENCH_FETCH_HOT=ON \
   -DMEMTABLE_BENCH_FETCH_WORMHOLE=ON
-cmake --build build-research --target memtable_bench adapter_contract key_dataset_contract -j 4
+cmake --build build-research -j 4
 ctest --test-dir build-research --output-on-failure
 ./build-research/memtable_bench --list-indexes
 ```
 
-The new integrations target 64-bit Linux/macOS with GCC/Clang, on x86-64 or ARM64;
-HOT is x86-only. Wormhole uses SSE4.2 on x86 and CRC extensions on ARM64, so the
-host must support those instructions. UnoDB's x86 baseline uses SSE4.1, with AVX2
-explicitly disabled in this integration. No performance results from Rosetta
-should be mixed with native results.
+Optional indexes may require additional CPU instructions. HOT requires AVX2,
+BMI/BMI2, POPCNT and LZCNT; Wormhole uses SSE4.2. UnoDB uses SSE4.1, with AVX2
+explicitly disabled in this integration. Run on native hardware supporting the
+requested adapters. CSE also requires a native Linux x86-64 stable Rust toolchain.
 
 The five new integrations use full commit pins, and configuration verifies the checked-out
 commit even with `FETCHCONTENT_SOURCE_DIR_<NAME>` overrides. For the five new
@@ -147,8 +146,9 @@ libraries disabled. Pins and license details are in [THIRD_PARTY.md](THIRD_PARTY
   --key-size 24 --value-size 64 --output rocksdb.csv
 ```
 
-For the newly integrated native concurrent indexes, use a common append-only
-MVCC workload (one result file per index):
+For the native concurrent indexes, use the exact-key append workload below for
+structure diagnostics (one result file per index). Use `mvcc_bench` for database
+snapshot visibility; its workloads and CSV schema are described in [docs/mvcc.md](docs/mvcc.md):
 
 ```sh
 for index in btreeolc unodb_art masstree wormhole; do
@@ -168,8 +168,7 @@ On Linux, pin worker threads and bind their future allocations to a NUMA node:
 
 CPU IDs must belong to the process's allowed CPU set. The NUMA option uses Linux
 `set_mempolicy(MPOL_BIND)` per thread and fails if the requested binding is not
-permitted. On macOS these options are rejected explicitly. For a full process
-memory/CPU policy, launch through `numactl` as well. Build commands should be run
+permitted. For a full process memory/CPU policy, launch through `numactl` as well. Build commands should be run
 with proxy environment variables unset on hosts where that is required.
 
 ### Reproducible Linux matrix
@@ -480,8 +479,8 @@ Historical reports and raw files remain unchanged.
 | `dataset_hash,lcp_min,lcp_p50,lcp_p95,lcp_p99,lcp_max,lcp_mean` | Precomputed input digest and adjacent-user-key LCP; blank in inline mode |
 | `logical_payload_bytes,payload_gb_s` | Logical byte volume for Insert/GetCopy/full Scan and decimal GB/s; rate blank for other phases |
 
-On macOS, and on Linux when `perf_event_open` is unavailable or restricted,
-hardware counter fields are **empty**, never zero-filled. Linux counts exclude
+When `perf_event_open` is unavailable or restricted, hardware counter fields
+are **empty**, never zero-filled. Counts exclude
 kernel/hypervisor execution and are scaled by enabled/running time when multiplexed.
 The counters are thread-local. A stage 2 metric is blank if any worker lacks it.
 For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
@@ -496,7 +495,7 @@ For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
   serialized by a 256-stripe mutex array because upstream `insert` returns no
   created/upsert result. The extra lookup, stripes and record allocations are
   timed. The patch fixes empty-node `lowerBound`, uninitialized lookup misses,
-  missing headers and ARM pause instructions. The upstream OLC page fields use
+  missing standalone headers. The upstream OLC page fields use
   plain reads under version validation; ASan/UBSan success is not a proof of
   C++ data-race freedom. TSan cleanliness is not claimed.
 - **UnoDB ART:** uses `olc_db<key_view,value_view>` and QSBR. Terminated nibble
@@ -508,6 +507,8 @@ For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
   this behavior. Live cursors use public `scan_from`, copy one record, and re-seek
   for the next movement. Frozen cursors use the pinned internal
   `test_only_iterator()` API for native linear traversal, decoding each key.
+  An explicit iterator patch copies the restart key before mutable traversal
+  and corrects the keyless-leaf lower-bound comparison. The copy cost is timed.
   This internal API makes the commit pin part of the adapter's compatibility
   contract. No update/remove operation is exposed.
   This pinned revision uses keyless leaves for `key_view`: complete keys are
@@ -520,9 +521,7 @@ For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
   records are deferred until Destroy, avoiding the upstream server's global RCU
   thread lists and allocator pools. Live cursors use native range-scan callbacks;
   frozen cursors traverse leaf permutations, sibling links and trie layers.
-  The ARM patch supplies atomic exchange, memory fences, pause/prefetch and
-  byte-swap operations. ARM fences are conservative and their overhead is part
-  of results. A separate permutation patch handles the empty remainder of a
+  The permutation patch handles the empty remainder of a
   full 64-bit permutation without shifting by 64. With `--internal-key`, maximum
   user key size is 1015 bytes.
 - **HOT:** uses the upstream `HOTSingleThreaded` trie, C-string key extraction
@@ -534,6 +533,7 @@ For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
   key with `--internal-key`. Clang patches fix restrict/alignment declarations,
   template definition ordering/specializations and replace an equivalent MMX
   byte-mask operation with SSE2. ISA flags apply only to the HOT source file.
+  A separate patch fixes lower/upper bounds when the tree has one record.
   Native x86 contract/workload tests have passed on the Xeon server. A separate
   ROWEX adapter remains future work if native HOT concurrency is needed.
 - **Wormhole:** uses native `whsafe_get`/`whsafe_merge`, with one parked reference
@@ -543,7 +543,7 @@ For `ordered_flush`, `items_per_s` is the useful throughput; `ops` is one scan.
   deadlock a write in the same thread. Frozen cursors use native `whunsafe`
   iteration after admitted writes drain. The assembly patch uses newline-separated
   instructions and portable 16-byte alignment for the coroutine helper symbols
-  on Apple's ARM assembler. The unaligned-load patch replaces typed CRC/common-prefix
+  in the pinned upstream code. The unaligned-load patch replaces typed CRC/common-prefix
   reads from byte buffers with memcpy, preserving arbitrary view alignment.
   Published experiments preserve their original source snapshots from before
   this sanitizer fix. Complete keys are capped at 65535 bytes; values must
@@ -591,7 +591,16 @@ scripts/summarize_sensitivity.py Completeness validation and sensitivity report
 tests/key_dataset_contract.cc Key generation/ordering/LCP regression tests
 include/memtable_bench/index.h Unified ordered-index interface and metadata
 src/index.cc                   std/Abseil/TLX adapters, registry, InternalKey encoding
-src/main.cc                    Workloads, placement, metrics, CSV
+src/main.cc                    Exact-key diagnostic workloads and CSV v3
+include/memtable_bench/measurement.h Shared Linux placement, RSS, PMU and latency
+include/memtable_bench/mvcc.h   MVCC table, version cursor and visibility contracts
+src/mvcc_main.cc               MVCC workloads and CSV mvcc-v1
+src/mvcc.cc                    InternalKey MVCC wrappers and visible scans
+src/cse_index.cc               CSE native version-chain C ABI adapter
+rust/cse_memtable/             Pinned Rust bridge and source digests
+scripts/mvcc_matrix.py          MVCC screening matrix and validation
+scripts/export_cse_memtable.py  Verified local CSE source export
+docs/mvcc.md                    CSE scope, workload semantics, schema and examples
 src/adapter_common.h           Write admission, immutable records, nibble codec
 src/*_index.cc                 RocksDB and five research adapters
 cmake/*.cmake                  Pinned downloads and embedded upstream builds

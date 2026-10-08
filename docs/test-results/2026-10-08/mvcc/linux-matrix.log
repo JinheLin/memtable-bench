@@ -1,0 +1,273 @@
+[0/2] Re-checking globbed directories...
+[1/2] Re-running CMake...
+CMake Warning (dev) at vendor/tlx/CMakeLists.txt:19 (project):
+  Policy CMP0048 is not set: project() command manages VERSION variables.
+  Run "cmake --help-policy CMP0048" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  The following variable(s) would be set to empty:
+
+    PROJECT_VERSION
+    PROJECT_VERSION_MAJOR
+    PROJECT_VERSION_MINOR
+    PROJECT_VERSION_PATCH
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- TLX CMAKE_CXX_FLAGS: -Wshadow -Wold-style-cast -std=c++20 -g -W -Wall -Wextra -fPIC  -Wcast-qual -Winit-self -Wnoexcept -Woverloaded-virtual -Wredundant-decls
+-- Enabling RTTI in all builds
+-- ROCKSDB_PLUGINS: 
+-- ROCKSDB PLUGINS TO BUILD 
+-- JNI library is disabled
+-- Warning diagnostics are not fatal
+-- Using SSE4.1 instructions on x86_64
+-- Code coverage reporting not enabled
+-- SANITIZER_ENV: 
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+CMake Warning at /usr/share/cmake/Modules/FindBoost.cmake:1384 (message):
+  New Boost version may have incorrect or missing dependencies and imported
+  targets
+Call Stack (most recent call first):
+  /usr/share/cmake/Modules/FindBoost.cmake:1508 (_Boost_COMPONENT_DEPENDENCIES)
+  /usr/share/cmake/Modules/FindBoost.cmake:2119 (_Boost_MISSING_DEPENDENCIES)
+  vendor/unodb/CMakeLists.txt:372 (find_package)
+
+
+-- Not using clang-tidy due to non-clang compiler being used
+-- cppcheck not found
+-- cpplint not found
+-- Build configuration and user-set CMake options:
+-- CMAKE_BUILD_TYPE: Release
+-- STANDALONE: OFF
+-- AVX2: OFF
+-- SPINLOCK_LOOP: PAUSE
+-- STATS: OFF
+-- TESTS: OFF
+-- BENCHMARKS: OFF
+-- MAINTAINER_MODE: OFF
+-- COVERAGE: OFF
+-- GCOV_PATH: NOTFOUND
+-- SANITIZE_ADDRESS: OFF
+-- SANITIZE_THREAD: OFF
+-- SANITIZE_UB: OFF
+-- STATIC_ANALYSIS: OFF
+-- CPPCHECK_AGGRESSIVE: OFF
+-- IWYU: OFF
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+[0/2] Re-checking globbed directories...
+[1/2] Building CXX object CMakeFiles/mvcc_bench.dir/src/mvcc_main.cc.o
+[2/2] Linking CXX executable mvcc_bench
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+      Start  1: mvcc_contract
+ 1/15 Test  #1: mvcc_contract ....................   Passed    0.04 sec
+      Start  2: mvcc_smoke
+ 2/15 Test  #2: mvcc_smoke .......................   Passed    0.05 sec
+      Start  3: key_dataset_contract
+ 3/15 Test  #3: key_dataset_contract .............   Passed    0.02 sec
+      Start  4: adapter_contract
+ 4/15 Test  #4: adapter_contract .................   Passed    0.54 sec
+      Start  5: smoke
+ 5/15 Test  #5: smoke ............................   Passed    0.01 sec
+      Start  6: rocksdb_smoke
+ 6/15 Test  #6: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  7: rocksdb_reject_upsert
+ 7/15 Test  #7: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  8: btreeolc_smoke
+ 8/15 Test  #8: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  9: unodb_art_smoke
+ 9/15 Test  #9: unodb_art_smoke ..................   Passed    0.02 sec
+      Start 10: masstree_smoke
+10/15 Test #10: masstree_smoke ...................   Passed    0.01 sec
+      Start 11: wormhole_smoke
+11/15 Test #11: wormhole_smoke ...................   Passed    0.02 sec
+      Start 12: unodb_reject_upsert
+12/15 Test #12: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 13: mvcc_integration
+13/15 Test #13: mvcc_integration .................   Passed    0.56 sec
+      Start 14: benchmark_policy
+14/15 Test #14: benchmark_policy .................   Passed    0.37 sec
+      Start 15: harness_integration
+15/15 Test #15: harness_integration ..............   Passed    1.47 sec
+
+100% tests passed, 0 tests failed out of 15
+
+Total Test time (real) =   3.13 sec
+1/160 prefix-s1-t1-cse_arena-r1
+2/160 deep-s1-t1-std_map-r1
+3/160 value-s2-t1-abseil_btree-r1
+4/160 prefix-s1-t1-wormhole-r1
+5/160 deep-s1-t1-unodb_art-r1
+6/160 base-s1-t1-std_map-r1
+7/160 prefix-s1-t1-btreeolc-r1
+8/160 base-s2-t1-rocksdb_inlineskiplist-r1
+9/160 deep-s3-t1-hot-r1
+10/160 base-s2-t1-masstree-r1
+11/160 value-s1-t1-rocksdb_inlineskiplist-r1
+12/160 prefix-s3-t1-cse_arena-r1
+13/160 deep-s2-t1-wormhole-r1
+14/160 deep-s2-t1-hot-r1
+15/160 value-s3-t1-std_map-r1
+16/160 deep-s3-t1-unodb_art-r1
+17/160 value-s2-t1-btreeolc-r1
+18/160 deep-s2-t1-rocksdb_inlineskiplist-r1
+19/160 deep-s2-t4-unodb_art-r1
+20/160 base-s1-t1-abseil_btree-r1
+21/160 value-s1-t1-cse_crossbeam-r1
+22/160 base-s2-t1-hot-r1
+23/160 base-s3-t1-std_map-r1
+24/160 base-s1-t1-wormhole-r1
+25/160 value-s2-t4-unodb_art-r1
+26/160 value-s2-t1-tlx_btree-r1
+27/160 base-s2-t4-rocksdb_inlineskiplist-r1
+28/160 prefix-s1-t1-unodb_art-r1
+29/160 value-s2-t1-std_map-r1
+30/160 prefix-s2-t1-cse_arena-r1
+31/160 base-s2-t1-std_map-r1
+32/160 prefix-s1-t1-rocksdb_inlineskiplist-r1
+33/160 deep-s2-t1-cse_arena-r1
+34/160 base-s1-t1-rocksdb_inlineskiplist-r1
+35/160 base-s3-t1-cse_crossbeam-r1
+36/160 base-s1-t1-unodb_art-r1
+37/160 base-s2-t4-cse_crossbeam-r1
+38/160 prefix-s3-t1-cse_crossbeam-r1
+39/160 deep-s3-t1-tlx_btree-r1
+40/160 base-s1-t1-cse_arena-r1
+41/160 deep-s2-t4-wormhole-r1
+42/160 base-s3-t1-wormhole-r1
+43/160 base-s1-t1-tlx_btree-r1
+44/160 value-s1-t1-unodb_art-r1
+45/160 base-s2-t1-btreeolc-r1
+46/160 base-s2-t1-abseil_btree-r1
+47/160 value-s3-t1-hot-r1
+48/160 deep-s1-t1-abseil_btree-r1
+49/160 deep-s1-t1-cse_arena-r1
+50/160 value-s1-t1-tlx_btree-r1
+51/160 value-s2-t1-unodb_art-r1
+52/160 value-s1-t1-abseil_btree-r1
+53/160 prefix-s2-t1-masstree-r1
+54/160 base-s2-t4-masstree-r1
+55/160 value-s2-t1-masstree-r1
+56/160 prefix-s1-t1-tlx_btree-r1
+57/160 base-s2-t1-tlx_btree-r1
+58/160 deep-s2-t1-unodb_art-r1
+59/160 value-s2-t1-cse_arena-r1
+60/160 prefix-s1-t1-std_map-r1
+61/160 deep-s2-t1-tlx_btree-r1
+62/160 deep-s3-t1-btreeolc-r1
+63/160 prefix-s2-t1-hot-r1
+64/160 base-s2-t4-cse_arena-r1
+65/160 value-s1-t1-masstree-r1
+66/160 value-s1-t1-hot-r1
+67/160 base-s2-t4-unodb_art-r1
+68/160 prefix-s2-t4-btreeolc-r1
+69/160 base-s2-t1-unodb_art-r1
+70/160 base-s1-t1-cse_crossbeam-r1
+71/160 prefix-s2-t4-wormhole-r1
+72/160 base-s3-t1-btreeolc-r1
+73/160 prefix-s3-t1-wormhole-r1
+74/160 value-s1-t1-btreeolc-r1
+75/160 deep-s3-t1-cse_crossbeam-r1
+76/160 deep-s1-t1-hot-r1
+77/160 value-s3-t1-tlx_btree-r1
+78/160 prefix-s2-t1-btreeolc-r1
+79/160 deep-s3-t1-abseil_btree-r1
+80/160 value-s2-t4-masstree-r1
+81/160 prefix-s2-t1-std_map-r1
+82/160 value-s3-t1-masstree-r1
+83/160 prefix-s2-t1-rocksdb_inlineskiplist-r1
+84/160 base-s3-t1-hot-r1
+85/160 prefix-s3-t1-tlx_btree-r1
+86/160 value-s2-t1-rocksdb_inlineskiplist-r1
+87/160 deep-s2-t1-abseil_btree-r1
+88/160 prefix-s1-t1-abseil_btree-r1
+89/160 base-s1-t1-masstree-r1
+90/160 base-s3-t1-abseil_btree-r1
+91/160 deep-s3-t1-wormhole-r1
+92/160 deep-s3-t1-rocksdb_inlineskiplist-r1
+93/160 base-s3-t1-masstree-r1
+94/160 deep-s2-t4-rocksdb_inlineskiplist-r1
+95/160 prefix-s2-t1-tlx_btree-r1
+96/160 base-s2-t1-wormhole-r1
+97/160 deep-s1-t1-cse_crossbeam-r1
+98/160 base-s2-t4-btreeolc-r1
+99/160 base-s3-t1-rocksdb_inlineskiplist-r1
+100/160 prefix-s2-t4-cse_arena-r1
+101/160 value-s2-t4-cse_crossbeam-r1
+102/160 value-s2-t4-rocksdb_inlineskiplist-r1
+103/160 value-s3-t1-cse_crossbeam-r1
+104/160 prefix-s2-t1-cse_crossbeam-r1
+105/160 base-s3-t1-cse_arena-r1
+106/160 value-s1-t1-wormhole-r1
+107/160 prefix-s3-t1-abseil_btree-r1
+108/160 value-s3-t1-unodb_art-r1
+109/160 deep-s3-t1-std_map-r1
+110/160 value-s3-t1-wormhole-r1
+111/160 deep-s1-t1-wormhole-r1
+112/160 prefix-s3-t1-hot-r1
+113/160 base-s1-t1-hot-r1
+114/160 deep-s1-t1-tlx_btree-r1
+115/160 value-s3-t1-cse_arena-r1
+116/160 value-s2-t1-cse_crossbeam-r1
+117/160 value-s3-t1-btreeolc-r1
+118/160 base-s3-t1-tlx_btree-r1
+119/160 value-s3-t1-abseil_btree-r1
+120/160 value-s2-t4-cse_arena-r1
+121/160 base-s2-t4-wormhole-r1
+122/160 deep-s2-t4-masstree-r1
+123/160 deep-s1-t1-rocksdb_inlineskiplist-r1
+124/160 base-s1-t1-btreeolc-r1
+125/160 value-s1-t1-std_map-r1
+126/160 prefix-s1-t1-hot-r1
+127/160 value-s3-t1-rocksdb_inlineskiplist-r1
+128/160 deep-s2-t4-cse_crossbeam-r1
+129/160 deep-s2-t1-cse_crossbeam-r1
+130/160 deep-s2-t4-cse_arena-r1
+131/160 prefix-s2-t4-unodb_art-r1
+132/160 deep-s2-t1-btreeolc-r1
+133/160 base-s3-t1-unodb_art-r1
+134/160 prefix-s2-t1-abseil_btree-r1
+135/160 prefix-s3-t1-unodb_art-r1
+136/160 value-s2-t1-wormhole-r1
+137/160 prefix-s3-t1-btreeolc-r1
+138/160 deep-s2-t1-std_map-r1
+139/160 base-s2-t1-cse_crossbeam-r1
+140/160 prefix-s3-t1-masstree-r1
+141/160 deep-s1-t1-masstree-r1
+142/160 prefix-s3-t1-std_map-r1
+143/160 base-s2-t1-cse_arena-r1
+144/160 prefix-s2-t4-masstree-r1
+145/160 prefix-s2-t1-unodb_art-r1
+146/160 prefix-s1-t1-cse_crossbeam-r1
+147/160 deep-s3-t1-masstree-r1
+148/160 deep-s2-t4-btreeolc-r1
+149/160 prefix-s1-t1-masstree-r1
+150/160 value-s2-t1-hot-r1
+151/160 value-s1-t1-cse_arena-r1
+152/160 deep-s1-t1-btreeolc-r1
+153/160 prefix-s2-t4-rocksdb_inlineskiplist-r1
+154/160 deep-s3-t1-cse_arena-r1
+155/160 deep-s2-t1-masstree-r1
+156/160 prefix-s3-t1-rocksdb_inlineskiplist-r1
+157/160 value-s2-t4-wormhole-r1
+158/160 value-s2-t4-btreeolc-r1
+159/160 prefix-s2-t1-wormhole-r1
+160/160 prefix-s2-t4-cse_crossbeam-r1

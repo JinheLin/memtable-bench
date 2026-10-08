@@ -48,6 +48,12 @@ measured; see [verification notes](../docs/testing.md#wormhole-alignment-regress
 
 ## Functional pilots
 
+The [MVCC/CSE pilot](mvcc-pilot-2026-10-08/README.md) uses the new `mvcc-v1`
+model: eleven implementations, 10,000 present user keys with 4/16 versions,
+four profiles, one repeat, 160 processes and 524 phase rows. Seven native
+concurrent implementations run SWMR. Its contents and version counts agree
+across candidates. Its times are not comparable to the legacy exact-key suites.
+
 | Pilot | Stored records | Repeats | Processes | Phase rows | Purpose |
 | --- | --- | --- | --- | --- | --- |
 | [Range scan pilot](range-scan-pilot-2026-10-08/report.md) | 10,000 | 1 | 90 | 270 | Validate scan lengths, row counts and checksums |

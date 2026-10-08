@@ -220,8 +220,6 @@ std::vector<AdapterInfo> ListAdapters() {
 #ifdef MEMTABLE_BENCH_HAVE_HOT
       {"hot", HOTSupported(), HOTSupported() ? "HOTSingleThreaded; coarse reader/writer lock; terminated nibble keys" :
         "CPU lacks AVX2/BMI/BMI2/POPCNT/LZCNT required by HOT", false, true, 127, "nibble_terminated"},
-#elif defined(MEMTABLE_BENCH_HOT_UNSUPPORTED)
-      {"hot", false, "HOT requires x86_64 AVX2/BMI2; this target architecture is unsupported", false, true, 127, "nibble_terminated"},
 #else
       {"hot", false, "configure -DMEMTABLE_BENCH_FETCH_HOT=ON; requires x86_64 AVX2/BMI2", false, true, 127, "nibble_terminated"},
 #endif

@@ -63,6 +63,25 @@ void VerifyBinaryRecords(const mb::AdapterInfo& info) {
   VerifyContents(*index, expected);
 }
 
+void VerifyLeafLowerBounds(const mb::AdapterInfo& info) {
+  auto index = mb::MakeIndex(info.name);
+  const std::string stored("a\0", 2);
+  assert(index->Insert(stored, "leaf"));
+  const std::vector<std::string> probes = {"", "a", stored, stored + '\0', "b"};
+  for (int frozen = 0; frozen < 2; ++frozen) {
+    auto cursor = index->NewCursor();
+    for (const auto& probe : probes) {
+      const bool expected = probe <= stored;
+      assert(cursor->Seek(probe) == expected);
+      if (expected) {
+        assert(cursor->Key() == stored && cursor->Value() == "leaf");
+        assert(!cursor->Next());
+      }
+    }
+    index->Freeze();
+  }
+}
+
 void VerifyManyVersions(const mb::AdapterInfo& info) {
   auto index = mb::MakeIndex(info.name);
   std::vector<std::size_t> order(info.name == "btreeolc" ? 65536 : 4096);
@@ -300,6 +319,7 @@ int main() {
     assert(frozen->Seek(gap) && frozen->Key() == older);
     assert(!frozen->Seek(mb::EncodeKey(9, 16, true)));
     VerifyBinaryRecords(info);
+    VerifyLeafLowerBounds(info);
     VerifyManyVersions(info);
     VerifyUnalignedInputs(info);
     if (info.native_concurrent) {

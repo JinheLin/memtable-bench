@@ -1,0 +1,59 @@
+-- The CXX compiler identification is GNU 11.3.1
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline
+[1/14] Building CXX object CMakeFiles/memtable_bench_index.dir/src/mvcc.cc.o
+[2/14] Building CXX object CMakeFiles/memtable_bench_index.dir/src/index.cc.o
+[3/14] Building CXX object CMakeFiles/memtable_bench_index.dir/src/key_dataset.cc.o
+[4/14] Linking CXX static library libmemtable_bench_index.a
+[5/14] Building CXX object CMakeFiles/key_dataset_contract.dir/tests/key_dataset_contract.cc.o
+[6/14] Building CXX object CMakeFiles/mvcc_contract.dir/tests/mvcc_contract.cc.o
+[7/14] Linking CXX executable key_dataset_contract
+[8/14] Linking CXX executable mvcc_contract
+[9/14] Building CXX object CMakeFiles/memtable_bench.dir/src/main.cc.o
+[10/14] Linking CXX executable memtable_bench
+[11/14] Building CXX object CMakeFiles/adapter_contract.dir/tests/adapter_contract.cc.o
+[12/14] Linking CXX executable adapter_contract
+[13/14] Building CXX object CMakeFiles/mvcc_bench.dir/src/mvcc_main.cc.o
+[14/14] Linking CXX executable mvcc_bench
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline
+    Start 1: mvcc_contract
+1/8 Test #1: mvcc_contract ....................   Passed    0.00 sec
+    Start 2: mvcc_smoke
+2/8 Test #2: mvcc_smoke .......................   Passed    0.04 sec
+    Start 3: key_dataset_contract
+3/8 Test #3: key_dataset_contract .............   Passed    0.01 sec
+    Start 4: adapter_contract
+4/8 Test #4: adapter_contract .................   Passed    0.01 sec
+    Start 5: smoke
+5/8 Test #5: smoke ............................   Passed    0.01 sec
+    Start 6: mvcc_integration
+6/8 Test #6: mvcc_integration .................   Passed    0.06 sec
+    Start 7: benchmark_policy
+7/8 Test #7: benchmark_policy .................   Passed    0.38 sec
+    Start 8: harness_integration
+8/8 Test #8: harness_integration ..............   Passed    0.17 sec
+
+100% tests passed, 0 tests failed out of 8
+
+Total Test time (real) =   0.69 sec
+std_map	available	reference baseline; coarse reader/writer lock	native_concurrent=0	key_encoding=binary
+abseil_btree	unavailable	configure -DMEMTABLE_BENCH_FETCH_ABSEIL=ON	native_concurrent=0	key_encoding=binary
+tlx_btree	unavailable	configure -DMEMTABLE_BENCH_FETCH_TLX=ON	native_concurrent=0	key_encoding=binary
+rocksdb_inlineskiplist	unavailable	configure -DMEMTABLE_BENCH_FETCH_ROCKSDB=ON	native_concurrent=1	key_encoding=binary
+btreeolc	unavailable	configure -DMEMTABLE_BENCH_FETCH_BTREEOLC=ON	native_concurrent=1	key_encoding=binary
+unodb_art	unavailable	configure -DMEMTABLE_BENCH_FETCH_UNODB=ON	native_concurrent=1	key_encoding=nibble_terminated
+masstree	unavailable	configure -DMEMTABLE_BENCH_FETCH_MASSTREE=ON	native_concurrent=1	key_encoding=binary
+hot	unavailable	configure -DMEMTABLE_BENCH_FETCH_HOT=ON; requires x86_64 AVX2/BMI2	native_concurrent=0	key_encoding=nibble_terminated
+wormhole	unavailable	configure -DMEMTABLE_BENCH_FETCH_WORMHOLE=ON	native_concurrent=1	key_encoding=binary
+cse_arena	unavailable	configure MEMTABLE_BENCH_CSE_SOURCE_DIR with pinned export	native_concurrent=1	key_encoding=user_key_chain
+cse_crossbeam	unavailable	configure MEMTABLE_BENCH_CSE_SOURCE_DIR with pinned export	native_concurrent=1	key_encoding=user_key_chain

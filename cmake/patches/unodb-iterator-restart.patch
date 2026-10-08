@@ -1,0 +1,61 @@
+--- a/olc_art.hpp
++++ b/olc_art.hpp
+@@ -4072,14 +4072,16 @@
+ olc_db<Key, Value, HeapTag>::iterator::next() {
+   const auto node = current_node();
+   if (node != nullptr || (!empty() && top().is_packed_value)) {
+-    const art_key_type akey{[&]() noexcept -> art_key_type {
++    // Restart probes must outlive changes to the iterator's key buffer.
++    key_encoder restart_key;
++    const art_key_type akey{[&]() -> art_key_type {
+       if constexpr (art_policy::full_key_in_inode_path) {
+-        return art_key_type{keybuf_.get_key_view()};
++        restart_key.append_bytes(keybuf_.get_key_view());
++        return art_key_type{restart_key.get_key_view()};
+       } else if constexpr (art_policy::has_heap) {
+         // Heap mode: recover key from the heap using the packed value.
+         const auto value_id = art_policy::unpack_value(node);
+-        key_encoder key_buf;
+-        const auto kv = db_.heap_.heap.extract_key(value_id, key_buf);
++        const auto kv = db_.heap_.heap.extract_key(value_id, restart_key);
+         return art_key_type{kv};
+       } else {
+         UNODB_DETAIL_ASSERT(node.type() == node_type::LEAF);
+@@ -4163,14 +4165,16 @@
+ olc_db<Key, Value, HeapTag>::iterator::prior() {
+   const auto node = current_node();
+   if (node != nullptr || (!empty() && top().is_packed_value)) {
+-    const art_key_type akey{[&]() noexcept -> art_key_type {
++    // Restart probes must outlive changes to the iterator's key buffer.
++    key_encoder restart_key;
++    const art_key_type akey{[&]() -> art_key_type {
+       if constexpr (art_policy::full_key_in_inode_path) {
+-        return art_key_type{keybuf_.get_key_view()};
++        restart_key.append_bytes(keybuf_.get_key_view());
++        return art_key_type{restart_key.get_key_view()};
+       } else if constexpr (art_policy::has_heap) {
+         // Heap mode: recover key from the heap using the packed value.
+         const auto value_id = art_policy::unpack_value(node);
+-        key_encoder key_buf;
+-        const auto kv = db_.heap_.heap.extract_key(value_id, key_buf);
++        const auto kv = db_.heap_.heap.extract_key(value_id, restart_key);
+         return art_key_type{kv};
+       } else {
+         UNODB_DETAIL_ASSERT(node.type() == node_type::LEAF);
+@@ -4336,14 +4340,14 @@
+       push_leaf(node, node_critical_section);
+       int cmp_{0};
+       if constexpr (art_policy::full_key_in_inode_path) {
+-        cmp_ = unodb::detail::compare(keybuf_.get_key_view(), k.get_key_view());
++        cmp_ = unodb::detail::compare(k.get_key_view(), keybuf_.get_key_view());
+       } else if constexpr (art_policy::has_heap) {
+         // LCOV_EXCL_START — Heap mode has no leaf nodes; this branch is
+         // unreachable at runtime but must compile for type correctness.
+         const auto value_id = art_policy::unpack_value(node);
+         key_encoder key_buf;
+         const auto kv = db_.heap_.heap.extract_key(value_id, key_buf);
+-        cmp_ = unodb::detail::compare(kv, k.get_key_view());
++        cmp_ = unodb::detail::compare(k.get_key_view(), kv);
+         // LCOV_EXCL_STOP
+       } else {
+         cmp_ = leaf->cmp(k);

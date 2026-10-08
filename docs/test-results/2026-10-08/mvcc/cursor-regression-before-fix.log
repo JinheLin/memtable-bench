@@ -1,0 +1,9 @@
+[0/2] Re-checking globbed directories...
+[1/2] Building CXX object CMakeFiles/mvcc_contract.dir/tests/mvcc_contract.cc.o
+[2/2] Linking CXX executable mvcc_contract
+std_map MVCC contract passed
+abseil_btree MVCC contract passed
+tlx_btree MVCC contract passed
+rocksdb_inlineskiplist MVCC contract passed
+btreeolc MVCC contract passed
+unodb_art: historical cursor: version=16, value=new, expected version=3, value=a3

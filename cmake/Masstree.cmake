@@ -1,10 +1,5 @@
-if(NOT UNIX OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8 OR
-   NOT CMAKE_CXX_COMPILER_ID MATCHES "^(AppleClang|Clang|GNU)$")
-  message(FATAL_ERROR "Masstree integration requires 64-bit Unix with Clang/GCC")
-endif()
 memtable_fetch(masstree https://github.com/kohler/masstree-beta.git
   11198427a1170654ca646dd20d96c8f349bca2bd)
-memtable_patch(${masstree_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/cmake/patches/masstree-arm64.patch)
 memtable_patch(${masstree_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/cmake/patches/masstree-permutation.patch)
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("#include <cstdint>\n#include <type_traits>\nstatic_assert(std::is_same_v<int64_t,long>);\nint main(){}" HAVE_INT64_T_IS_LONG)

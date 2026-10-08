@@ -1,0 +1,38 @@
+{
+  "build_input_hashes": {
+    "cmake/masstree_config.h.in": "a2c7b60d6feccda8243dbe467b8686e7598f2c4d30e02264c44092bc251d6e1a",
+    "cmake/patches/btreeolc.patch": "3da3daafcb0d56573348ef8387a4b8c5c5c847dccdf501e179e70b29ee6cba1d",
+    "cmake/patches/hot-clang.patch": "1fd88f637186b2a461cdd4027b17c432926dd9f99bab87ccaeb03ba562eee3ce",
+    "cmake/patches/masstree-arm64.patch": "f6fc6bc51815560c775a30eb809b94ac49d128d7b37426f4c1ec4d77e51c061f",
+    "cmake/patches/masstree-permutation.patch": "d57e5372082f2a56624fc33fe8b9d17e96f1753a9927f9e4ca33cd52ba2d6193",
+    "cmake/patches/unodb-thread-registration.patch": "172fcb8ecb76cfa0d21a3c95f7f8b1355b3322a322b8c28a389b5dea5af172a4",
+    "cmake/patches/wormhole-asm.patch": "de8b42d45d388641a4d309bfc7e49ccbc1e8bb1041ee6346048f3d375ffdb115",
+    "cmake/patches/wormhole-unaligned.patch": "cee8cf6847796f1535030483bdb4970bf1fe756d5ca08b8034fa01a14d49522e",
+    "scripts/build_all.sh": "0d34b932b39d4a76d84002b8f519346ecfa5dfbc07c03fd3d51bb3ffacbce648"
+  },
+  "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)\nbinary: rustc\ncommit-hash: ded5c06cf21d2b93bffd5d884aa6e96934ee4234\ncommit-date: 2025-12-08\nhost: x86_64-unknown-linux-gnu\nrelease: 1.92.0\nLLVM version: 21.1.3\n",
+  "compiler": "g++ (GCC) 11.3.1 20220421 (Red Hat 11.3.1-2)",
+  "cmake_cache_configuration": [
+    "CMAKE_BUILD_TYPE:STRING=Release",
+    "CMAKE_CXX_COMPILER:STRING=/usr/bin/g++",
+    "CMAKE_CXX_FLAGS:STRING=",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING=-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG",
+    "MEMTABLE_BENCH_CSE_SOURCE_DIR:PATH=/DATA/disk1/jinhelin/github/memtable-bench/vendor/cse-memtable",
+    "MEMTABLE_BENCH_FETCH_ABSEIL:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_BTREEOLC:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_HOT:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_MASSTREE:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_ROCKSDB:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_TLX:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_UNODB:BOOL=ON",
+    "MEMTABLE_BENCH_FETCH_WORMHOLE:BOOL=ON",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1"
+  ]
+}

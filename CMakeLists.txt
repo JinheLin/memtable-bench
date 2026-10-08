@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
 project(memtable_bench VERSION 0.1.0 LANGUAGES CXX)
 
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
+   NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_CROSSCOMPILING OR
+   NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$" OR
+   NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+  message(FATAL_ERROR "memtable-bench supports native Linux x86-64 builds only")
+endif()
+if(NOT CMAKE_CXX_COMPILER_ID MATCHES "^(Clang|GNU)$")
+  message(FATAL_ERROR "memtable-bench requires GCC or Clang on Linux x86-64")
+endif()
+
 option(MEMTABLE_BENCH_FETCH_ABSEIL "Build the Abseil B-tree adapter" OFF)
 option(MEMTABLE_BENCH_FETCH_TLX "Build the TLX B+tree adapter" OFF)
 option(MEMTABLE_BENCH_FETCH_ROCKSDB "Build the RocksDB InlineSkipList adapter" OFF)
@@ -9,19 +19,23 @@ option(MEMTABLE_BENCH_FETCH_UNODB "Build the UnoDB OLC ART adapter" OFF)
 option(MEMTABLE_BENCH_FETCH_MASSTREE "Build the Masstree adapter" OFF)
 option(MEMTABLE_BENCH_FETCH_HOT "Build the HOT adapter (x86_64 AVX2/BMI2)" OFF)
 option(MEMTABLE_BENCH_FETCH_WORMHOLE "Build the Wormhole adapter" OFF)
+set(MEMTABLE_BENCH_CSE_SOURCE_DIR "" CACHE PATH "Pinned CSE MemTable export directory")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Threads REQUIRED)
-add_library(memtable_bench_index src/index.cc src/key_dataset.cc)
+add_library(memtable_bench_index src/index.cc src/key_dataset.cc src/mvcc.cc)
 target_include_directories(memtable_bench_index PUBLIC include)
 target_link_libraries(memtable_bench_index PUBLIC Threads::Threads)
 add_executable(memtable_bench src/main.cc)
 target_link_libraries(memtable_bench PRIVATE memtable_bench_index)
 target_compile_options(memtable_bench PRIVATE -Wall -Wextra -Wpedantic)
 target_compile_options(memtable_bench_index PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(mvcc_bench src/mvcc_main.cc)
+target_link_libraries(mvcc_bench PRIVATE memtable_bench_index)
+target_compile_options(mvcc_bench PRIVATE -Wall -Wextra -Wpedantic)
 
 if(MEMTABLE_BENCH_FETCH_ABSEIL OR MEMTABLE_BENCH_FETCH_TLX OR MEMTABLE_BENCH_FETCH_ROCKSDB)
   include(FetchContent)
@@ -70,8 +84,18 @@ endif()
 if(MEMTABLE_BENCH_FETCH_WORMHOLE)
   include(cmake/Wormhole.cmake)
 endif()
+if(MEMTABLE_BENCH_CSE_SOURCE_DIR)
+  include(cmake/CSE.cmake)
+endif()
 
 enable_testing()
+add_executable(mvcc_contract tests/mvcc_contract.cc)
+target_link_libraries(mvcc_contract PRIVATE memtable_bench_index)
+add_test(NAME mvcc_contract COMMAND mvcc_contract)
+set_tests_properties(mvcc_contract PROPERTIES TIMEOUT 120)
+add_test(NAME mvcc_smoke COMMAND mvcc_bench --index std_map --stage all
+  --keys 100 --versions 4 --ops 300 --batch-size 7
+  --output ${CMAKE_CURRENT_BINARY_DIR}/mvcc-smoke-v1.csv)
 add_executable(key_dataset_contract tests/key_dataset_contract.cc)
 target_link_libraries(key_dataset_contract PRIVATE memtable_bench_index)
 add_test(NAME key_dataset_contract COMMAND key_dataset_contract)
@@ -112,6 +136,9 @@ endif()
 
 find_package(Python3 QUIET COMPONENTS Interpreter)
 if(Python3_Interpreter_FOUND)
+  add_test(NAME mvcc_integration COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/mvcc_integration.py $<TARGET_FILE:mvcc_bench>)
+  set_tests_properties(mvcc_integration PROPERTIES TIMEOUT 180)
   add_test(NAME benchmark_policy COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/benchmark_policy.py $<TARGET_FILE:memtable_bench>)
   add_test(NAME harness_integration COMMAND ${Python3_EXECUTABLE}

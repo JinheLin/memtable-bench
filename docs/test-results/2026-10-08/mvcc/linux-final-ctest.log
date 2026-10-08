@@ -1,0 +1,83 @@
+[0/2] Re-checking globbed directories...
+[1/7] Generating cse-rust/release/libmemtable_bench_cse.a
+   Compiling memtable-bench-cse v0.1.0 (/DATA/disk1/jinhelin/github/memtable-bench/rust/cse_memtable)
+warning: type `ValueGuard` is more private than the item `crossbeam_skl::SkipListCore::get`
+   --> /DATA/disk1/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:515:5
+    |
+515 |     pub fn get(&self, key: &[u8], version: u64) -> ValueGuard {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ method `crossbeam_skl::SkipListCore::get` is reachable at visibility `pub`
+    |
+note: but type `ValueGuard` is only usable at visibility `pub(in crate::table::memtable)`
+   --> /DATA/disk1/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:232:1
+    |
+232 | pub(super) struct ValueGuard {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: `#[warn(private_interfaces)]` on by default
+
+warning: type `ValueGuard` is more private than the item `crossbeam_skl::SkipListCore::get_newer`
+   --> /DATA/disk1/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:523:5
+    |
+523 |     pub fn get_newer(&self, key: &[u8], version: u64) -> ValueGuard {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ method `crossbeam_skl::SkipListCore::get_newer` is reachable at visibility `pub`
+    |
+note: but type `ValueGuard` is only usable at visibility `pub(in crate::table::memtable)`
+   --> /DATA/disk1/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:232:1
+    |
+232 | pub(super) struct ValueGuard {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `memtable-bench-cse` (lib) generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.69s
+[2/7] Linking CXX executable memtable_bench
+[3/7] Linking CXX executable adapter_contract
+[4/7] Linking CXX executable key_dataset_contract
+[5/7] Linking CXX executable mvcc_bench
+[6/7] Building CXX object CMakeFiles/mvcc_contract.dir/tests/mvcc_contract.cc.o
+[7/7] Linking CXX executable mvcc_contract
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+      Start  1: mvcc_contract
+ 1/15 Test  #1: mvcc_contract ....................   Passed    0.08 sec
+      Start  2: mvcc_smoke
+ 2/15 Test  #2: mvcc_smoke .......................   Passed    0.04 sec
+      Start  3: key_dataset_contract
+ 3/15 Test  #3: key_dataset_contract .............   Passed    0.02 sec
+      Start  4: adapter_contract
+ 4/15 Test  #4: adapter_contract .................   Passed    0.52 sec
+      Start  5: smoke
+ 5/15 Test  #5: smoke ............................   Passed    0.01 sec
+      Start  6: rocksdb_smoke
+ 6/15 Test  #6: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  7: rocksdb_reject_upsert
+ 7/15 Test  #7: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  8: btreeolc_smoke
+ 8/15 Test  #8: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  9: unodb_art_smoke
+ 9/15 Test  #9: unodb_art_smoke ..................   Passed    0.02 sec
+      Start 10: masstree_smoke
+10/15 Test #10: masstree_smoke ...................   Passed    0.01 sec
+      Start 11: wormhole_smoke
+11/15 Test #11: wormhole_smoke ...................   Passed    0.02 sec
+      Start 12: unodb_reject_upsert
+12/15 Test #12: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 13: mvcc_integration
+13/15 Test #13: mvcc_integration .................   Passed    0.54 sec
+      Start 14: benchmark_policy
+14/15 Test #14: benchmark_policy .................   Passed    0.38 sec
+      Start 15: harness_integration
+15/15 Test #15: harness_integration ..............   Passed    1.42 sec
+
+100% tests passed, 0 tests failed out of 15
+
+Total Test time (real) =   3.10 sec
+std_map MVCC contract passed
+abseil_btree MVCC contract passed
+tlx_btree MVCC contract passed
+rocksdb_inlineskiplist MVCC contract passed
+btreeolc MVCC contract passed
+unodb_art MVCC contract passed
+masstree MVCC contract passed
+hot MVCC contract passed
+wormhole MVCC contract passed
+cse_arena MVCC contract passed
+cse_crossbeam MVCC contract passed

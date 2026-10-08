@@ -1,5 +1,54 @@
 # Verification results
 
+Current support is **native Linux x86-64 with GCC/Clang**. The build now rejects
+other platforms. Earlier macOS/ARM entries below describe historical verification
+and do not imply current platform support.
+
+The final platform cleanup was rebuilt and verified on the Linux host; the
+[Linux-only validation log](test-results/2026-10-08/mvcc/linux-only-validation.log)
+includes the 15/15 test run and a fresh all-eleven, 1/4-worker MVCC runner check.
+The runner completed 40 processes / 131 phase rows, with matching counts and
+contents; [metadata](test-results/2026-10-08/mvcc/linux-only-metadata.json) records
+the tested binary and source hashes.
+Raw results and per-process commands/logs are in
+`test-results/2026-10-08/mvcc/linux-only-records.tar.gz`.
+
+The concurrent MVCC contract exposed an intermittent UnoDB cursor failure:
+OLC restart probes referenced the iterator's mutable key buffer. An explicit
+patch retains an owned probe and fixes keyless-leaf seek comparison direction.
+The strengthened contract starts readers and the writer together;
+[100 consecutive runs passed](test-results/2026-10-08/mvcc/cursor-regression-fixed.log).
+The new single-record, binary-prefix lower-bound test also exposed HOT's
+reversed comparison and inclusive upper bound; its explicit patch passed the
+complete adapter contract. All nine adapters exercise this boundary while live
+and frozen. See [the original failure](test-results/2026-10-08/mvcc/cursor-regression-before-fix.log).
+
+## CSE and MVCC workload integration
+
+Linux x86-64 / GCC 11.3.1 / Rust stable 1.92.0, on 2026-10-08:
+**15/15 CTest tests passed**, including all eleven MVCC implementations and HOT.
+See [final test log](test-results/2026-10-08/mvcc/linux-only-validation.log).
+The CSE contract also tests native snapshot reads, empty live values, tombstones,
+resurrection, concurrent readers, retained history, permanent Freeze and complete
+version flush. A 16 MiB payload exercises Crossbeam's separate-value backing;
+Arena rejects it before insertion. The final contract run passed for all eleven
+implementations. All compilation cleared proxy variables.
+
+The [MVCC functional pilot](../benchmarks/mvcc-pilot-2026-10-08/README.md)
+completed **160 independent processes / 524 phase rows**: 10,000 present user keys,
+10,000 operation budgets, one repeat, four profiles, 1/4 workers. All eleven
+implementations ran single-thread phases; the seven native concurrent candidates
+ran SWMR. Every comparison's counts, contents and checksums matched. All 524
+phase rows have PMU cycle data; this is a functional pilot, not a stable ranking.
+Source snapshots and build inputs preserve the version actually measured.
+
+The dependency-free default build was verified on Linux at **8/8 tests**;
+see [Linux baseline log](test-results/2026-10-08/mvcc/linux-baseline-tests.log).
+CSE correctness and benchmark qualification for this change are based on Linux.
+
+See [MVCC semantics and schema](mvcc.md) for the scope of native CSE source reuse,
+FFI costs, snapshot model, batch operation units and memory accounting.
+
 ## Native concurrency policy validation
 
 Fresh checks after the participation change, on 2026-10-08:
@@ -72,7 +121,7 @@ Proxy environment variables were unset during builds.
   4,185 phase rows, with cross-adapter count/checksum validation.
 
 ASan/UBSan checks detect memory and undefined-behavior errors in the tested
-workloads; TSan cleanliness is not claimed. HOT cannot run on this ARM64 host.
+workloads; TSan cleanliness is not claimed. Historical ARM64 runs excluded HOT.
 Older pilot test logs stay with their measured experiments and are distinct from
 these fresh checks.
 
@@ -107,9 +156,8 @@ Choose CPU IDs and the NUMA node from your own topology. For a dependency-free
 sanitized baseline:
 
 ```sh
-env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
-    -u http_proxy -u https_proxy -u all_proxy \
-  cmake -S . -B build-baseline-sanitize -DCMAKE_BUILD_TYPE=Debug \
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
+cmake -S . -B build-baseline-sanitize -DCMAKE_BUILD_TYPE=Debug \
   '-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer'
 cmake --build build-baseline-sanitize -j 4
 ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 \

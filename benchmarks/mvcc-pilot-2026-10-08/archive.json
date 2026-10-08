@@ -1,0 +1,15 @@
+{
+  "measurement_model": "mvcc-v1",
+  "kind": "functional pilot; no performance ranking",
+  "processes": 160,
+  "phase_rows": 524,
+  "validation": "source/build input hashes, per-process records, phase counts and cross-adapter contents matched",
+  "files": {
+    "raw.csv": "31f4929a308759d41de94ba5525902f8c7bbca796b04b574b6394979ed810a68",
+    "metadata.json": "846ae5a011ffb15ce1bf33fe7d07855679d7dc7f92077d9bcc67c29548e39b03",
+    "build-record.json": "3f99dff0c47e9bee56e0ef70f9523fff9b2a39c54756cfade7752dfd1fbb7cec",
+    "process-records.tar.gz": "413d033fc7e2c0f1cdc8283afd6767a84e9a75f682517599ff22966f3fd7c2ea",
+    "source-snapshot.tar.gz": "8931e451da75bda7d9aca31e3ed7bbd9d0e22e477d5abe68cf75efea8eecf825",
+    "build-inputs.tar.gz": "ce3b1e725f008ad506d46d28c631f189883908dc0517c47f1d369d875fa22614"
+  }
+}

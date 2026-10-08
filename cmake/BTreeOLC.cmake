@@ -1,6 +1,3 @@
-if(NOT UNIX OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
-  message(FATAL_ERROR "BTreeOLC integration requires 64-bit Unix")
-endif()
 memtable_fetch(btreeolc https://github.com/wangziqi2016/index-microbench.git
   74cafa57d74798f209d8fcbce8c4f317ce066eae)
 memtable_patch(${btreeolc_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/cmake/patches/btreeolc.patch)

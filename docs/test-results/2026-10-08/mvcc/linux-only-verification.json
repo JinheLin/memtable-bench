@@ -1,0 +1,10 @@
+{
+  "model": "mvcc-v1",
+  "source_hashes_match": 63,
+  "processes": 40,
+  "rows": 131,
+  "cycle_rows": 131,
+  "overlap_rows": 14,
+  "records_sha256": "aa730ad92032e73165467436f516b57468affa4f25cdfd2e1ccb1209707573b2",
+  "binary_sha256": "aa1a7e3cda7be3d92fb94fc493db423afdbe30e450e58268643de16116016144"
+}

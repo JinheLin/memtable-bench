@@ -5,3 +5,5 @@
 !/benchmarks/**/*.csv
 .DS_Store
 __pycache__/
+/vendor/cse-memtable/
+/rust/cse_memtable/target/

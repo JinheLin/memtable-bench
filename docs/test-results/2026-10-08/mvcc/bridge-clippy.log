@@ -1,0 +1,54 @@
+    Checking memtable-bench-cse v0.1.0 (/Users/jinhelin/github/memtable-bench/rust/cse_memtable)
+warning: type `table::memtable::crossbeam_skl::ValueGuard` is more private than the item `table::memtable::crossbeam_skl::SkipListCore::get`
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:515:5
+    |
+515 |     pub fn get(&self, key: &[u8], version: u64) -> ValueGuard {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ method `table::memtable::crossbeam_skl::SkipListCore::get` is reachable at visibility `pub`
+    |
+note: but type `table::memtable::crossbeam_skl::ValueGuard` is only usable at visibility `pub(memtable)`
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:232:1
+    |
+232 | pub(super) struct ValueGuard {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: `#[warn(private_interfaces)]` on by default
+
+warning: type `table::memtable::crossbeam_skl::ValueGuard` is more private than the item `table::memtable::crossbeam_skl::SkipListCore::get_newer`
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:523:5
+    |
+523 |     pub fn get_newer(&self, key: &[u8], version: u64) -> ValueGuard {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ method `table::memtable::crossbeam_skl::SkipListCore::get_newer` is reachable at visibility `pub`
+    |
+note: but type `table::memtable::crossbeam_skl::ValueGuard` is only usable at visibility `pub(memtable)`
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:232:1
+    |
+232 | pub(super) struct ValueGuard {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: redundant closure
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/arena.rs:211:44
+    |
+211 |         blocks.resize_with(MAX_NUM_BLOCKS, || AtomicPtr::<ArenaBlock>::default());
+    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace the closure with the function itself: `AtomicPtr::<ArenaBlock>::default`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#redundant_closure
+    = note: `#[warn(clippy::redundant_closure)]` on by default
+
+warning: use of `unwrap_or_else` to construct default value
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:704:14
+    |
+704 |             .unwrap_or_else(Value::new)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `unwrap_or_default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unwrap_or_default
+    = note: `#[warn(clippy::unwrap_or_default)]` on by default
+
+warning: use of `unwrap_or_else` to construct default value
+   --> /Users/jinhelin/github/memtable-bench/vendor/cse-memtable/crossbeam_skl.rs:808:14
+    |
+808 |             .unwrap_or_else(Value::new)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `unwrap_or_default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unwrap_or_default
+
+warning: `memtable-bench-cse` (lib) generated 5 warnings (run `cargo clippy --fix --lib -p memtable-bench-cse` to apply 3 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.59s

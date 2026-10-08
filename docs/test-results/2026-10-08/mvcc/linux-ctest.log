@@ -1,0 +1,50 @@
+[0/2] Re-checking globbed directories...
+[1/2] Building CXX object CMakeFiles/mvcc_bench.dir/src/mvcc_main.cc.o
+[2/2] Linking CXX executable mvcc_bench
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux
+      Start  1: mvcc_contract
+ 1/15 Test  #1: mvcc_contract ....................   Passed    0.04 sec
+      Start  2: mvcc_smoke
+ 2/15 Test  #2: mvcc_smoke .......................   Passed    0.05 sec
+      Start  3: key_dataset_contract
+ 3/15 Test  #3: key_dataset_contract .............   Passed    0.01 sec
+      Start  4: adapter_contract
+ 4/15 Test  #4: adapter_contract .................   Passed    0.51 sec
+      Start  5: smoke
+ 5/15 Test  #5: smoke ............................   Passed    0.01 sec
+      Start  6: rocksdb_smoke
+ 6/15 Test  #6: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  7: rocksdb_reject_upsert
+ 7/15 Test  #7: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  8: btreeolc_smoke
+ 8/15 Test  #8: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  9: unodb_art_smoke
+ 9/15 Test  #9: unodb_art_smoke ..................   Passed    0.02 sec
+      Start 10: masstree_smoke
+10/15 Test #10: masstree_smoke ...................   Passed    0.01 sec
+      Start 11: wormhole_smoke
+11/15 Test #11: wormhole_smoke ...................   Passed    0.03 sec
+      Start 12: unodb_reject_upsert
+12/15 Test #12: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 13: mvcc_integration
+13/15 Test #13: mvcc_integration .................   Passed    0.55 sec
+      Start 14: benchmark_policy
+14/15 Test #14: benchmark_policy .................   Passed    0.38 sec
+      Start 15: harness_integration
+15/15 Test #15: harness_integration ..............   Passed    1.41 sec
+
+100% tests passed, 0 tests failed out of 15
+
+Total Test time (real) =   3.06 sec
+std_map	available	reference baseline; coarse reader/writer lock	native_concurrent=0	key_encoding=binary
+abseil_btree	available	Abseil btree_map; coarse reader/writer lock	native_concurrent=0	key_encoding=binary
+tlx_btree	available	TLX btree_map; coarse reader/writer lock	native_concurrent=0	key_encoding=binary
+rocksdb_inlineskiplist	available	RocksDB InlineSkipList + ConcurrentArena; append-only	native_concurrent=1	key_encoding=binary
+btreeolc	available	BTreeOLC; native OLC with per-key stripes for exact size/upsert	native_concurrent=1	key_encoding=binary
+unodb_art	available	UnoDB olc_db + QSBR; append-only; terminated nibble keys	native_concurrent=1	key_encoding=nibble_terminated
+masstree	available	Masstree; native concurrency; deferred node/value reclamation	native_concurrent=1	key_encoding=binary
+hot	available	HOTSingleThreaded; coarse reader/writer lock; terminated nibble keys	native_concurrent=0	key_encoding=nibble_terminated
+wormhole	available	Wormhole; native whsafe API with parked per-thread references	native_concurrent=1	key_encoding=binary
+cse_arena	available	CSE native version chains; serialized batch writer; Rust FFI	native_concurrent=1	key_encoding=user_key_chain
+cse_crossbeam	available	CSE native version chains; serialized batch writer; Rust FFI	native_concurrent=1	key_encoding=user_key_chain

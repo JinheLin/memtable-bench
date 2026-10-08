@@ -1,13 +1,6 @@
 #include "memtable_bench/index.h"
 #include "adapter_common.h"
 
-#if defined(__APPLE__)
-// Upstream's helpers use glibc's names; AppleClang exposes the same operations
-// as builtins. No trie implementation or instruction selection is replaced.
-#define __bswap_16 __builtin_bswap16
-#define __bswap_32 __builtin_bswap32
-#define __bswap_64 __builtin_bswap64
-#endif
 #include "hot/singlethreaded/HOTSingleThreaded.hpp"
 
 #include <mutex>
