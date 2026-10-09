@@ -27,18 +27,18 @@ def must_fail(function, *args):
 
 
 listing = subprocess.check_output([sys.argv[1], '--list-indexes'], text=True)
-validate_listing(listing, ['std_map'])
-must_fail(validate_listing, listing.replace('native_concurrent=1', 'native_concurrent=0'), ['std_map'])
+validate_listing(listing, ['rocksdb_inlineskiplist'])
+must_fail(validate_listing, listing.replace('native_concurrent=1', 'native_concurrent=0'), ['rocksdb_inlineskiplist'])
 old_listing = '\n'.join('\t'.join(f for f in line.split('\t') if not f.startswith('native_concurrent='))
                         for line in listing.splitlines())
-must_fail(validate_listing, old_listing, ['std_map'])
+must_fail(validate_listing, old_listing, ['rocksdb_inlineskiplist'])
 
 original_plan = plan('benchmark_matrix.py')
-assert original_plan['formal_processes'] == 280
+assert original_plan['formal_processes'] == 160
 representative_plan = plan('sensitivity_matrix.py', '--suite', 'representative')
-assert representative_plan['formal_processes'] == 336
-assert plan('sensitivity_matrix.py')['formal_processes'] == 540
-assert plan('sensitivity_matrix.py', '--suite', 'range-scan')['formal_processes'] == 270
+assert representative_plan['formal_processes'] == 192
+assert plan('sensitivity_matrix.py')['formal_processes'] == 240
+assert plan('sensitivity_matrix.py', '--suite', 'range-scan')['formal_processes'] == 120
 for data in (original_plan, representative_plan):
     assert data['concurrency_policy'] == POLICY
     assert data['scenario_indexes']['mixed_t1'] == INDEXES
@@ -49,12 +49,13 @@ for script in ('benchmark_matrix.py', 'sensitivity_matrix.py'):
     extra = ['--suite', 'representative'] if script.startswith('sensitivity') else []
     data = plan(script, *extra, '--threads', '4,16')
     assert data['scenario_indexes']['mixed_t1'] == INDEXES
-subset = plan('sensitivity_matrix.py', '--suite', 'representative', '--indexes', 'std_map,hot')
+subset = plan('sensitivity_matrix.py', '--suite', 'representative', '--indexes', 'rocksdb_inlineskiplist')
 assert subset['formal_processes'] == 48
-assert subset['scenario_indexes']['mixed_t4'] == subset['scenario_indexes']['mixed_t16'] == []
-subset = plan('sensitivity_matrix.py', '--suite', 'representative', '--indexes', 'std_map,oceanbase_keybtree')
-assert subset['scenario_indexes']['mixed_t1'] == ['std_map', 'oceanbase_keybtree']
-assert subset['scenario_indexes']['mixed_t4'] == subset['scenario_indexes']['mixed_t16'] == ['oceanbase_keybtree']
+assert subset['scenario_indexes']['mixed_t4'] == subset['scenario_indexes']['mixed_t16'] == ['rocksdb_inlineskiplist']
+for retired in ('std_map', 'abseil_btree', 'tlx_btree', 'masstree', 'hot', 'oceanbase_keybtree'):
+    result = subprocess.run([sys.executable, str(REPO/'scripts/sensitivity_matrix.py'),
+                             '--list-plan', '--indexes', retired], capture_output=True)
+    assert result.returncode != 0, retired
 
 source = REPO / 'benchmarks' / 'xeon79-2026-10-08'
 meta = json.loads((source / 'metadata.json').read_text())
@@ -69,13 +70,13 @@ with tempfile.TemporaryDirectory(prefix='benchmark-policy-') as directory:
     assert (len(included), len(excluded)) == (595, 80)
     assert (selection['included_processes'], selection['excluded_processes']) == (280, 80)
     current = dict(meta, concurrency_policy=POLICY,
-                   scenario_indexes={name: eligible_indexes(INDEXES, workers)
+                   scenario_indexes={name: eligible_indexes(meta['indexes'], workers, archived=True)
                                      for name, _, workers in workloads},
                    planned_processes=280, completed_processes=280)
     validate_rows(current, included, workloads, phases)
     must_fail(validate_rows, current, included[1:], workloads, phases)
     must_fail(validate_rows, current, [*included, included[0]], workloads, phases)
     must_fail(validate_rows, current, [*included, excluded[0]], workloads, phases)
-    wrong_capabilities = dict(current, scenario_indexes={name: INDEXES for name, _, _ in workloads})
+    wrong_capabilities = dict(current, scenario_indexes={name: meta['indexes'] for name, _, _ in workloads})
     must_fail(validate_rows, wrong_capabilities, included, workloads, phases)
 print('Plans, binary capabilities, archive selection and incomplete-matrix rejection passed')

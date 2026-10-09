@@ -177,9 +177,11 @@ def main():
                 'Phase elapsed time includes PMU start/stop and sampling setup. '
                 'For a one-request Freeze phase this overhead dominates; the separately sampled call '
                 'excludes PMU control but still includes clock/call instrumentation. '
-                'Neither is a stable native-only Freeze latency estimate. '
-                'OceanBase is the KeyBtree core port with InternalKey visibility, not full ObMemtable; '
-                'its common GetAt includes filling the first native 225-entry iterator batch.']
+                'Neither is a stable native-only Freeze latency estimate.']
+    if any(key[-1] == 'oceanbase_keybtree' for key in groups):
+        sections.append('This historical OceanBase candidate is the KeyBtree core port with '
+                        'InternalKey visibility; its common GetAt includes filling the first '
+                        'native 225-entry iterator batch.')
     for cohort, meta in cohorts.items():
         options = meta['arguments']
         indexes = options['indexes'].split(',') if options.get('indexes') else [

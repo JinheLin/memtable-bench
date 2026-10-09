@@ -15,7 +15,7 @@
 namespace mb = memtable_bench;
 namespace {
 struct Options {
-  std::string index = "std_map", stage = "all", output = "mvcc-results.csv";
+  std::string index = "rocksdb_inlineskiplist", stage = "all", output = "mvcc-results.csv";
   std::string layout = "random", distribution = "uniform", cpu_list;
   std::size_t keys = 10000, versions = 4, ops = 20000, key_size = 16, value_size = 32;
   std::size_t batch_size = 32, snapshot_lag = 2, scan_length = 100;
@@ -118,16 +118,6 @@ Options Parse(int argc, char** argv) {
       throw std::invalid_argument("adapter lacks native concurrency; use --threads 1");
     if (info.max_key_size && o.key_size + (info.key_encoding == "user_key_chain" ? 0 : 9) > info.max_key_size)
       throw std::invalid_argument("key size exceeds adapter limit");
-    if (o.index == "cse_arena" && o.value_size + 10 > 16*1024*1024-1)
-      throw std::invalid_argument("CSE Arena encoded values must be < 16 MiB");
-    if (o.index == "cse_arena") {
-      // Conservative allocation bound, including the largest tower and an
-      // older-version link. Arena's shared allocation counter is uint32.
-      const auto record_bound=o.key_size+o.value_size+192;
-      const auto version_bound=o.keys*o.versions+((o.stage=="2" || o.stage=="all") ? o.ops : 0);
-      if (version_bound>(UINT32_MAX-4096)/record_bound)
-        throw std::invalid_argument("CSE Arena workload may overflow its uint32 allocation counter");
-    }
   }
   if (!found) throw std::invalid_argument("unknown adapter");
   if (o.threads > 1 && !o.read_percent)

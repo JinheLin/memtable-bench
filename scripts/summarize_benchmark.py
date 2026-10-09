@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import statistics
 
-from adapter_policy import NATIVE_CONCURRENT, select_rows, validate_rows
+from adapter_policy import ARCHIVED_NATIVE_CONCURRENT as NATIVE_CONCURRENT, select_rows, validate_rows
 
 LABEL = {'std_map': 'std::map', 'abseil_btree': 'Abseil B-tree', 'tlx_btree': 'TLX B+Tree',
          'rocksdb_inlineskiplist': 'RocksDB InlineSkipList', 'btreeolc': 'BTreeOLC',
@@ -161,7 +161,7 @@ def main():
 | CPU 绑定 | NUMA node {meta['numa_node']}；逻辑 CPU {','.join(map(str, meta['selected_cpus']))}，每个来自不同物理核；各线程使用列表前 N 个核 |
 | NUMA 内存 | numactl 在进程启动前 membind；harness 再设置每线程策略 |
 | 频率 | governor={meta['cpu_governor']}；Turbo disabled={meta['turbo_disabled']}；未锁定频率 |
-| 构建 | {meta['compiler']}；Release；HOT 使用单独的 AVX2/BMI 等编译选项 |
+| 构建 | {meta['compiler']}；Release；各依赖的 ISA 选项保存在测量构建配置中 |
 | 数据规模 | {meta['keys']:,} 条初始记录；{meta['ops']:,} 次读取/混合操作 |
 | Key / value | 24 B user key + 9 B sequence/type = 33 B logical key；64 B value |
 | MVCC | 开启；读 sequence=1，写唯一新 sequence；不做 snapshot/latest-visible 查找 |
@@ -193,10 +193,10 @@ Get 拷贝 64 B value。计时还包括 key 编码、adapter 同步、记录管�
 {memory}
 
 RSS 为进程级、按页统计的插入前后差值；不是精确节点大小。共同逻辑 payload 为 97 B。
-UnoDB 和 HOT 存储 nibble 编码 key：33 B 变成 67 B；HOT 另保留原始 key。
+UnoDB 的 nibble 编码将 33 B logical key 变成 67 B；历史 HOT adapter 也使用该编码。
 额外编码、解码和存储开销计入结果，不能把它们当作同样物理 key 长度的裸索引比较。
-BTreeOLC 使用不可变记录、额外查找和 256 个 key 分片锁；Masstree 使用每索引分配上下文、
-延迟到 Destroy 回收；HOT 的进程级节点池可以保留内存。上述选择都会影响 RSS 和生命周期。
+BTreeOLC 使用不可变记录、额外查找和 256 个 key 分片锁。历史 Masstree/HOT 的
+分配与回收范围见对应源码快照。同步、所有权和回收选择都会影响 RSS 和生命周期。
 
 ## 2. 混合 workload
 
@@ -210,10 +210,8 @@ BTreeOLC 使用不可变记录、额外查找和 256 个 key 分片锁；Masstre
 
 {latency}
 
-std::map、Abseil、TLX 和 HOT 使用整体读写锁；HOT 是 HOTSingleThreaded，未接入 ROWEX。
-RocksDB、BTreeOLC、UnoDB、Masstree、Wormhole 采用各自原生并发路径及已标明的 adapter 辅助机制。
-只有这五个原生并发实现进入多线程表和延迟表。std::map、Abseil、TLX 和当前 HOT
-仅保留单线程数据；已有的 wrapper 多线程记录单独列入 `excluded.csv`。
+本轮多线程候选：{', '.join(LABEL[i] for i in native_indexes)}。候选资格取决于
+实际接入实现的原生并发能力。历史 wrapper 多线程记录单独列入 `excluded.csv`。
 这些曲线比较当前接入方式的扩展性。不同线程数会生成相应线程 trace；同一线程数下所有
 adapter 的 trace 一致。核固定在同一个 socket，未使用 SMT，但共享服务器仍可能有干扰。
 
@@ -242,7 +240,7 @@ IPC 来自 instructions/cycles。各 metric 分别对每轮结果取中位数，
 排除 {selection['excluded_processes']} 个 wrapper 多线程进程、{len(excluded)} 条记录。
 所有原始记录先核对完整性和同场景 checksum，再按 `native-concurrency-v1` 选择。
 单线程场景覆盖全部 {len(indexes)} 个 adapter，多线程场景只覆盖原生并发 adapter。
-所有全量 flush 返回 {meta['keys']:,} 行且严格有序。HOT 只出现在单线程结果中。
+所有全量 flush 返回 {meta['keys']:,} 行且严格有序。
 
 `selection.json` 保存原始 raw.csv 的 SHA256、来源和纳入/排除计数。
 本报告是对已有测量的重整，没有重新运行性能测量；Wormhole 的源码版本以原始快照为准。

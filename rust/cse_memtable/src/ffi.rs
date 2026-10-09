@@ -12,11 +12,7 @@ pub struct RecordView {
     key: *const u8, key_len: usize, value: *const u8, value_len: usize,
     version: u64, deleted: u8,
 }
-enum Backend {
-    Arena(skl::SkipList, Arc<arena::Arena>),
-    Crossbeam(crossbeam_skl::SkipList),
-}
-struct Table { backend: Backend, frozen: RwLock<bool> }
+struct Table { list: crossbeam_skl::SkipList, frozen: RwLock<bool> }
 struct CursorHandle {
     // Drop iterator before its owner, including the borrowed sealed iterator.
     iter: Box<dyn Iterator>,
@@ -36,14 +32,11 @@ fn record(key: &[u8], value: Value) -> RecordView {
                  value_len: payload.len(), version: value.version, deleted: u8::from(value.is_deleted()) }
 }
 #[no_mangle]
-pub extern "C" fn cse_new(crossbeam: u8) -> *mut c_void {
+pub extern "C" fn cse_new() -> *mut c_void {
     catch_unwind(|| {
-        let backend = if crossbeam != 0 { Backend::Crossbeam(crossbeam_skl::SkipList::new()) }
-        else {
-            let arena = Arc::new(arena::Arena::new());
-            Backend::Arena(skl::SkipList::new(Some(arena.clone())), arena)
-        };
-        Box::into_raw(Box::new(Arc::new(Table { backend, frozen: RwLock::new(false) }))).cast()
+        Box::into_raw(Box::new(Arc::new(Table {
+            list: crossbeam_skl::SkipList::new(), frozen: RwLock::new(false),
+        }))).cast()
     }).unwrap_or(ptr::null_mut())
 }
 #[no_mangle]
@@ -66,7 +59,6 @@ pub unsafe extern "C" fn cse_write(handle: *const c_void, input: *const WriteVie
         for row in rows {
             if row.key_len > u16::MAX as usize || row.value_len > u32::MAX as usize { return -2; }
             size = match size.checked_add(row.key_len + row.value_len) { Some(n) => n, None => return -2 };
-            if matches!(table.backend, Backend::Arena(..)) && row.value_len + 10 > arena::MAX_VAL_SIZE as usize { return -2; }
         }
         if size > u32::MAX as usize { return -2; }
         let mut batch = WriteBatch::new();
@@ -74,10 +66,7 @@ pub unsafe extern "C" fn cse_write(handle: *const c_void, input: *const WriteVie
             batch.put(InnerKey::from_inner_buf(unsafe { bytes(row.key, row.key_len) }),
                       u8::from(row.deleted != 0), &[], row.version, unsafe { bytes(row.value, row.value_len) });
         }
-        match &table.backend {
-            Backend::Arena(list, _) => list.put_batch_preserve_tombstones(&mut batch, 0),
-            Backend::Crossbeam(list) => list.put_batch_preserve_tombstones(&mut batch, 0),
-        }
+        table.list.put_batch_preserve_tombstones(&mut batch, 0);
         1
     })
 }
@@ -90,19 +79,10 @@ pub unsafe extern "C" fn cse_get(handle: *const c_void, key: *const u8, len: usi
     guarded(|| {
         let table = unsafe { &*handle.cast::<Arc<Table>>() };
         let key = unsafe { bytes(key, len) };
-        match &table.backend {
-            Backend::Arena(list, _) => {
-                let value = list.get(key, snapshot);
-                if !value.is_valid() { return 0; }
-                callback(output, &record(key, value));
-            }
-            Backend::Crossbeam(list) => {
-                let guard = list.get(key, snapshot);
-                let value = *guard.value();
-                if !value.is_valid() { return 0; }
-                callback(output, &record(key, value)); // guard remains alive until copy finishes
-            }
-        }
+        let guard = table.list.get(key, snapshot);
+        let value = *guard.value();
+        if !value.is_valid() { return 0; }
+        callback(output, &record(key, value)); // guard remains alive until copy finishes
         1
     })
 }
@@ -113,7 +93,7 @@ pub unsafe extern "C" fn cse_freeze(handle: *const c_void) -> i32 {
     guarded(|| {
         let table = unsafe { &*handle.cast::<Arc<Table>>() };
         let mut frozen = table.frozen.write().unwrap();
-        if let Backend::Crossbeam(list) = &table.backend { list.seal(); }
+        table.list.seal();
         *frozen = true;
         1
     })
@@ -126,14 +106,14 @@ pub unsafe extern "C" fn cse_cursor_new(handle: *const c_void, flush: u8) -> *mu
     catch_unwind(AssertUnwindSafe(|| {
         let table = unsafe { &*handle.cast::<Arc<Table>>() }.clone();
         assert!(flush == 0 || *table.frozen.read().unwrap(), "flush requires Freeze");
-        let iter: Box<dyn Iterator + '_> = match &table.backend {
-            Backend::Arena(list, _) => Box::new(list.new_iterator(false)),
-            Backend::Crossbeam(list) if flush != 0 => Box::new(list.new_flush_iterator()),
-            Backend::Crossbeam(list) => Box::new(list.new_iterator(false)),
+        let iter: Box<dyn Iterator + '_> = if flush != 0 {
+            Box::new(table.list.new_flush_iterator())
+        } else {
+            Box::new(table.list.new_iterator(false))
         };
         // SAFETY: Arc<Table> has a stable heap address and CursorHandle retains
         // it. The borrowed flush iterator is dropped BEFORE _owner. Freeze is
-        // permanent and the write gate prevents subsequent Arena writes too.
+        // permanent and the write gate prevents subsequent writes.
         let iter = unsafe { std::mem::transmute::<Box<dyn Iterator + '_>, Box<dyn Iterator>>(iter) };
         Box::into_raw(Box::new(CursorHandle { iter, _owner: table })).cast()
     })).unwrap_or(ptr::null_mut())
@@ -184,9 +164,6 @@ pub unsafe extern "C" fn cse_cursor_record(handle: *const c_void, out: *mut Reco
 pub unsafe extern "C" fn cse_retained(handle: *const c_void) -> u64 {
     catch_unwind(AssertUnwindSafe(|| {
         let table = unsafe { &*handle.cast::<Arc<Table>>() };
-        match &table.backend {
-            Backend::Arena(_, arena) => arena.size() as u64,
-            Backend::Crossbeam(list) => list.memory_usage(),
-        }
+        table.list.memory_usage()
     })).unwrap_or(0)
 }

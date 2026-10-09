@@ -60,7 +60,7 @@ fig.legend(handles,labels,ncol=5,loc='upper center',bbox_to_anchor=(.5,.92),fram
 repeat_label = 'repeat' if meta['repeats']==1 else 'repeats'
 fig.text(.5,.035,f"{meta['repeats']} {repeat_label}: median and Q1-Q3. Same hit-start traces across lengths; random inserts, frozen indexes.\n"
          f"NUMA node {meta['numa_node']}; shared server, no CPU reservation. Prefill/freeze/full validation outside timing.\n"
-         'Row limits can truncate at EOF. All scans include Seek; ART/HOT include nibble codec, HOT uses a coarse RW lock. No disk I/O.',
+         'Row limits can truncate at EOF. All scans include Seek; Key encoding, copying and synchronization costs included. No disk I/O.',
          ha='center',fontsize=10,color='#4C535B')
 fig.savefig(root/'range-scan.png',dpi=180,facecolor='white')
 fig.savefig(root/'range-scan.svg',facecolor='white')

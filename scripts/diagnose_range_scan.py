@@ -119,7 +119,7 @@ parts += ['## 测量边界',
           '- Prefill、Freeze、全表内容/顺序校验在计时外执行；阶段按 SeekOnly → 游标 → payload 顺序运行。\n'
           '- 吞吐按真实返回行数计算，包含表尾截断。扫描均包含 NewCursor + Seek。\n'
           '- 完整 payload 扫描包含全部 key/value checksum，不包含 SSTable 编码和磁盘写入。\n'
-          '- 当前 ART/HOT adapter 包含 nibble 编码；HOT 使用 SingleThreaded 实现。\n'
+          '- UnoDB adapter 包含 nibble 编码；adapter 编码、所有权和校验成本计入结果。\n'
           '- 同 layout/seed 跨扫描长度的输入 corpus 和 Seek checksum 一致；所有 adapter 的行数/checksum 一致。\n'
           '- 共享 Xeon Gold 6240 服务器，CPU 2 / NUMA node 0；Turbo 开启，无 CPU 独占或频率锁定。\n'
           f'- 硬件计数器空值数：`{json.dumps(missing)}`。短阶段可能因 PMU 复用未调度而缺少事件。\n'

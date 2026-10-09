@@ -7,13 +7,12 @@ jobs:
       matrix:
         compiler: [gcc, clang]
     env:
-      MEMTABLE_BENCH_REQUIRE_HOT: "1"
       BUILD_JOBS: "4"
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools and Boost headers
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build clang libboost-dev
-      - name: Build and validate all adapters including HOT
+      - name: Build and validate retained adapters
         shell: bash
         run: |
           if [ "${{ matrix.compiler }}" = clang ]; then

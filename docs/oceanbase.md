@@ -1,6 +1,11 @@
-# OceanBase KeyBtree integration
+# Historical OceanBase KeyBtree integration
 
-## Availability and boundary
+The adapter, build/vendor scripts and port glue were removed on 2026-10-09;
+see [the pruning decision](index-selection.md). The following describes the
+historical measured integration. Its build commands require the original source
+snapshot or pre-removal commit and do not apply to the current checkout.
+
+## Historical availability and boundary
 
 | Candidate | Status | What it measures |
 | --- | --- | --- |

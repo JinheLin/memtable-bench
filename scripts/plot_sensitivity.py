@@ -64,7 +64,7 @@ fig.suptitle('memtable-bench | Key / prefix / value sensitivity | '+f"{meta['key
 handles,labels=axes[0,0].get_legend_handles_labels()
 fig.legend(handles,labels,ncol=5,loc='upper center',bbox_to_anchor=(.5,.95),frameon=False)
 fig.text(.5,.025,f"{meta['repeats']} repeats: median and Q1-Q3. Uniform hits, random inserts; precomputed logical keys.\n"
-         'NUMA node 0; shared Xeon server, Turbo enabled. ART/HOT include nibble codec; HOT uses a coarse RW lock.\n'
+         'NUMA node 0; shared Xeon server, Turbo enabled. Key encoding, copying and synchronization costs included.\n'
          'Cursor scans consume key size/first byte; full scans hash all bytes. No disk I/O. Values remain stored in all cases.',
          ha='center',fontsize=10,color='#4C535B')
 fig.savefig(root/'sensitivity.png',dpi=180,facecolor='white')

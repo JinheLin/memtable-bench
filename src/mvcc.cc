@@ -4,7 +4,7 @@
 
 namespace memtable_bench {
 #ifdef MEMTABLE_BENCH_HAVE_CSE
-std::unique_ptr<MvccTable> MakeCseTable(bool crossbeam, std::size_t key_size);
+std::unique_ptr<MvccTable> MakeCseTable(std::size_t key_size);
 #endif
 namespace {
 std::uint64_t DecodeVersion(std::string_view key) {
@@ -91,7 +91,6 @@ std::vector<AdapterInfo> ListMvccAdapters() {
   constexpr bool available = false;
   const std::string reason = "configure MEMTABLE_BENCH_CSE_SOURCE_DIR with pinned export";
 #endif
-  adapters.push_back({"cse_arena", available, reason, true, false, 65535, "user_key_chain"});
   adapters.push_back({"cse_crossbeam", available, reason, true, false, 65535, "user_key_chain"});
   return adapters;
 }
@@ -102,8 +101,7 @@ std::unique_ptr<MvccTable> MakeMvccTable(std::string_view name, std::size_t key_
     if (info.max_key_size && width > info.max_key_size)
       throw std::invalid_argument("MVCC key exceeds adapter limit");
 #ifdef MEMTABLE_BENCH_HAVE_CSE
-    if (name == "cse_arena" || name == "cse_crossbeam")
-      return MakeCseTable(name == "cse_crossbeam", key_size);
+    if (name == "cse_crossbeam") return MakeCseTable(key_size);
 #endif
     return std::make_unique<InternalTable>(MakeIndex(name), key_size);
   }

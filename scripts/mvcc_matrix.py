@@ -9,6 +9,7 @@ from pathlib import Path
 import random
 import subprocess
 import time
+from adapter_policy import INDEXES
 
 ENV = {k: v for k, v in os.environ.items() if k.lower() not in {'http_proxy', 'https_proxy', 'all_proxy'}}
 PROFILES = {
@@ -50,6 +51,8 @@ def main():
     indexes = args.indexes.split(',') if args.indexes else available
     profiles = args.profiles.split(',')
     threads = [int(n) for n in args.threads.split(',')]
+    if set(available) - {*INDEXES, 'cse_crossbeam'}:
+        parser.error('binary advertises retired adapters; rebuild it for the current cohort')
     if not indexes or set(indexes)-set(available) or set(profiles)-set(PROFILES):
         parser.error('unavailable adapter or unknown profile')
     if min(args.keys, args.ops, args.repeats, *threads) < 1 or len(set(threads)) != len(threads):
@@ -82,23 +85,21 @@ def main():
     root.mkdir(parents=True, exist_ok=False)
     (root/'runs').mkdir()
     repo = Path(__file__).resolve().parents[1]
-    files = [p for folder in ('src', 'include', 'cmake', 'rust', 'scripts', 'tests', 'vendor/oceanbase-port')
+    files = [p for folder in ('src', 'include', 'cmake', 'rust', 'scripts', 'tests')
              for p in (repo/folder).rglob('*') if p.is_file() and
              p.suffix in {'.cc', '.h', '.cmake', '.rs', '.json', '.toml', '.lock', '.py', '.patch', '.in', '.sh'} and
              '__pycache__' not in p.parts and 'target' not in p.parts]
     files.append(repo/'CMakeLists.txt')
     manifest = {str(p.relative_to(repo)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     dependencies = {}
-    for p in ((repo/'vendor').iterdir() if (repo/'vendor').exists() else []):
+    for name in ('rocksdb', 'btreeolc', 'unodb', 'wormhole'):
+        p = repo/'vendor'/name
         if (p/'.git').exists():
             dependencies[p.name] = output(['git', '-C', str(p), 'rev-parse', 'HEAD'])
     cse_manifest = repo/'vendor/cse-memtable/source-manifest.json'
     if cse_manifest.exists():
         dependencies['cse'] = json.loads(cse_manifest.read_text())
         dependencies['rust_toolchain'] = output(['rustc', '+stable', '-vV'])
-    oceanbase_manifest = repo/'vendor/oceanbase-keybtree/source-manifest.json'
-    if oceanbase_manifest.exists():
-        dependencies['oceanbase_keybtree'] = json.loads(oceanbase_manifest.read_text())
     metadata = dict(status='running', model='mvcc-v1', started_at=time.time(),
                     binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                     source_files=manifest, dependencies=dependencies, adapter_listing=listing,

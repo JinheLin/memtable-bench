@@ -4,24 +4,27 @@ import hashlib
 import json
 import os
 
-INDEXES = ['std_map', 'abseil_btree', 'tlx_btree', 'rocksdb_inlineskiplist',
-           'btreeolc', 'unodb_art', 'masstree', 'hot', 'wormhole']
-# Keep the historical default cohort stable. New index cores can be selected
-# explicitly in sensitivity_matrix; mvcc_matrix discovers the binary's list.
-KNOWN_INDEXES = frozenset([*INDEXES, 'oceanbase_keybtree'])
-NATIVE_CONCURRENT = frozenset({'rocksdb_inlineskiplist', 'btreeolc', 'unodb_art',
-                               'masstree', 'wormhole', 'oceanbase_keybtree'})
+INDEXES = ['rocksdb_inlineskiplist', 'btreeolc', 'unodb_art', 'wormhole']
+KNOWN_INDEXES = frozenset(INDEXES)
+NATIVE_CONCURRENT = frozenset(INDEXES)
+# Retired names are accepted only when validating/reporting measured archives.
+ARCHIVED_INDEXES = KNOWN_INDEXES | {'std_map', 'abseil_btree', 'tlx_btree',
+                                   'masstree', 'hot', 'oceanbase_keybtree'}
+ARCHIVED_NATIVE_CONCURRENT = NATIVE_CONCURRENT | {'masstree', 'oceanbase_keybtree'}
 POLICY = 'native-concurrency-v1'
 
 
-def eligible_indexes(indexes, workers):
-    return [index for index in indexes if workers == 1 or index in NATIVE_CONCURRENT]
+def eligible_indexes(indexes, workers, *, archived=False):
+    native = ARCHIVED_NATIVE_CONCURRENT if archived else NATIVE_CONCURRENT
+    return [index for index in indexes if workers == 1 or index in native]
 
 
 def validate_listing(listing, indexes):
     adapters = {}
     for line in listing.splitlines():
         fields = line.split('\t')
+        if fields[0] not in KNOWN_INDEXES:
+            raise RuntimeError(f'retired/unknown adapter {fields[0]}; rebuild the binary')
         info = dict(field.split('=', 1) for field in fields[3:])
         if info.get('native_concurrent') != str(int(fields[0] in NATIVE_CONCURRENT)):
             raise RuntimeError(f'concurrency capability differs for {fields[0]}; rebuild the binary')
@@ -34,10 +37,12 @@ def validate_listing(listing, indexes):
 def validate_rows(meta, rows, workloads, phases, configs=('',)):
     """Validate old full matrices and new per-scenario participant matrices."""
     indexes = meta['indexes']
+    assert set(indexes) <= ARCHIVED_INDEXES, 'unknown adapter in archive'
+    archived = bool(set(indexes) - KNOWN_INDEXES)
     participants = {name: list(indexes) for name, _, _ in workloads}
     if 'concurrency_policy' in meta:
         assert meta['concurrency_policy'] == POLICY, 'unknown concurrency policy'
-        participants = {name: eligible_indexes(indexes, workers)
+        participants = {name: eligible_indexes(indexes, workers, archived=archived)
                         for name, _, workers in workloads}
         assert meta['scenario_indexes'] == participants, 'incorrect scenario participants'
     expected = {(config, name, phase, index, repeat)
@@ -67,8 +72,8 @@ def select_rows(rows, source, destination):
     """Keep legacy raw data intact; report discarded wrapper-concurrency rows."""
     included, excluded = [], []
     for row in rows:
-        assert row['index'] in KNOWN_INDEXES, f'unknown adapter: {row["index"]}'
-        allowed = row['index'] in eligible_indexes([row['index']], int(row['threads']))
+        assert row['index'] in ARCHIVED_INDEXES, f'unknown adapter: {row["index"]}'
+        allowed = row['index'] in eligible_indexes([row['index']], int(row['threads']), archived=True)
         if allowed and int(row['threads']) > 1:
             assert row['adapter_mode'].startswith('native_'), 'native adapter uses a wrapper concurrency mode'
         (included if allowed else excluded).append(row)
@@ -84,7 +89,7 @@ def select_rows(rows, source, destination):
                      included_phase_rows=len(included), excluded_phase_rows=len(excluded),
                      included_processes=len({identity(row) for row in included}),
                      excluded_processes=len({identity(row) for row in excluded}),
-                     native_concurrent_indexes=sorted(NATIVE_CONCURRENT.intersection(row['index'] for row in rows)),
+                     native_concurrent_indexes=sorted(ARCHIVED_NATIVE_CONCURRENT.intersection(row['index'] for row in rows)),
                      exclusion_reason='threads > 1 without native concurrency in the integrated implementation',
                      measurement_rerun=False)
     (destination / 'selection.json').write_text(json.dumps(selection, indent=2) + '\n')

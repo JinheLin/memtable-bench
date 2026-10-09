@@ -129,11 +129,8 @@ def main():
                 raise RuntimeError(f'source manifest differs: {name}')
         (root / 'source-manifest.json').write_text(manifest.read_text())
     pins = {name: output(['git', '-C', str(repo / 'vendor' / name), 'rev-parse', 'HEAD'])
-            for name in ('abseil-cpp', 'tlx', 'rocksdb', 'btreeolc', 'unodb', 'masstree', 'hot', 'wormhole')
+            for name in ('rocksdb', 'btreeolc', 'unodb', 'wormhole')
             if (repo / 'vendor' / name).exists()}
-    oceanbase = repo / 'vendor/oceanbase-keybtree/source-manifest.json'
-    if oceanbase.exists():
-        pins['oceanbase_keybtree'] = json.loads(oceanbase.read_text())
     meta = dict(status='running', suite=args.suite, started_at=now(), source=source,
                 binary=str(binary), binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                 compiler=output(['g++', '--version']).splitlines()[0], kernel=output(['uname', '-a']),

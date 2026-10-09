@@ -4,6 +4,8 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CSE_MEMTABLE_EXPORT");
     let root = PathBuf::from(env::var("CSE_MEMTABLE_EXPORT").expect("set CSE_MEMTABLE_EXPORT"));
     let mut modules = String::new();
+    // Crossbeam reuses WriteBatch/WriteBatchEntry from skl; skl imports arena.
+    // These unchanged dependency modules do not expose an Arena C ABI backend.
     for name in ["arena", "skl", "crossbeam_skl"] {
         let path = root.join(format!("{name}.rs")).canonicalize().unwrap();
         println!("cargo:rerun-if-changed={}", path.display());

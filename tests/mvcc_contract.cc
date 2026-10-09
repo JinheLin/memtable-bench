@@ -85,18 +85,12 @@ void Oversized(const mb::AdapterInfo& info) {
   const auto key=Key(1);
   std::string payload(16*1024*1024,'x');
   const mb::MvccWrite row{key,payload,1};
-  if (info.name=="cse_arena") {
-    bool rejected=false;
-    try { table->Write(std::span(&row,1)); } catch (const std::runtime_error&) { rejected=true; }
-    Check(rejected && table->VersionCount()==0);
-  } else {
-    Check(table->Write(std::span(&row,1)));
-    mb::MvccValue value;
-    Check(table->GetAt(key,1,&value) && value.value==payload);
-    table->Freeze();
-    auto cursor=table->NewCursor(true);
-    Check(cursor->Seek(key) && cursor->Value()==payload && cursor->Version()==1);
-  }
+  Check(table->Write(std::span(&row,1)));
+  mb::MvccValue value;
+  Check(table->GetAt(key,1,&value) && value.value==payload);
+  table->Freeze();
+  auto cursor=table->NewCursor(true);
+  Check(cursor->Seek(key) && cursor->Value()==payload && cursor->Version()==1);
 }
 int main() {
   try {

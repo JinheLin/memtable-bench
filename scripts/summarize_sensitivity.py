@@ -8,7 +8,7 @@ from pathlib import Path
 import statistics
 
 from summarize_benchmark import LABEL, METRICS
-from adapter_policy import NATIVE_CONCURRENT, select_rows, validate_rows
+from adapter_policy import ARCHIVED_NATIVE_CONCURRENT as NATIVE_CONCURRENT, select_rows, validate_rows
 
 METRICS = dict(METRICS, payload_gb_s='logical GB/s')
 
@@ -208,7 +208,7 @@ Suite：`{meta['suite']}`；时间：{meta['started_at']} — {meta['finished_at
 按 `native-concurrency-v1` 纳入 {selection['included_processes']} 个进程、{len(rows)} 条 phase 记录；
 排除 {selection['excluded_processes']} 个 wrapper 多线程进程、{len(excluded)} 条记录。
 全部原始记录先通过完整性、同配置/workload/repeat 的 checksum、操作数和行数核对。
-全部实现参加单线程；只有 RocksDB、BTreeOLC、UnoDB、Masstree、Wormhole 进入多线程表。
+全部实现参加单线程；多线程表只纳入本轮具有原生并发能力的候选。
 `selection.json` 记录来源和 raw.csv 哈希；`excluded.csv` 保留被排除的历史 wrapper 记录。
 这是从已有 raw.csv 生成的报告，没有重新运行性能测量；版本以原始源码快照和二进制哈希为准。
 表中数值为中位数 [Q1,Q3]；四分位范围描述波动，不是置信区间。
@@ -225,7 +225,7 @@ Suite：`{meta['suite']}`；时间：{meta['started_at']} — {meta['finished_at
 - 完整冻结内容校验在游标计时前执行。固定阶段顺序为 {phase_order}，属于预热后的测量。
 - RSS 是预生成输入之后、索引构造前到各阶段结束的进程 RSS 增量；输入缓冲区不计入增量但占用内存并参与 cache 流量。
 - GetCopy GB/s 仅按复制的 value 字节计算；Insert/完整 Scan 按逻辑 key+value 字节计算，不是物理内存带宽。游标/LookupOnly 不给 GB/s。
-- ART/HOT nibble key 为 `2*(user key+9)+1` B，改变长度和分支字母表；成本保留在 adapter 中。HOT 为粗粒度读写锁 SingleThreaded。
+- UnoDB 的 nibble key 为 `2*(user key+9)+1` B，改变长度和分支字母表；成本保留在 adapter 中。历史 HOT adapter 使用同一编码及 SingleThreaded 包装。
 - NUMA node {meta['numa_node']}，CPU {','.join(map(str,meta['selected_cpus']))}，不同物理核；governor={meta['cpu_governor']}，Turbo disabled={meta['turbo_disabled']}。
 - 共享服务器，无频率锁定或 CPU 独占。起始负载 `{meta['load_before']}`；结束负载 `{meta['load_after']}`。
 - 编译器：{meta['compiler']}。二进制 SHA256：`{meta['binary_sha256']}`。

@@ -32,7 +32,7 @@ using Clock = std::chrono::steady_clock;
 namespace {
 
 struct Options {
-  std::string index = "std_map";
+  std::string index = "rocksdb_inlineskiplist";
   std::string stage = "all";
   std::string output = "results.csv";
   std::string distribution = "uniform";

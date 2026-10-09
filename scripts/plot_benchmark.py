@@ -17,7 +17,7 @@ source = OUT
 if (OUT / 'selection.json').exists():
     source = (OUT / json.loads((OUT / 'selection.json').read_text())['source_directory']).resolve()
 meta = json.loads((source / 'metadata.json').read_text())
-from adapter_policy import NATIVE_CONCURRENT
+from adapter_policy import ARCHIVED_NATIVE_CONCURRENT as NATIVE_CONCURRENT
 
 INDEXES = meta['indexes']
 LABEL = {'std_map': 'std::map', 'abseil_btree': 'Abseil B-tree', 'tlx_btree': 'TLX B+Tree',
@@ -96,7 +96,7 @@ fig.suptitle('memtable-bench | Xeon Gold 6240 | 1M stored versions | 33 B logica
              fontsize=16, fontweight='bold')
 fig.supxlabel(f"{meta['repeats']} runs: median and Q1-Q3; NUMA node {meta['numa_node']}; shared server, Turbo enabled.\n"
               'All indexes in single-thread panels; only native concurrent implementations in scaling panel.\n'
-              'ART/HOT store 67 B nibble keys; codec and synchronization costs included.\n'
+              'UnoDB uses nibble keys; codec and synchronization costs included.\n'
               'Scans validate order/checksum; no SSTable compression or disk I/O. RSS is an allocation/allocator estimate.',
               fontsize=10, color='#4C535B')
 fig.savefig(OUT / 'comparison.png', dpi=180)

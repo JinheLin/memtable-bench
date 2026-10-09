@@ -16,7 +16,7 @@ struct NativeRecord {
   std::uint64_t version = 0; std::uint8_t deleted = 0;
 };
 extern "C" {
-void* cse_new(std::uint8_t);
+void* cse_new();
 void cse_drop(void*);
 int cse_write(const void*, const NativeWrite*, std::size_t);
 int cse_get(const void*, const char*, std::size_t, std::uint64_t, void*,
@@ -59,7 +59,7 @@ class CseCursor final : public VersionCursor {
 };
 class CseTable final : public MvccTable {
  public:
-  CseTable(bool crossbeam, std::size_t key_size) : handle_(cse_new(crossbeam)), key_size_(key_size) {
+  explicit CseTable(std::size_t key_size) : handle_(cse_new()), key_size_(key_size) {
     if (!handle_) throw std::runtime_error("CSE initialization failed");
   }
   ~CseTable() override { cse_drop(handle_); }
@@ -104,7 +104,7 @@ class CseTable final : public MvccTable {
   std::atomic<std::size_t> versions_{0};
 };
 }  // namespace
-std::unique_ptr<MvccTable> MakeCseTable(bool crossbeam, std::size_t key_size) {
-  return std::make_unique<CseTable>(crossbeam, key_size);
+std::unique_ptr<MvccTable> MakeCseTable(std::size_t key_size) {
+  return std::make_unique<CseTable>(key_size);
 }
 }  // namespace memtable_bench

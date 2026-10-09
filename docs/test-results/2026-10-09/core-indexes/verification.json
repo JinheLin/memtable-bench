@@ -1,0 +1,116 @@
+{
+  "verified_on": "2026-10-09",
+  "parent_commit": "80db5dd79775cd9323c5039bad2b1b003a5da05e",
+  "scope": "Pruning and functional validation; no new million-key performance run",
+  "observations": {
+    "host": "jinhelin@10.2.12.79",
+    "source_hashes_verified": 56,
+    "binary_sha256": {
+      "build-linux-core/mvcc_bench": "8d86c46df777666da4d82019e407a87a757f7da4427342c8fab7bdb78d911d21",
+      "build-linux-core/memtable_bench": "036a07715459315b4a66669725f528dc1e40335675b9dd1e3b55a693c1f1b164",
+      "build-linux-baseline-core/mvcc_bench": "99bd3cf469d1aa3d5e3f07eec092e517c5e8ff2ab6d5067d3888cc59435a53c4",
+      "build-linux-baseline-core/memtable_bench": "a0aa4c99132aa4658512b5c1ee6e685baee4da1b871ae6ca3f2c996eca1c3100"
+    },
+    "adapter_listings": {
+      "build-linux-core/mvcc_bench": "rocksdb_inlineskiplist\tavailable\tRocksDB InlineSkipList baseline + ConcurrentArena; append-only\tnative_concurrent=1\tkey_encoding=binary\nbtreeolc\tavailable\tBTreeOLC; native OLC with per-key stripes for exact size/upsert\tnative_concurrent=1\tkey_encoding=binary\nunodb_art\tavailable\tUnoDB olc_db + QSBR; append-only; terminated nibble keys\tnative_concurrent=1\tkey_encoding=nibble_terminated\nwormhole\tavailable\tWormhole; native whsafe API with parked per-thread references\tnative_concurrent=1\tkey_encoding=binary\ncse_crossbeam\tavailable\tCSE native version chains; serialized batch writer; Rust FFI\tnative_concurrent=1\tkey_encoding=user_key_chain\n",
+      "build-linux-baseline-core/mvcc_bench": "rocksdb_inlineskiplist\tavailable\tRocksDB InlineSkipList baseline + ConcurrentArena; append-only\tnative_concurrent=1\tkey_encoding=binary\nbtreeolc\tunavailable\tconfigure -DMEMTABLE_BENCH_FETCH_BTREEOLC=ON\tnative_concurrent=1\tkey_encoding=binary\nunodb_art\tunavailable\tconfigure -DMEMTABLE_BENCH_FETCH_UNODB=ON\tnative_concurrent=1\tkey_encoding=nibble_terminated\nwormhole\tunavailable\tconfigure -DMEMTABLE_BENCH_FETCH_WORMHOLE=ON\tnative_concurrent=1\tkey_encoding=binary\ncse_crossbeam\tunavailable\tconfigure MEMTABLE_BENCH_CSE_SOURCE_DIR with pinned export\tnative_concurrent=1\tkey_encoding=user_key_chain\n"
+    },
+    "compiler": "c++ (GCC) 11.3.1 20220421 (Red Hat 11.3.1-2)"
+  },
+  "ctest": {
+    "retained_five": {
+      "passed": 14,
+      "total": 14
+    },
+    "default_baseline": {
+      "passed": 10,
+      "total": 10
+    }
+  },
+  "default_index": "rocksdb_inlineskiplist",
+  "retained_mvcc_indexes": [
+    "rocksdb_inlineskiplist",
+    "btreeolc",
+    "unodb_art",
+    "wormhole",
+    "cse_crossbeam"
+  ],
+  "retired_indexes": [
+    "std_map",
+    "abseil_btree",
+    "tlx_btree",
+    "masstree",
+    "hot",
+    "oceanbase_keybtree",
+    "cse_arena"
+  ],
+  "pilot": {
+    "status": "complete",
+    "processes": 100,
+    "phase_rows": 320,
+    "cohorts": [
+      {
+        "cohort": "pilot",
+        "processes": 100,
+        "phase_rows": 320,
+        "comparison_groups": 64,
+        "binary_sha256": "8d86c46df777666da4d82019e407a87a757f7da4427342c8fab7bdb78d911d21",
+        "raw_sha256": "d31ccae57c7e2b1fcfecdc3292646ab4622168e8f5cb64fc79188b83ad63ed38",
+        "pmu_rows": {
+          "cycles_per_request": 320,
+          "instructions_per_request": 320,
+          "l1d_miss_per_request": 320,
+          "llc_miss_per_request": 320,
+          "branch_miss_per_request": 320,
+          "dtlb_miss_per_request": 238
+        }
+      }
+    ]
+  },
+  "planned_formal_mvcc": {
+    "processes": 300,
+    "phase_rows": 960,
+    "profiles": [
+      "base",
+      "deep",
+      "prefix",
+      "value"
+    ],
+    "threads": [
+      1,
+      4,
+      8
+    ],
+    "repeats": 3,
+    "executed": false
+  },
+  "exact_key_default_plan_processes": {
+    "original": 160,
+    "screening": 240,
+    "representative": 192,
+    "range_scan": 120
+  },
+  "source_snapshot_inputs": 56,
+  "source_snapshot_hashes_match_metadata_and_current_files": true,
+  "cse_native_pin_unchanged": true,
+  "historical_formal_mvcc_archive_matches_parent_commit": true,
+  "build_proxy_variables_cleared": [
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "ALL_PROXY",
+    "http_proxy",
+    "https_proxy",
+    "all_proxy"
+  ],
+  "format_target_run": false,
+  "artifact_sha256": {
+    "historical-mvcc-validation.json": "d787978e49d95f36b41d8900945cff945d9ab40ba82f66831ae84e6487a4f8eb",
+    "source-snapshot.tar.gz": "9d1065e335f1305a9a7fc29b088f57ee85bd8b87375366e2b388f7f8f37964db",
+    "pilot-records.tar.gz": "1e38424e7c117ebdff4d9743b55b80afcd0eb9e6d493cee40b30293404ff6af6",
+    "baseline-build-tests.log": "0c43842bcf9da48873762688642284393eb2ef7deed7452458d64c0fa2310815",
+    "pilot-validation.json": "b127755bad5291093a1fd95a9fcff4c21d314a46f5fe0818e38f26dca2b381e2",
+    "pilot.log": "0077bf3857c050e67c2fdf83e9ce926df6bccb699bc028a8af4df6a631db184e",
+    "final-build-tests.log": "9e04977d3725e62d47a5f37d581f4d7e40cea5542238779cddeb26807ec2d51d",
+    "pilot-metadata.json": "cf6d187d113f7ba6b77be6f40a9101bc4b110c195aa270b41e97f4eea362dfef"
+  }
+}

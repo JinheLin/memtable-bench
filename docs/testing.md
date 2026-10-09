@@ -1,10 +1,48 @@
 # Verification results
 
-Current support is **native Linux x86-64 with GCC/Clang**. The build now rejects
+Current support is **native Linux x86-64 with GCC/Clang**. The current adapter
+set has five candidates with InlineSkipList as its default baseline; see
+[index selection](index-selection.md). Entries below preserve earlier measured
+candidate sets and test counts. The build now rejects
 other platforms. Earlier macOS/ARM entries below describe historical verification
 and do not imply current platform support.
 
-## Formal MVCC matrix completion
+## Five-candidate pruning validation (2026-10-09)
+
+Linux x86-64 / Xeon Gold 6240 / GCC 11.3.1 / Rust 1.92.0:
+
+- All five retained candidates: **14/14 CTest tests passed**;
+  [final build/test log](test-results/2026-10-09/core-indexes/final-build-tests.log).
+  Both executable defaults are InlineSkipList. Integration tests reject all
+  seven retired names before creating CSV files, and exercise visibility,
+  tombstones, concurrent readers/writer, ordered scans and lifecycle checks.
+- Fresh default build with only InlineSkipList available: **10/10 passed**;
+  [baseline build/test log](test-results/2026-10-09/core-indexes/baseline-build-tests.log).
+- The compact MVCC pilot completed **100 fresh processes / 320 phase rows**:
+  1,000 user keys, 2,000 operation budgets, four profiles, one repetition and
+  1/4/8 workers. All **64** content/count comparison groups agree. This is
+  functional validation; its timings do not establish a performance ranking.
+  See [run log](test-results/2026-10-09/core-indexes/pilot.log),
+  [metadata](test-results/2026-10-09/core-indexes/pilot-metadata.json) and
+  [independent validation](test-results/2026-10-09/core-indexes/pilot-validation.json).
+- All 56 measured public source/build/test inputs match the current files.
+  The [source snapshot](test-results/2026-10-09/core-indexes/source-snapshot.tar.gz)
+  preserves those inputs; private CSE engine sources and linked binaries are
+  excluded. Its native source pins are unchanged.
+  [Pilot records](test-results/2026-10-09/core-indexes/pilot-records.tar.gz)
+  contain the raw CSV and every process's command/result/log.
+  [Verification manifest](test-results/2026-10-09/core-indexes/verification.json)
+  records binary/artifact hashes, availability and plan counts.
+- Cycles, instructions, L1/LLC and branch fields are present in all 320 rows;
+  DTLB fields in 238. Missing events remain empty.
+- The new million-key plan has **300 processes / 960 phase rows**, but was
+  not run in this change. The previous 906-process archive still validates,
+  and its recorded file hashes are unchanged.
+
+Builds cleared all HTTP/HTTPS/ALL proxy variables. No formatting target was run.
+See [selection reasons and CSE default evidence](index-selection.md).
+
+## Historical formal MVCC matrix completion
 
 Completed on Linux x86-64 / GCC 11.3.1 on 2026-10-09:
 
@@ -169,14 +207,15 @@ Proxy environment variables were unset during builds.
   adapters reject unsupported exact-key upsert workloads.
 - `benchmark_policy`: runner participation/counts, advertised native capability,
   historical/new matrix completeness, and missing/duplicate/ineligible row rejection.
-- `harness_integration`: single-thread contents/checksums against `std_map`,
+- `harness_integration`: single-thread contents/checksums against InlineSkipList,
   multithreaded checksums within the native concurrent group, early rejection of
   non-native multithreaded requests (including read-only workloads), CSV
   schema and parameter checks, controlled key layouts, split measurements,
   range limits and deterministic EOF truncation, and invalid inputs rejected
   before output creation.
-- [Benchmark archives](../benchmarks/README.md) retain 1,170 formal processes and
-  4,185 phase rows, with cross-adapter count/checksum validation.
+- [Earlier exact-key benchmark archives](../benchmarks/README.md) retain 1,170
+  formal processes and 4,185 phase rows, with cross-adapter count/checksum
+  validation. The formal MVCC archive above is separate.
 
 ASan/UBSan checks detect memory and undefined-behavior errors in the tested
 workloads; TSan cleanliness is not claimed. Historical ARM64 runs excluded HOT.
@@ -204,13 +243,13 @@ the fix, and the archives retain their original measurement snapshots.
 Linux with the required x86 ISA:
 
 ```sh
-MEMTABLE_BENCH_REQUIRE_HOT=1 ./scripts/build_all.sh build-all -G Ninja
-MEMTABLE_BENCH_REQUIRE_HOT=1 MEMTABLE_BENCH_TEST_NUMA_NODE=0 \
+./scripts/build_all.sh build-core -G Ninja
+MEMTABLE_BENCH_TEST_NUMA_NODE=0 \
   MEMTABLE_BENCH_TEST_CPUS=2,3,4,5 \
-  ctest --test-dir build-all --output-on-failure
+  ctest --test-dir build-core --output-on-failure
 ```
 
-Choose CPU IDs and the NUMA node from your own topology. For a dependency-free
+Choose CPU IDs and the NUMA node from your own topology. For a RocksDB
 sanitized baseline:
 
 ```sh
@@ -223,5 +262,5 @@ ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 \
 ```
 
 The GitHub Actions workflow builds the all-adapter configuration with GCC and
-Clang on Linux and requires HOT at runtime. Local checks above are separate from
+Clang on Linux for the four retained C++ adapters. Local checks above are separate from
 GitHub Actions results.

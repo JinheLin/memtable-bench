@@ -25,11 +25,18 @@ for line in invoke("--list-indexes").splitlines():
     metadata = dict(field.split("=", 1) for field in fields[3:])
     assert metadata["native_concurrent"] in ("0", "1")
     adapters[fields[0]] = (fields[1] == "available", metadata)
-if os.environ.get("MEMTABLE_BENCH_REQUIRE_HOT") == "1" and not adapters["hot"][0]:
-    raise AssertionError("HOT runtime validation requires a CPU with its advertised ISA features")
+assert set(adapters) == {'rocksdb_inlineskiplist', 'btreeolc', 'unodb_art', 'wormhole'}
+assert adapters['rocksdb_inlineskiplist'][0]
 
 with tempfile.TemporaryDirectory(prefix="memtable-contract-") as directory:
     root = Path(directory)
+    default = root / 'default.csv'
+    invoke('--stage', 1, '--keys', 10, '--ops', 10, '--output', default)
+    assert {row['index'] for row in csv.DictReader(default.open())} == {'rocksdb_inlineskiplist'}
+    for retired in ('std_map', 'abseil_btree', 'tlx_btree', 'masstree', 'hot', 'oceanbase_keybtree', 'cse_arena'):
+        rejected = root / (retired + '-retired.csv')
+        invoke('--index', retired, '--output', rejected, succeeds=False)
+        assert not rejected.exists(), retired
     reference = None
     for name, (available, metadata) in adapters.items():
         output = root / (name + ".csv")
@@ -57,7 +64,7 @@ with tempfile.TemporaryDirectory(prefix="memtable-contract-") as directory:
         if reference is None:
             reference = observed
         assert observed == reference, f"workload/checksum mismatch: {name}"
-        print(f"{name}: all stages, CSV and checksums match std_map")
+        print(f"{name}: all stages, CSV and checksums match InlineSkipList")
 
         if metadata["native_concurrent"] == "0":
             for stage in ("1", "2", "3", "all"):

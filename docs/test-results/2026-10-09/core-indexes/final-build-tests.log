@@ -1,0 +1,55 @@
+[0/2] Re-checking globbed directories...
+[1/13] Building CXX object _deps/rocksdb-build/CMakeFiles/trace_analyzer.dir/tools/trace_analyzer.cc.o
+[2/13] Building CXX object _deps/rocksdb-build/CMakeFiles/block_cache_trace_analyzer.dir/tools/block_cache_analyzer/block_cache_trace_analyzer_tool.cc.o
+[3/13] Linking CXX executable _deps/rocksdb-build/trace_analyzer
+[4/13] Linking CXX executable _deps/rocksdb-build/block_cache_trace_analyzer
+[5/13] Building CXX object CMakeFiles/memtable_bench_index.dir/src/wormhole_index.cc.o
+/DATA/disk1/jinhelin/github/memtable-bench/src/wormhole_index.cc:130:11: warning: invalid use of 'struct kv' with a zero-size array in 'class memtable_bench::{anonymous}::WormholeIndex::WormCursor' [-Wpedantic]
+  130 |     kvref view_{};
+      |           ^~~~~
+In file included from /DATA/disk1/jinhelin/github/memtable-bench/src/wormhole_index.cc:5:
+/DATA/disk1/jinhelin/github/memtable-bench/vendor/wormhole/kv.h:49:6: note: array member 'u8 kv::kv [0]' declared here
+   49 |   u8 kv[0];  // len(kv) == klen + vlen
+      |      ^~
+[6/13] Building CXX object CMakeFiles/memtable_bench_index.dir/src/btreeolc_index.cc.o
+[7/13] Building CXX object CMakeFiles/memtable_bench_index.dir/src/unodb_index.cc.o
+[8/13] Linking CXX static library libmemtable_bench_index.a
+[9/13] Linking CXX executable adapter_contract
+[10/13] Linking CXX executable memtable_bench
+[11/13] Linking CXX executable key_dataset_contract
+[12/13] Linking CXX executable mvcc_contract
+[13/13] Linking CXX executable mvcc_bench
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-core
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux-core
+      Start  1: mvcc_contract
+ 1/14 Test  #1: mvcc_contract ....................   Passed    0.07 sec
+      Start  2: mvcc_smoke
+ 2/14 Test  #2: mvcc_smoke .......................   Passed    0.03 sec
+      Start  3: key_dataset_contract
+ 3/14 Test  #3: key_dataset_contract .............   Passed    0.01 sec
+      Start  4: adapter_contract
+ 4/14 Test  #4: adapter_contract .................   Passed    0.47 sec
+      Start  5: smoke
+ 5/14 Test  #5: smoke ............................   Passed    0.01 sec
+      Start  6: rocksdb_smoke
+ 6/14 Test  #6: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  7: rocksdb_reject_upsert
+ 7/14 Test  #7: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  8: btreeolc_smoke
+ 8/14 Test  #8: btreeolc_smoke ...................   Passed    0.01 sec
+      Start  9: unodb_art_smoke
+ 9/14 Test  #9: unodb_art_smoke ..................   Passed    0.02 sec
+      Start 10: wormhole_smoke
+10/14 Test #10: wormhole_smoke ...................   Passed    0.02 sec
+      Start 11: unodb_reject_upsert
+11/14 Test #11: unodb_reject_upsert ..............   Passed    0.00 sec
+      Start 12: mvcc_integration
+12/14 Test #12: mvcc_integration .................   Passed    0.31 sec
+      Start 13: benchmark_policy
+13/14 Test #13: benchmark_policy .................   Passed    0.65 sec
+      Start 14: harness_integration
+14/14 Test #14: harness_integration ..............   Passed    0.81 sec
+
+100% tests passed, 0 tests failed out of 14
+
+Total Test time (real) =   2.43 sec

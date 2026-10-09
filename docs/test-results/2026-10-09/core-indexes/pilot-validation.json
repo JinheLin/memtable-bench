@@ -1,0 +1,23 @@
+{
+  "status": "complete",
+  "processes": 100,
+  "phase_rows": 320,
+  "cohorts": [
+    {
+      "cohort": "pilot",
+      "processes": 100,
+      "phase_rows": 320,
+      "comparison_groups": 64,
+      "binary_sha256": "8d86c46df777666da4d82019e407a87a757f7da4427342c8fab7bdb78d911d21",
+      "raw_sha256": "d31ccae57c7e2b1fcfecdc3292646ab4622168e8f5cb64fc79188b83ad63ed38",
+      "pmu_rows": {
+        "cycles_per_request": 320,
+        "instructions_per_request": 320,
+        "l1d_miss_per_request": 320,
+        "llc_miss_per_request": 320,
+        "branch_miss_per_request": 320,
+        "dtlb_miss_per_request": 238
+      }
+    }
+  ]
+}

@@ -7,10 +7,20 @@ import tempfile
 
 binary = str(Path(sys.argv[1]).resolve())
 listing = subprocess.check_output([binary, '--list-indexes'], text=True)
+assert {line.split('\t')[0] for line in listing.splitlines()} == {
+    'rocksdb_inlineskiplist', 'btreeolc', 'unodb_art', 'wormhole', 'cse_crossbeam'}
 adapters = [(fields[0], 'native_concurrent=1' in fields)
             for line in listing.splitlines()
             if (fields := line.split('\t'))[1] == 'available']
 with tempfile.TemporaryDirectory() as directory:
+    default = Path(directory)/'default.csv'
+    subprocess.run([binary, '--keys', '10', '--ops', '20', '--output', str(default)],
+                   stdout=subprocess.DEVNULL, check=True)
+    assert {row['index'] for row in csv.DictReader(default.open())} == {'rocksdb_inlineskiplist'}
+    for retired in ('std_map', 'abseil_btree', 'tlx_btree', 'masstree', 'hot', 'oceanbase_keybtree', 'cse_arena'):
+        dest = Path(directory)/(retired+'-retired.csv')
+        result = subprocess.run([binary, '--index', retired, '--output', str(dest)], capture_output=True)
+        assert result.returncode != 0 and not dest.exists(), retired
     checks = {}
     for name, native in adapters:
         for case, extra in [('normal', []), ('empty_deleted', ['--value-size','0','--delete-percent','100']),

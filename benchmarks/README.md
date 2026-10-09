@@ -6,7 +6,15 @@ serially with CPU affinity and NUMA binding. Frequency is not locked and CPUs
 are not reserved. Dependency revisions, compiler options, binary hashes and
 measurement source snapshots are recorded separately for each experiment.
 
-## Current comparison policy
+## Current code and historical measurements
+
+The current benchmark retains RocksDB InlineSkipList (default baseline),
+BTreeOLC, UnoDB ART, Wormhole and CSE Crossbeam. [Index selection](../docs/index-selection.md)
+records why seven adapters were removed. The archives below preserve the
+candidate sets, source snapshots and original statistics actually measured;
+retired names remain valid for historical reporting only.
+
+## Historical comparison policy
 
 For snapshot-visible database workloads, use the
 [completed MVCC matrix](mvcc-formal-1m-2026-10-08/README.md): **906 processes /

@@ -14,33 +14,26 @@ See [all cohort tables](../benchmarks/mvcc-formal-1m-2026-10-08/summary/report.m
 
 ## Implementations
 
+The current benchmark retains five candidates; InlineSkipList is the default
+baseline. See [index selection and removal reasons](index-selection.md).
+The completed archive above records the twelve-candidate run before pruning.
+
 | Candidates | Physical representation | Multiworker participation |
 | --- | --- | --- |
-| std::map, Abseil B-tree, TLX B+tree, HOTSingleThreaded | One ordered InternalKey per version | One worker only |
-| RocksDB InlineSkipList, BTreeOLC, UnoDB ART, Masstree, Wormhole | One ordered InternalKey per version | One worker; native concurrent readers; SWMR |
-| `oceanbase_keybtree` | One ordered InternalKey per version; actual KeyBtree core port | One worker; native concurrent readers; SWMR |
-| `cse_arena` | One Arena skiplist node per user key; native older-version links | Native concurrent reads; internally serialized batch writer |
+| RocksDB InlineSkipList, BTreeOLC, UnoDB ART, Wormhole | One ordered InternalKey per version | Native concurrent readers; SWMR |
 | `cse_crossbeam` | One Crossbeam SkipMap entry per user key; native immutable Arc version chains | Native concurrent reads; internally serialized batch writer |
 
-The ten ordered-index candidates use `user_key || BE(~timestamp) || type`, with deletion type 0
-and put type 1. User keys are fixed width in one experiment. `GetAt` seeks the
-first version at or below the snapshot, then checks the user key. It returns a
-copy of the payload. Each lookup includes cursor creation and key encoding.
-The CSE adapters invoke native `get(user_key, snapshot)` and copy the result
-while its native ownership guard is live. They store user keys and native
-metadata, rather than passing an encoded InternalKey as the CSE user key.
+The four ordered-index candidates use `user_key || BE(~timestamp) || type`,
+with deletion type 0 and put type 1. User keys are fixed width in one experiment.
+`GetAt` seeks the first version at or below the snapshot, then checks the user
+key and copies the payload. Each lookup includes cursor creation and key encoding.
+CSE invokes native `get(user_key, snapshot)` and copies its result while the
+native ownership guard is live. It stores native metadata and user keys.
 
-Costs of wrappers, synchronization, Rust FFI, ownership and encoding are timed.
-This is an operation-path comparison; it is not an isolated measurement of
-the underlying tree traversal instructions. UnoDB/HOT retain their additional
-terminated nibble encoding. The CSE cursor bridge performs C ABI calls per
-navigation step and metadata refresh; this cost is included in scans and flush.
-
-OceanBase KeyBtree uses its native 225-entry buffered iterator and a binary
-comparator. Point `GetAt` includes filling the first native iterator batch.
-This candidate does not use native OceanBase version chains or transaction
-services. OceanBase integration is limited to the KeyBtree index core; see
-[the integration boundary](oceanbase.md).
+Wrappers, synchronization, Rust FFI, ownership and encoding are timed. UnoDB
+retains terminated nibble encoding. The CSE cursor bridge performs C ABI calls
+per navigation step and metadata refresh; these costs are included in scans
+and flush traversal.
 
 ### CSE source boundary
 
@@ -56,14 +49,15 @@ A small standalone Rust static library supplies compatible `Value`, raw
 `InnerKey`, and iterator types. Benchmark keys are already inner keys;
 TiKV API V2 keyspace prefix parsing is not performed. Snapshot callbacks are
 unreachable because the adapters always use the native preserve-tombstones
-batch API. Arena growth timing is retained, with a no-op metrics observer.
+batch API. Crossbeam reuses the native `WriteBatch`/`WriteBatchEntry` defined in
+`skl.rs`, which imports `arena.rs`; these pinned dependency modules remain
+compiled. The C ABI creates only Crossbeam and has no backend-selection argument.
+Arena is no longer a candidate or a constructible bridge backend.
 Blob references, user metadata, CfTable's three CFs, transaction files, WAL,
 lower SSTs and actual SST generation are outside this comparison.
 
-Crossbeam Freeze calls its native `seal`; ordered flush uses its sealed,
-borrowed iterator. Arena has an adapter write gate for permanent Freeze and
-uses its native iterator. Concurrent writes use the native batch writer mutex
-in each CSE core; the adapter does not claim parallel writers. The bridge
+Crossbeam Freeze calls native `seal`; ordered flush uses its sealed, borrowed
+iterator. Concurrent writes use the native batch writer mutex; the bridge
 retains native backing owners for cursor views and catches Rust panics at the
 ABI boundary. Its flush iterator retains an Arc owner until after iterator
 destruction. C++ exceptions from Get materialization do not cross the C ABI.
@@ -75,7 +69,7 @@ and third-party terms before redistributing an export or linked binary.
 
 ## Build
 
-The dependency-free default builds both executables, with `std_map` available:
+The default builds both executables with the required InlineSkipList baseline:
 
 ```sh
 unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
@@ -109,11 +103,11 @@ For an authorized benchmark host without the checkout, copy that verified
 export and pass its absolute directory to CMake. Rust uses the selected CMake
 compiler as its host linker and clears inherited Rust flags. CMake's Cargo
 build clears proxy variables too. The export is verified even on that host.
-Without a valid export, both CSE candidates are explicitly unavailable.
+Without a valid export, `cse_crossbeam` is explicitly unavailable.
 The build does not download the complete CSE workspace or require its nightly
 toolchain. The project supports **native Linux x86-64 only**; configuration rejects other
-platforms and cross builds. GCC 11.3.1 and Rust stable 1.92.0 passed all eleven
-implementation tests; see [verification notes](testing.md).
+platforms and cross builds. See [verification notes](testing.md) for current
+and historical test evidence.
 
 ## Workload semantics
 
@@ -179,7 +173,7 @@ build-cse/mvcc_bench --index cse_crossbeam --stage 1 \
   --scan-length 100 --scan-ops 2000 --output mvcc-single.csv
 
 # Single writer + seven readers; 80% reads, of which 10% are visible scans.
-build-all/mvcc_bench --index cse_arena --stage 2 \
+build-all/mvcc_bench --index cse_crossbeam --stage 2 \
   --keys 100000 --versions 4 --snapshot-lag 2 --ops 1000000 \
   --threads 8 --read-percent 80 --scan-percent 10 --batch-size 64 \
   --distribution zipf --cpu-list 2,3,4,5,6,7,8,9 --numa-node 0 \
@@ -192,10 +186,9 @@ build-all/mvcc_bench --index rocksdb_inlineskiplist --stage 3 \
 
 Common-prefix layouts and distributions reuse the controlled key generator.
 Uniform, sequential and Zipf(theta=1.1) choose user keys; history depth varies
-independently. Native key limits apply to encoded keys for the ten ordered indexes,
-and user key width for CSE. Arena limits encoded values to 16 MiB-1 and rejects
-workload bounds that could overflow its uint32 allocation counter. This guard
-is deliberately conservative; it is not a claim of exact allocation size.
+independently. Native key limits apply to encoded keys for the four ordered
+indexes and user-key width for CSE. Crossbeam has no Arena-specific 16 MiB
+value limit; the bridge checks uint16 keys, uint32 values and total batch bytes.
 
 ## Screening matrix
 
@@ -220,16 +213,10 @@ This is a screening design; timestamp retention, contention, key distribution,
 batch size and read/scan mix can then be explored in focused CLI runs. It avoids
 exhausting the Cartesian product before identifying expensive cases.
 
-CSE Arena has both a uint32 allocation counter and an encoded block-index
-limit. The harness checks the counter before constructing inputs; the native
-block-index limit can still reject smaller allocations during loading. With
-these small record sizes, the pinned growth schedule provides about 656 MiB
-per node/value segment, before alignment and unused block tails. At one million
-user keys, base/prefix fit, while deep/value exceed native capacity. Record
-these cases as unsupported; do not change the pinned allocator or compare a
-smaller Arena population against million-key peers. Separate 500,000-key deep
-and 100,000-key value cohorts fit all twelve candidates, including stage 2 with
-a one-million-operation budget. Keep their statistics separate.
+The five-candidate base/deep/prefix/value plan, three repetitions and 1/4/8
+workers, schedules **300 processes / 960 phase rows**. Every retained candidate
+is eligible for SWMR. Use `--list-plan` to check the actual compiled participants.
+Arena-specific matched smaller cohorts are only part of the historical archive.
 
 ```sh
 python3 scripts/mvcc_matrix.py --binary build-all/mvcc_bench \
@@ -296,10 +283,9 @@ sampled latency. Reader latency may still combine Get and scan; use scan-percent
 
 RSS includes allocator caches and measurement overhead; it is not exact object
 size. Prefer a fresh process per stage, as the runner does, for memory comparison.
-Stage-all can retain allocator pages from earlier tables. CSE Arena accounting
-counts arena allocation charges; Crossbeam estimates retained object charges,
-excluding allocator overhead. They are not interchangeable with each other or
-RSS. Destroy may leave resident allocator pages even after all objects retire.
+Stage-all can retain allocator pages from earlier tables. Crossbeam estimates
+retained object charges, excluding allocator overhead; this is not equivalent
+to RSS. Destroy may leave resident allocator pages even after all objects retire.
 
 Phase wall duration includes PMU start/stop and sampling setup. For the one-call
 Freeze phase, these controls dominate the recorded duration. The report also

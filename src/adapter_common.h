@@ -59,8 +59,7 @@ class WriteAdmission {
 
 // No zero bytes except the terminator. The transformation preserves unsigned
 // binary lexicographic order, including empty keys and prefix relationships.
-// ART receives the terminator as part of its key, making keys prefix-free;
-// HOT receives the same buffer as a C string.
+// UnoDB receives the terminator as part of its key, making keys prefix-free.
 inline std::string NibbleKey(std::string_view key) {
   if (key.size() > (std::numeric_limits<std::size_t>::max() - 1) / 2)
     throw std::length_error("key too large to encode");
