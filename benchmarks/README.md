@@ -13,6 +13,10 @@ BTreeOLC, UnoDB ART, Wormhole and CSE Crossbeam. [Index selection](../docs/index
 records why seven adapters were removed. The archives below preserve the
 candidate sets, source snapshots and original statistics actually measured;
 retired names remain valid for historical reporting only.
+The current `mvcc-v2` workload has separate OLTP/latest and long-history groups;
+see [the current protocol](../docs/mvcc.md#two-workload-groups). Its small
+functional pilot is recorded in [verification notes](../docs/testing.md#oltplatest-and-long-history-groups-2026-10-09).
+The formal `mvcc-v1` archive below retains its original read protocol.
 
 ## Historical comparison policy
 

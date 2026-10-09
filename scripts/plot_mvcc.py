@@ -26,15 +26,18 @@ def main():
         dict.fromkeys(row['index'] for row in rows))}
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10,
                          'axes.spines.top': False, 'axes.spines.right': False, 'svg.fonttype': 'none'})
-    panels = [('batch_load', 'throughput_versions_s', 'Load: million written versions/s', 1),
-              ('get_snapshot', 'throughput_requests_s', 'Historical Get: million requests/s', 1),
-              ('scan_snapshot', 'items_s', 'Historical scan: million live rows/s', 1),
-              ('batch_load', 'bytes_per_version', 'RSS growth after load: bytes/version', 1)]
     for cohort, profile in combinations:
         samples = [row for row in rows if row['cohort'] == cohort and row['profile'] == profile]
         stem = cohort if sum(name == cohort for name, _ in combinations) == 1 else f'{cohort}-{profile}'
         stats = {(row['phase'], row['metric'], int(row['stage']), int(row['scenario_threads']), row['index']): row
                  for row in samples}
+        latest = not any(row['phase'] == 'get_snapshot' for row in samples)
+        group = samples[0].get('workload_group', 'legacy')
+        suffix, label = ('latest', 'Latest') if latest else ('snapshot', 'Historical')
+        panels = [('batch_load', 'throughput_versions_s', 'Load: million written versions/s', 1),
+                  ('get_' + suffix, 'throughput_requests_s', label + ' Get: million requests/s', 1),
+                  ('scan_' + suffix, 'items_s', label + ' scan: million live rows/s', 1),
+                  ('batch_load', 'bytes_per_version', 'RSS growth after load: bytes/version', 1)]
         indexes = list(dict.fromkeys(row['index'] for row in samples))
         # Summary rows are sorted by index. Use the same order in every panel.
         positions = np.arange(len(indexes))
@@ -52,8 +55,9 @@ def main():
             ax.set_title(title, loc='left', fontweight='bold')
             ax.set_xlim(left=0)
             ax.grid(axis='x', alpha=.18)
-        fig.suptitle(f'MVCC benchmark | {stem}', fontsize=17, fontweight='bold')
-        fig.text(.5, .015, 'Fresh processes; medians with Q1-Q3. Fixed historical snapshots. '
+        fig.suptitle(f'MVCC benchmark | {group} | {stem}', fontsize=17, fontweight='bold')
+        view = 'Latest completed batch captured per request.' if latest else 'Fixed historical snapshots.'
+        fig.text(.5, .015, 'Fresh processes; medians with Q1-Q3. ' + view + ' '
                  'Adapter, codec, copies and checksums included.\n'
                  'Shared Xeon host; CPU/NUMA binding; no CPU reservation or frequency lock. '
                  'No disk I/O. Cohorts with different key counts stay separate.', ha='center', fontsize=10)

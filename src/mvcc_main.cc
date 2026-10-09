@@ -9,6 +9,7 @@
 #include <iostream>
 #include <limits>
 #include <numeric>
+#include <optional>
 #include <random>
 #include <thread>
 
@@ -16,12 +17,13 @@ namespace mb = memtable_bench;
 namespace {
 struct Options {
   std::string index = "rocksdb_inlineskiplist", stage = "all", output = "mvcc-results.csv";
+  std::string read_view = "latest";
   std::string layout = "random", distribution = "uniform", cpu_list;
-  std::size_t keys = 10000, versions = 4, ops = 20000, key_size = 16, value_size = 32;
-  std::size_t batch_size = 32, snapshot_lag = 2, scan_length = 100;
+  std::size_t keys = 10000, versions = 2, ops = 20000, key_size = 16, value_size = 32;
+  std::size_t batch_size = 32, snapshot_lag = 0, scan_length = 100;
   std::size_t scan_ops = 1024;
   std::size_t prefix_bytes = 0, prefix_groups = 1;
-  unsigned threads = 1, read_percent = 80, scan_percent = 10;
+  unsigned threads = 1, read_percent = 80, scan_percent = 0;
   unsigned delete_percent = 10, miss_percent = 10;
   std::uint64_t seed = 42;
   int numa_node = -1;
@@ -37,6 +39,7 @@ std::size_t Unsigned(std::string_view value) {
 void Help() {
   std::cout << "mvcc_bench: snapshot semantics over InternalKeys or native version chains\n"
     "  --index NAME --list-indexes --stage 1|2|3|all --output FILE\n"
+    "  --read-view latest|historical (default latest; latest requires lag=0)\n"
     "  --keys N --versions N --ops N --key-size N --value-size N\n"
     "  --batch-size N           Entries per Write submission (not atomic transactions)\n"
     "  --snapshot-lag N         Completed version rounds behind latest, 0..versions\n"
@@ -65,6 +68,7 @@ Options Parse(int argc, char** argv) {
     if (++i == argc) throw std::invalid_argument("missing value: " + arg);
     const std::string value = argv[i];
     if (arg == "--index") o.index = value;
+    else if (arg == "--read-view") o.read_view = value;
     else if (arg == "--stage") o.stage = value;
     else if (arg == "--output") o.output = value;
     else if (arg == "--key-layout") o.layout = value;
@@ -102,6 +106,9 @@ Options Parse(int argc, char** argv) {
   }
   if (o.stage != "1" && o.stage != "2" && o.stage != "3" && o.stage != "all")
     throw std::invalid_argument("stage must be 1, 2, 3, or all");
+  if ((o.read_view != "latest" && o.read_view != "historical") ||
+      (o.read_view == "latest" && o.snapshot_lag != 0))
+    throw std::invalid_argument("read-view must be latest (lag=0) or historical");
   if (!o.keys || !o.versions || !o.ops || !o.threads || !o.batch_size || !o.scan_length || !o.scan_ops ||
       o.key_size < 8 || o.snapshot_lag > o.versions)
     throw std::invalid_argument("positive sizes required; key-size >= 8; snapshot-lag <= versions");
@@ -148,6 +155,8 @@ struct Request { std::size_t id; bool scan = false; };
 struct Stats {
   std::size_t gets = 0, scans = 0, writes = 0, hits = 0, tombstones = 0, misses = 0;
   std::size_t versions_tested = 0;
+  std::uint64_t snapshot_min = UINT64_MAX, snapshot_max = 0;
+  std::size_t reads_with_newer_snapshot = 0, newer_version_hits = 0;
 };
 struct Fixture {
   const Options& o;
@@ -158,6 +167,8 @@ struct Fixture {
   std::vector<Request> scans;
   std::array<std::uint64_t,4> read_checks{};
   std::vector<std::size_t> sorted_present;
+  // Independent oracle index over precomputed writes, never over the adapter.
+  std::vector<std::vector<std::size_t>> updates;
   std::vector<double> cdf;
 
   explicit Fixture(const Options& options) : o(options),
@@ -193,11 +204,13 @@ struct Fixture {
     }
     const auto count = o.ops - o.ops/100*o.read_percent - (o.ops%100)*o.read_percent/100;
     writes.reserve(count);
+    if (o.read_view == "latest") updates.resize(o.keys);
     for (std::size_t i = 0; i < count; ++i) {
       const auto id = Pick(rng, i);
       const bool deleted = Mix(o.seed+i+991)%100 < o.delete_percent;
       writes.push_back({keys.Key(id), deleted ? std::string_view{} : values.back(),
                         o.keys*o.versions+i+1, deleted});
+      if (!updates.empty()) updates[id].push_back(i);
     }
     scans.reserve(std::min(o.ops,o.scan_ops));
     for (std::size_t i=0;i<std::min(o.ops,o.scan_ops);++i) scans.push_back({reads[i].id%o.keys,true});
@@ -218,26 +231,40 @@ struct Fixture {
   std::uint64_t Snapshot(bool latest = false) const { return (o.versions-(latest ? 0 : o.snapshot_lag))*o.keys; }
   bool Expected(std::size_t id, std::uint64_t snapshot, mb::MvccValue* value) const {
     if (id >= o.keys || snapshot < id+1) return false;
+    if (!updates.empty() && snapshot > Snapshot(true)) {
+      const auto& history = updates[id];
+      auto it = std::upper_bound(history.begin(), history.end(), snapshot,
+        [&](auto timestamp, auto ordinal) { return timestamp < writes[ordinal].version; });
+      if (it != history.begin()) {
+        const auto& row = writes[*std::prev(it)];
+        value->version = row.version; value->deleted = row.deleted;
+        value->value.assign(row.value);
+        return true;
+      }
+    }
     const auto round = std::min<std::uint64_t>((snapshot-id-1)/o.keys, o.versions-1);
     value->version = round*o.keys+id+1;
     value->deleted = Deleted(id, round);
     value->value = value->deleted ? std::string_view{} : std::string_view(values[round]);
     return true;
   }
-  std::uint64_t ExpectedReads(std::span<const Request> trace, std::uint64_t snapshot, bool scans) const {
+  std::uint64_t ExpectedReads(std::span<const Request> trace, std::uint64_t snapshot, bool scans,
+                             std::span<const std::uint64_t> snapshots = {}) const {
     std::uint64_t hash = kHash;
     mb::MvccValue value;
-    for (const auto& request : trace) {
+    for (std::size_t n = 0; n < trace.size(); ++n) {
+      const auto& request = trace[n];
+      const auto read_ts = snapshots.empty() ? snapshot : snapshots[n];
       if (scans && request.scan) {
         auto it = std::lower_bound(sorted_present.begin(), sorted_present.end(), keys.Key(request.id),
           [&](auto id, auto key) { return keys.Key(id) < key; });
         std::size_t rows = 0;
         for (; it != sorted_present.end() && rows < o.scan_length; ++it)
-          if (Expected(*it, snapshot, &value) && !value.deleted) {
+          if (Expected(*it, read_ts, &value) && !value.deleted) {
             mb::HashRecord(keys.Key(*it), value.value, value.version, false, &hash); ++rows;
           }
       } else {
-        const bool found = Expected(request.id, snapshot, &value);
+        const bool found = Expected(request.id, read_ts, &value);
         mb::HashRecord(keys.Key(request.id), found ? value.value : std::string_view{},
                        found ? value.version : 0, found && value.deleted, &hash);
       }
@@ -246,6 +273,9 @@ struct Fixture {
   }
   std::size_t Read(const mb::MvccTable& table, const Request& request, std::uint64_t snapshot,
                    bool scans, Stats* stats, std::uint64_t* hash) const {
+    stats->snapshot_min = std::min(stats->snapshot_min, snapshot);
+    stats->snapshot_max = std::max(stats->snapshot_max, snapshot);
+    stats->reads_with_newer_snapshot += snapshot > Snapshot(true);
     if (scans && request.scan) {
       ++stats->scans;
       return mb::VisibleScan(table, keys.Key(request.id), snapshot, o.scan_length, hash, &stats->versions_tested);
@@ -253,6 +283,7 @@ struct Fixture {
     ++stats->gets;
     mb::MvccValue result;
     const bool found = table.GetAt(keys.Key(request.id), snapshot, &result);
+    stats->newer_version_hits += found && result.version > Snapshot(true);
     if (!found) ++stats->misses;
     else if (result.deleted) ++stats->tombstones;
     else ++stats->hits;
@@ -280,14 +311,15 @@ class Csv {
              const mb::Sample& sample, const Stats& stats, std::uint64_t baseline,
              std::uint64_t before, std::uint64_t after, std::size_t versions,
              std::string_view mode, std::string_view representation, bool native_batch,
-             std::uint64_t retained, std::uint64_t overlap = 0, std::uint64_t writer_elapsed = 0) {
+             std::uint64_t retained, std::uint64_t overlap = 0, std::uint64_t writer_elapsed = 0,
+             std::optional<std::uint64_t> oracle_checksum = {}) {
     (void)table;
     const double seconds = sample.elapsed_ns/1e9;
     const auto counter = [&](mb::Counter c) {
       return sample.counters[c] && sample.operations ? mb::Number(*sample.counters[c]/sample.operations) : "";
     };
     const auto delta = static_cast<std::int64_t>(after)-static_cast<std::int64_t>(baseline);
-    out_ << "mvcc-v1," << run_id_ << ',' << o.index << ',' << representation << ',' << mode
+    out_ << "mvcc-v2," << run_id_ << ',' << o.index << ',' << representation << ',' << mode
          << ',' << native_batch << ',' << stage << ',' << phase << ',' << workers << ','
          << o.keys << ',' << o.versions << ',' << versions << ',' << o.key_size << ',' << o.value_size
          << ',' << o.batch_size << ',' << snapshot << ',' << o.snapshot_lag << ',' << o.delete_percent
@@ -314,7 +346,13 @@ class Csv {
     if (stage==2 && workers>1) out_ << overlap;
     out_ << ',';
     if (stage==2 && writer_elapsed) out_ << writer_elapsed;
-    out_ << ',' << sample.checksum << '\n'; out_.flush();
+    out_ << ',' << sample.checksum << ',' << o.read_view << ',';
+    if (stats.gets + stats.scans) out_ << stats.snapshot_min;
+    out_ << ',';
+    if (stats.gets + stats.scans) out_ << stats.snapshot_max;
+    out_ << ',' << stats.reads_with_newer_snapshot << ',' << stats.newer_version_hits << ',';
+    if (oracle_checksum) out_ << *oracle_checksum;
+    out_ << ',' << o.scan_ops << '\n'; out_.flush();
     std::cout << o.index << ' ' << phase << ": " << mb::Number(sample.operations/seconds)
               << " requests/s, " << stats.writes << " written versions, " << sample.items << " items\n";
   }
@@ -328,7 +366,8 @@ class Csv {
     "latency_p50_ns,latency_p95_ns,latency_p99_ns,cycles_per_request,instructions_per_request,ipc,"
     "l1d_miss_per_request,llc_miss_per_request,branch_miss_per_request,dtlb_miss_per_request,"
     "rss_baseline_bytes,rss_before_bytes,rss_after_bytes,rss_retained_delta_bytes,bytes_per_user_key,bytes_per_version,"
-    "backend_retained_bytes,concurrent_overlap_ns,writer_elapsed_ns,checksum";
+    "backend_retained_bytes,concurrent_overlap_ns,writer_elapsed_ns,checksum,read_view,"
+    "snapshot_min_ts,snapshot_max_ts,reads_with_newer_snapshot,newer_version_hits,oracle_checksum,scan_ops";
   std::ofstream out_;
   std::uint64_t run_id_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
     std::chrono::system_clock::now().time_since_epoch()).count();
@@ -356,10 +395,11 @@ void Single(const Options& o, const Fixture& f, Csv& csv, bool lifecycle) {
   const std::string mode(table->ConcurrencyMode()), representation(table->Representation());
   const bool native_batch = table->NativeBatch();
   const int stage = lifecycle ? 3 : 1;
-  auto emit = [&](auto phase, const mb::Sample& s, const Stats& stats, auto before, auto snapshot) {
+  auto emit = [&](auto phase, const mb::Sample& s, const Stats& stats, auto before, auto snapshot,
+                  std::optional<std::uint64_t> expected = {}) {
     csv.Write(o,f,table.get(),stage,phase,1,snapshot,s,stats,baseline,before,mb::ResidentBytes(),
               table ? table->VersionCount() : f.load.size(),mode,representation,native_batch,
-              table ? table->RetainedBytes() : 0);
+              table ? table->RetainedBytes() : 0, 0, 0, expected);
   };
   Stats stats;
   auto before = mb::ResidentBytes();
@@ -378,23 +418,24 @@ void Single(const Options& o, const Fixture& f, Csv& csv, bool lifecycle) {
     before = mb::ResidentBytes();
     sample = mb::Measure(1,[&](auto,auto* hash) { return mb::FlushVersions(*table,hash); });
     Verify(sample.items==f.load.size() && sample.checksum==expected,"complete ordered flush");
-    emit("flush_all_versions",sample,{},before,f.Snapshot(true));
+    emit("flush_all_versions",sample,{},before,f.Snapshot(true),expected);
     before = mb::ResidentBytes();
     sample = mb::Measure(1,[&](auto,auto*) { table.reset(); return 0; });
     emit("destroy",sample,{},before,0);
   } else {
-    for (bool latest : {true,false}) {
+    {
+      const bool latest = o.read_view == "latest";
       const auto snapshot = f.Snapshot(latest);
       before = mb::ResidentBytes(); stats = {};
       const auto expected = f.read_checks[latest ? 0 : 1];
       sample = mb::Measure(f.reads.size(),[&](auto i,auto* hash) { return f.Read(*table,f.reads[i],snapshot,false,&stats,hash); });
       Verify(sample.checksum==expected,"point snapshot visibility / payload");
-      emit(latest ? "get_latest" : "get_snapshot",sample,stats,before,snapshot);
+      emit(latest ? "get_latest" : "get_snapshot",sample,stats,before,snapshot,expected);
       const auto scan_expected = f.read_checks[latest ? 2 : 3];
       before=mb::ResidentBytes(); stats={};
       sample=mb::Measure(f.scans.size(),[&](auto i,auto* hash) { return f.Read(*table,f.scans[i],snapshot,true,&stats,hash); });
       Verify(sample.checksum==scan_expected,"visible range scan");
-      emit(latest ? "scan_latest" : "scan_snapshot",sample,stats,before,snapshot);
+      emit(latest ? "scan_latest" : "scan_snapshot",sample,stats,before,snapshot,scan_expected);
     }
   }
 }
@@ -420,10 +461,19 @@ Stats MergeStats(std::span<const Stats> inputs) {
     result.gets+=s.gets; result.scans+=s.scans; result.writes+=s.writes;
     result.hits+=s.hits; result.tombstones+=s.tombstones; result.misses+=s.misses;
     result.versions_tested+=s.versions_tested;
+    result.snapshot_min=std::min(result.snapshot_min,s.snapshot_min);
+    result.snapshot_max=std::max(result.snapshot_max,s.snapshot_max);
+    result.reads_with_newer_snapshot+=s.reads_with_newer_snapshot;
+    result.newer_version_hits+=s.newer_version_hits;
   }
   return result;
 }
 void Concurrent(const Options& o, const Fixture& f, Csv& csv) {
+  const bool latest = o.read_view == "latest";
+  const auto initial_snapshot = f.Snapshot(latest);
+  // Publish only after the entire batch returns. Each read captures one bound,
+  // so concurrent future inserts cannot expose an incomplete batch or scan view.
+  std::atomic<std::uint64_t> published_snapshot{f.Snapshot(true)};
   const bool writer = !f.writes.empty();
   const std::size_t read_count=o.ops-f.writes.size();
   const unsigned reader_begin=(writer && o.threads>1) ? 1 : 0;
@@ -431,6 +481,7 @@ void Concurrent(const Options& o, const Fixture& f, Csv& csv) {
   if (read_count<readers && o.threads>1) throw std::invalid_argument("too few reads for SWMR readers");
   std::vector<std::span<const Request>> traces(o.threads);
   std::vector<std::uint64_t> expected(o.threads,kHash);
+  std::vector<std::vector<std::uint64_t>> read_snapshots(o.threads);
   std::vector<std::size_t> actions;
   if (o.threads==1) {
     actions.assign(read_count,0);
@@ -445,7 +496,10 @@ void Concurrent(const Options& o, const Fixture& f, Csv& csv) {
       traces[t]=std::span(f.reads).subspan(begin,count);
     }
   }
-  for (unsigned t=reader_begin;t<o.threads;++t) expected[t]=f.ExpectedReads(traces[t],f.Snapshot(),true);
+  for (unsigned t=reader_begin;t<o.threads;++t) {
+    if (latest) read_snapshots[t].resize(traces[t].size());
+    else expected[t]=f.ExpectedReads(traces[t],initial_snapshot,true);
+  }
   const auto baseline=mb::ResidentBytes();
   auto table=mb::MakeMvccTable(o.index,o.key_size);
   Stats ignored; Load(*table,f,&ignored);
@@ -471,19 +525,25 @@ void Concurrent(const Options& o, const Fixture& f, Csv& csv) {
       auto write=[&](std::size_t batch, std::uint64_t*) {
         const auto begin=batch*o.batch_size, count=std::min(o.batch_size,f.writes.size()-begin);
         Verify(table->Write(std::span(f.writes).subspan(begin,count)),"concurrent write rejected");
+        if (latest) published_snapshot.store(f.writes[begin+count-1].version,std::memory_order_release);
         stats[t].writes+=count;
         return count;
+      };
+      auto read=[&](std::size_t ordinal, std::uint64_t* hash) {
+        const auto snapshot=latest ? published_snapshot.load(std::memory_order_acquire) : initial_snapshot;
+        if (latest) read_snapshots[t][ordinal]=snapshot;
+        return f.Read(*table,traces[t][ordinal],snapshot,true,&stats[t],hash);
       };
       if (o.threads==1) {
         std::size_t r=0,w=0;
         samples[t]=mb::Measure(actions.size(),[&](auto i,auto* hash) {
-          return actions[i] ? write(w++,hash) : f.Read(*table,traces[t][r++],f.Snapshot(),true,&stats[t],hash);
+          return actions[i] ? write(w++,hash) : read(r++,hash);
         },&perf);
       } else if (writer && t==0) {
         samples[t]=mb::Measure(Batches(f.writes.size(),o.batch_size),write,&perf);
       } else {
         samples[t]=mb::Measure(traces[t].size(),[&](auto i,auto* hash) {
-          return f.Read(*table,traces[t][i],f.Snapshot(),true,&stats[t],hash);
+          return read(i,hash);
         },&perf);
       }
       finished[t]=mb::Clock::now();
@@ -503,21 +563,34 @@ void Concurrent(const Options& o, const Fixture& f, Csv& csv) {
   const auto overlap_start=*std::max_element(began.begin(),began.end());
   const auto overlap_end=*std::min_element(finished.begin(),finished.end());
   const auto overlap=overlap_end>overlap_start ? mb::Nanoseconds(overlap_end-overlap_start) : 0;
-  for (unsigned t=reader_begin;t<o.threads;++t) Verify(samples[t].checksum==expected[t],"SWMR fixed snapshot");
+  const auto after=mb::ResidentBytes();  // Keep oracle replay allocations out of the RSS sample.
+  for (unsigned t=reader_begin;t<o.threads;++t) {
+    // Oracle replay is outside timing. Latest snapshots depend on scheduling;
+    // validate against the exact timestamps captured by this reader.
+    if (latest) expected[t]=f.ExpectedReads(traces[t],initial_snapshot,true,read_snapshots[t]);
+    Verify(samples[t].checksum==expected[t],"mixed/SWMR snapshot visibility");
+  }
   Verify(table->VersionCount()==f.load.size()+f.writes.size(),"SWMR version count");
-  auto emit=[&](auto phase,unsigned threads,const mb::Sample& sample,const Stats& counts) {
-    csv.Write(o,f,table.get(),2,phase,threads,f.Snapshot(),sample,counts,baseline,before,mb::ResidentBytes(),
+  auto emit=[&](auto phase,unsigned threads,const mb::Sample& sample,const Stats& counts,auto oracle) {
+    csv.Write(o,f,table.get(),2,phase,threads,initial_snapshot,sample,counts,baseline,before,after,
               table->VersionCount(),table->ConcurrencyMode(),table->Representation(),table->NativeBatch(),table->RetainedBytes(),
-              overlap,writer ? samples[0].elapsed_ns : 0);
+              overlap,writer ? samples[0].elapsed_ns : 0,oracle);
+  };
+  auto merge_expected=[](std::span<const std::uint64_t> checksums) {
+    auto hash=kHash;
+    for (auto checksum:checksums) hash=(hash*1099511628211ULL)^checksum;
+    return hash;
   };
   auto total=Merge(samples,elapsed);
   // Aggregate latency mixes request classes. Report it only in single-worker
   // mixed mode; SWMR service latency is emitted separately for writer/readers.
   if (o.threads>1) total.latency_ns.clear();
-  emit(o.threads==1 ? "mixed_snapshot" : (writer ? "swmr_total" : "parallel_readers"),o.threads,total,MergeStats(stats));
+  emit(o.threads==1 ? (latest ? "mixed_latest" : "mixed_snapshot") :
+       (writer ? "swmr_total" : "parallel_readers"),o.threads,total,MergeStats(stats),merge_expected(expected));
   if (o.threads>1 && writer) {
-    emit("swmr_writer_batch",1,samples[0],stats[0]);
-    emit("swmr_readers",readers,Merge(std::span(samples).subspan(1),elapsed),MergeStats(std::span(stats).subspan(1)));
+    emit("swmr_writer_batch",1,samples[0],stats[0],expected[0]);
+    emit("swmr_readers",readers,Merge(std::span(samples).subspan(1),elapsed),
+         MergeStats(std::span(stats).subspan(1)),merge_expected(std::span(expected).subspan(1)));
   }
 }
 }  // namespace

@@ -1,0 +1,37 @@
+-- Enabling RTTI in all builds
+-- ROCKSDB_PLUGINS: 
+-- ROCKSDB PLUGINS TO BUILD 
+-- JNI library is disabled
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline-core
+[1/2] Building CXX object CMakeFiles/mvcc_bench.dir/src/mvcc_main.cc.o
+[2/2] Linking CXX executable mvcc_bench
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline-core
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux-baseline-core
+      Start  1: mvcc_contract
+ 1/11 Test  #1: mvcc_contract ....................   Passed    0.00 sec
+      Start  2: mvcc_smoke
+ 2/11 Test  #2: mvcc_smoke .......................   Passed    0.01 sec
+      Start  3: key_dataset_contract
+ 3/11 Test  #3: key_dataset_contract .............   Passed    0.01 sec
+      Start  4: adapter_contract
+ 4/11 Test  #4: adapter_contract .................   Passed    0.01 sec
+      Start  5: smoke
+ 5/11 Test  #5: smoke ............................   Passed    0.01 sec
+      Start  6: rocksdb_smoke
+ 6/11 Test  #6: rocksdb_smoke ....................   Passed    0.01 sec
+      Start  7: rocksdb_reject_upsert
+ 7/11 Test  #7: rocksdb_reject_upsert ............   Passed    0.00 sec
+      Start  8: mvcc_integration
+ 8/11 Test  #8: mvcc_integration .................   Passed    0.15 sec
+      Start  9: mvcc_matrix_integration
+ 9/11 Test  #9: mvcc_matrix_integration ..........   Passed    1.60 sec
+      Start 10: benchmark_policy
+10/11 Test #10: benchmark_policy .................   Passed    0.65 sec
+      Start 11: harness_integration
+11/11 Test #11: harness_integration ..............   Passed    0.23 sec
+
+100% tests passed, 0 tests failed out of 11
+
+Total Test time (real) =   2.69 sec

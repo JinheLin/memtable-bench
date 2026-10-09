@@ -1,0 +1,103 @@
+{
+  "status": "complete",
+  "processes": 906,
+  "phase_rows": 2928,
+  "cohorts": [
+    {
+      "cohort": "base-1m",
+      "processes": 156,
+      "phase_rows": 504,
+      "comparison_groups": 48,
+      "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+      "raw_sha256": "c5789615a236b1126294b414da45babc3c8ccb08c6727332a686694bef99797d",
+      "pmu_rows": {
+        "cycles_per_request": 504,
+        "instructions_per_request": 504,
+        "l1d_miss_per_request": 504,
+        "llc_miss_per_request": 504,
+        "branch_miss_per_request": 504,
+        "dtlb_miss_per_request": 463
+      }
+    },
+    {
+      "cohort": "deep-1m",
+      "processes": 141,
+      "phase_rows": 456,
+      "comparison_groups": 48,
+      "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+      "raw_sha256": "868185d030820ad3be421ca2818731fb02ed332fd61fc82be03e5cfce216f8af",
+      "pmu_rows": {
+        "cycles_per_request": 456,
+        "instructions_per_request": 456,
+        "l1d_miss_per_request": 456,
+        "llc_miss_per_request": 456,
+        "branch_miss_per_request": 456,
+        "dtlb_miss_per_request": 423
+      }
+    },
+    {
+      "cohort": "prefix-1m",
+      "processes": 156,
+      "phase_rows": 504,
+      "comparison_groups": 48,
+      "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+      "raw_sha256": "e23df9eb884f9ce46914396585423c5299999f89534f6c69b416d6b6c5ca857d",
+      "pmu_rows": {
+        "cycles_per_request": 504,
+        "instructions_per_request": 504,
+        "l1d_miss_per_request": 504,
+        "llc_miss_per_request": 504,
+        "branch_miss_per_request": 504,
+        "dtlb_miss_per_request": 465
+      }
+    },
+    {
+      "cohort": "value-1m",
+      "processes": 141,
+      "phase_rows": 456,
+      "comparison_groups": 48,
+      "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+      "raw_sha256": "308b61b62143513defa35059a304e5e4e61cccab7c8ea12bc39099967a7ef0ad",
+      "pmu_rows": {
+        "cycles_per_request": 456,
+        "instructions_per_request": 456,
+        "l1d_miss_per_request": 456,
+        "llc_miss_per_request": 456,
+        "branch_miss_per_request": 456,
+        "dtlb_miss_per_request": 423
+      }
+    },
+    {
+      "cohort": "deep-500k",
+      "processes": 156,
+      "phase_rows": 504,
+      "comparison_groups": 48,
+      "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+      "raw_sha256": "57e6de4021c299a2628d16aa910587f87b500395eb3a8d9fd0f1d7b4cce930e1",
+      "pmu_rows": {
+        "cycles_per_request": 504,
+        "instructions_per_request": 504,
+        "l1d_miss_per_request": 504,
+        "llc_miss_per_request": 504,
+        "branch_miss_per_request": 504,
+        "dtlb_miss_per_request": 468
+      }
+    },
+    {
+      "cohort": "value-100k",
+      "processes": 156,
+      "phase_rows": 504,
+      "comparison_groups": 48,
+      "binary_sha256": "3bbc39845116a756a05c731b1f59c25fb13967cb2b8b7ba99619dca171a17999",
+      "raw_sha256": "67a87d0415ef5129f0a9107bb5f5196d7a27ceffc0a7e68edcd79de88bc30b56",
+      "pmu_rows": {
+        "cycles_per_request": 504,
+        "instructions_per_request": 504,
+        "l1d_miss_per_request": 504,
+        "llc_miss_per_request": 504,
+        "branch_miss_per_request": 504,
+        "dtlb_miss_per_request": 467
+      }
+    }
+  ]
+}

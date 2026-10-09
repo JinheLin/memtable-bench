@@ -58,10 +58,11 @@ Crossbeam 的原生 `WriteBatch` / `WriteBatchEntry` 定义在 `skl.rs`，
 - 保留统一的 Insert/Get/Seek/Next/Scan、MVCC、Freeze/flush/Destroy、
   perf、RSS 和 CPU/NUMA 测量能力。
 - 五项均可参与原生并发实验；CSE 的 batch writer 串行约束继续如实记录。
-- 四种百万用户 key profile，1/4/8 workers、三次重复：
-  当前计划 **300 个进程 / 960 行结果**。精简前同样四组为
+- 精简时的四种百万用户 key profile，1/4/8 workers、三次重复：
+  当时计划 **300 个进程 / 960 行结果**。精简前同样四组为
   **594 / 1,920**；含 Arena 配套小规模组的原实验总计 **906 / 2,928**。
-  当前计划无需 Arena 专用的小规模补充组。
+  精简后无需 Arena 专用的小规模补充组。随后负载按 OLTP 最新读取和长链历史读取
+  重组为两组，当前为 **300 / 840**；参数和读取语义见 [MVCC 说明](mvcc.md)。
 - 历史 CSV、图表、源码快照和失败证据继续归档。报告工具对旧候选名称的兼容
   只用于读取历史结果；新实验的可用列表包含当前实现。
 

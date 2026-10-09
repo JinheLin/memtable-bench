@@ -1,0 +1,354 @@
+{
+  "verified_on": "2026-10-09",
+  "parent_commit": "8006f92e473380aa7df8b12a277e8b35c4742837",
+  "scope": "OLTP/history grouping and functional pilot; no new million-key performance run",
+  "observations": {
+    "host": "jinhelin@10.2.12.79",
+    "binary_sha256": {
+      "build-linux-core/mvcc_bench": "7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5",
+      "build-linux-core/memtable_bench": "036a07715459315b4a66669725f528dc1e40335675b9dd1e3b55a693c1f1b164",
+      "build-linux-baseline-core/mvcc_bench": "2c157aa1dfa531c8559aa21279a91ac554379486b5c8736647d7d1dfecb554af"
+    },
+    "changed_after_measurement": [
+      "scripts/summarize_mvcc.py",
+      "tests/mvcc_matrix_integration.py"
+    ],
+    "plans": {
+      "oltp": {
+        "processes": 150,
+        "phase_rows": 420,
+        "group": "oltp",
+        "profiles": [
+          "oltp_uniform",
+          "oltp_zipf"
+        ],
+        "configurations": {
+          "oltp_uniform": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "latest",
+            "versions": 2,
+            "snapshot_lag": 0,
+            "distribution": "uniform"
+          },
+          "oltp_zipf": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "latest",
+            "versions": 2,
+            "snapshot_lag": 0,
+            "distribution": "zipf"
+          }
+        },
+        "indexes": [
+          "rocksdb_inlineskiplist",
+          "btreeolc",
+          "unodb_art",
+          "wormhole",
+          "cse_crossbeam"
+        ],
+        "native_concurrent": [
+          "btreeolc",
+          "cse_crossbeam",
+          "rocksdb_inlineskiplist",
+          "unodb_art",
+          "wormhole"
+        ],
+        "threads": [
+          1,
+          4,
+          8
+        ]
+      },
+      "history": {
+        "processes": 150,
+        "phase_rows": 420,
+        "group": "history",
+        "profiles": [
+          "history_v16",
+          "history_v64"
+        ],
+        "configurations": {
+          "history_v16": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "historical",
+            "versions": 16,
+            "snapshot_lag": 15,
+            "distribution": "uniform"
+          },
+          "history_v64": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "historical",
+            "versions": 64,
+            "snapshot_lag": 63,
+            "distribution": "uniform"
+          }
+        },
+        "indexes": [
+          "rocksdb_inlineskiplist",
+          "btreeolc",
+          "unodb_art",
+          "wormhole",
+          "cse_crossbeam"
+        ],
+        "native_concurrent": [
+          "btreeolc",
+          "cse_crossbeam",
+          "rocksdb_inlineskiplist",
+          "unodb_art",
+          "wormhole"
+        ],
+        "threads": [
+          1,
+          4,
+          8
+        ]
+      },
+      "all": {
+        "processes": 300,
+        "phase_rows": 840,
+        "group": "all",
+        "profiles": [
+          "oltp_uniform",
+          "oltp_zipf",
+          "history_v16",
+          "history_v64"
+        ],
+        "configurations": {
+          "oltp_uniform": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "latest",
+            "versions": 2,
+            "snapshot_lag": 0,
+            "distribution": "uniform"
+          },
+          "oltp_zipf": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "latest",
+            "versions": 2,
+            "snapshot_lag": 0,
+            "distribution": "zipf"
+          },
+          "history_v16": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "historical",
+            "versions": 16,
+            "snapshot_lag": 15,
+            "distribution": "uniform"
+          },
+          "history_v64": {
+            "key_size": 16,
+            "value_size": 32,
+            "batch_size": 32,
+            "read_percent": 80,
+            "scan_percent": 0,
+            "delete_percent": 10,
+            "miss_percent": 10,
+            "scan_length": 100,
+            "scan_ops": 1024,
+            "key_layout": "random",
+            "prefix_bytes": 0,
+            "prefix_groups": 1,
+            "read_view": "historical",
+            "versions": 64,
+            "snapshot_lag": 63,
+            "distribution": "uniform"
+          }
+        },
+        "indexes": [
+          "rocksdb_inlineskiplist",
+          "btreeolc",
+          "unodb_art",
+          "wormhole",
+          "cse_crossbeam"
+        ],
+        "native_concurrent": [
+          "btreeolc",
+          "cse_crossbeam",
+          "rocksdb_inlineskiplist",
+          "unodb_art",
+          "wormhole"
+        ],
+        "threads": [
+          1,
+          4,
+          8
+        ]
+      }
+    },
+    "compiler": "c++ (GCC) 11.3.1 20220421 (Red Hat 11.3.1-2)"
+  },
+  "ctest": {
+    "retained_five": {
+      "passed": 15,
+      "total": 15
+    },
+    "default_baseline": {
+      "passed": 11,
+      "total": 11
+    },
+    "final_group_reporting_test": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "pilot": {
+    "status": "complete",
+    "processes": 100,
+    "phase_rows": 280,
+    "cohorts": [
+      {
+        "cohort": "pilot",
+        "processes": 100,
+        "phase_rows": 280,
+        "comparison_groups": 56,
+        "binary_sha256": "7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5",
+        "raw_sha256": "52e1fd97dfcc41645d9bca0650813a1a21ff690c2fb48230261c66b9d37065d7",
+        "pmu_rows": {
+          "cycles_per_request": 280,
+          "instructions_per_request": 280,
+          "l1d_miss_per_request": 280,
+          "llc_miss_per_request": 280,
+          "branch_miss_per_request": 280,
+          "dtlb_miss_per_request": 205
+        },
+        "groups": {
+          "history": {
+            "processes": 50,
+            "phase_rows": 140
+          },
+          "oltp": {
+            "processes": 50,
+            "phase_rows": 140
+          }
+        },
+        "cross_adapter_validation": {
+          "content_groups": 48,
+          "latest_scheduled_count_groups": 8,
+          "oracle_verified_rows": 200
+        }
+      }
+    ]
+  },
+  "all_20_latest_multiworker_runs_observed_new_versions_and_overlap": true,
+  "measured_source_inputs": 58,
+  "measured_source_snapshot_matches_metadata": true,
+  "post_measurement_report_only_sha256": {
+    "scripts/summarize_mvcc.py": "443593e42cb0b844fa80094fe5399c61ff2f147a7ccd8666efa69c1b8fd334fa",
+    "tests/mvcc_matrix_integration.py": "6f9c6770bcbd33b7829421f000099d8c2236a8e2974be549976116b0a2821d16"
+  },
+  "native_cse_pin_unchanged": true,
+  "historical_formal_mvcc_archive_matches_parent_commit": true,
+  "plots_verified": {
+    "runtime": "results/mvcc-plot-runtime",
+    "profiles": [
+      "oltp_uniform",
+      "oltp_zipf",
+      "history_v16",
+      "history_v64"
+    ],
+    "outputs": 16,
+    "visual_review": [
+      "pilot-oltp_uniform.png",
+      "pilot-history_v64.png"
+    ],
+    "purpose": "Plot pipeline verification only; pilot is not a performance ranking"
+  },
+  "build_proxy_variables_cleared": [
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "ALL_PROXY",
+    "http_proxy",
+    "https_proxy",
+    "all_proxy"
+  ],
+  "format_target_run": false,
+  "artifact_sha256": {
+    "source-snapshot.tar.gz": "3e92a8eab366665869019ff99ba346f7a082e943071ee92bd0ca6d357da308b9",
+    "reporting-source.tar.gz": "d74ce0ccf2822c3828c2480a2cbd608dcdfafb6346c052188d0e4c88a34d1385",
+    "pilot-records.tar.gz": "b6230877c78cd1e665e833dc74af512c42ffa07233797b0a525f474c76755906",
+    "group-build-tests.log": "e254f90be7f326d99d6eedaea14a596301dc5102a2d2075e717df5183bd56cb9",
+    "pilot-summary.tar.gz": "9f75130c963255ded69daf3eee1e7419d368a8ec3a52d3ad0e4ec055f8e5c81e",
+    "baseline-build-tests.log": "1fab8b13454a805b20da5e70bb3bc16dd5551997119cb18899a1e732a05f455a",
+    "historical-validation.json": "d787978e49d95f36b41d8900945cff945d9ab40ba82f66831ae84e6487a4f8eb",
+    "final-report-test.log": "5cb61efe1e0b351a9322791d492626c2b58ddea31186c9840e9f7840e99fdb7f",
+    "pilot-validation.json": "730f3654ca0935b610317e61869c0d7c3592ed2a2cc124336d5e636834c9f935",
+    "pilot.log": "64abdbae044c136a293bc68a56e2fe083f95d7d2db8cf9418709e26dbb247b28",
+    "pilot-metadata.json": "4bb05cc2c08f05fd42525f8b8ea2942617eb96860291e5ddce2de20a121bf05a"
+  }
+}

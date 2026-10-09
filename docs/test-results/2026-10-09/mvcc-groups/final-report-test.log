@@ -1,0 +1,8 @@
+Internal ctest changing into directory: /DATA/disk1/jinhelin/github/memtable-bench/build-linux-core
+Test project /DATA/disk1/jinhelin/github/memtable-bench/build-linux-core
+    Start 13: mvcc_matrix_integration
+1/1 Test #13: mvcc_matrix_integration ..........   Passed    1.67 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.67 sec

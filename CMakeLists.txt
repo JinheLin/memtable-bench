@@ -67,7 +67,7 @@ add_test(NAME mvcc_contract COMMAND mvcc_contract)
 set_tests_properties(mvcc_contract PROPERTIES TIMEOUT 120)
 add_test(NAME mvcc_smoke COMMAND mvcc_bench --index rocksdb_inlineskiplist --stage all
   --keys 100 --versions 4 --ops 300 --batch-size 7
-  --output ${CMAKE_CURRENT_BINARY_DIR}/mvcc-smoke-v1.csv)
+  --output ${CMAKE_CURRENT_BINARY_DIR}/mvcc-smoke-v2.csv)
 add_executable(key_dataset_contract tests/key_dataset_contract.cc)
 target_link_libraries(key_dataset_contract PRIVATE memtable_bench_index)
 add_test(NAME key_dataset_contract COMMAND key_dataset_contract)
@@ -111,6 +111,9 @@ if(Python3_Interpreter_FOUND)
   add_test(NAME mvcc_integration COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/mvcc_integration.py $<TARGET_FILE:mvcc_bench>)
   set_tests_properties(mvcc_integration PROPERTIES TIMEOUT 180)
+  add_test(NAME mvcc_matrix_integration COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/mvcc_matrix_integration.py $<TARGET_FILE:mvcc_bench>)
+  set_tests_properties(mvcc_matrix_integration PROPERTIES TIMEOUT 180)
   add_test(NAME benchmark_policy COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/benchmark_policy.py $<TARGET_FILE:memtable_bench>)
   add_test(NAME harness_integration COMMAND ${Python3_EXECUTABLE}

@@ -4,7 +4,7 @@
 `memtable_bench` and its CSV v3 archives remain exact-key index diagnostics.
 Results from these two workload models must be analyzed separately.
 
-The [completed formal matrix](../benchmarks/mvcc-formal-1m-2026-10-08/README.md)
+The [historical completed formal matrix](../benchmarks/mvcc-formal-1m-2026-10-08/README.md)
 contains six cohorts and three repetitions: **906 processes / 2,928 phase rows**,
 with 288 matching count/content comparison groups. The million-user-key
 base/deep/prefix/value cohorts use 1/4/8 workers where native concurrency permits.
@@ -109,6 +109,34 @@ toolchain. The project supports **native Linux x86-64 only**; configuration reje
 platforms and cross builds. See [verification notes](testing.md) for current
 and historical test evidence.
 
+## Two workload groups
+
+The current matrix has two groups and uses CSV protocol **`mvcc-v2`**.
+InlineSkipList remains the baseline; all five candidates participate.
+
+| Group | Profiles | Initial versions/key | Read view | Purpose |
+| --- | --- | --- | --- | --- |
+| `oltp` | `oltp_uniform`, `oltp_zipf` | 2 | Latest completed write batch at each request start | Short retained history, current point reads, and current reads under updates |
+| `history` | `history_v16`, `history_v64` | 16 / 64 | Fixed snapshot at the end of the first version round; lag 15 / 63 | Long retained histories, old-version lookup and visible-row scans |
+
+Both groups use the same 16 B random user keys, 32 B live values, batch size 32,
+10% deterministic deletions, 10% point misses, 80% read budgets and 1/4/8 workers.
+Their mixed reader workload is **point-only** (`scan_percent=0`), allowing reader
+latency comparisons without a mixture of Get and scan. Dedicated visible scans
+remain in stage 1: maximum 100 live rows/call, at most 1,024 calls.
+OLTP's Zipf distribution uses theta 1.1 with popular ranks spread across the
+random key order. The historical profiles both use uniform access and read the
+same first-round view, so their visibility is matched while retained history grows.
+
+The initial OLTP history is two versions/key; newer updates accumulate during
+stage 2, including longer chains on hot keys. No version GC is performed. The
+history group deliberately includes retained-history/index-size effects in
+addition to traversal; it is not a traversal-only microbenchmark.
+Key width, common-prefix layout, value width, batch size, scan mix and deletion
+rate remain CLI controls for focused follow-up experiments. The default matrix
+keeps those dimensions fixed instead of multiplying the two groups by every
+key/value configuration.
+
 ## Workload semantics
 
 Precomputed inputs contain N present user keys and N disjoint absent keys.
@@ -119,25 +147,60 @@ Round zero is live; later rounds generate deterministic tombstones and allow
 resurrection. Live payload bytes vary by version round. Tombstone payloads are
 empty, and an empty live value remains distinct from deletion and absence.
 
-A snapshot is a completed-round timestamp: latest is `versions*N`, historical
-is `(versions-snapshot_lag)*N`. Lag equal to versions reads before the first
-insert. Tombstones mask older values; they never fall back to an earlier live
+After prefill, the latest timestamp is `versions*N`. A fixed historical
+snapshot is `(versions-snapshot_lag)*N`; lag equal to versions reads before
+the first insert. `--read-view latest` requires `--snapshot-lag 0`.
+`--read-view historical` selects the fixed lagged view. Tombstones mask older
+values; they never fall back to an earlier live
 version. These are memtable-only reads, without an LSM lookup in older tables.
 
 | Stage | Timed phases | Units |
 | --- | --- | --- |
-| 1 | Batch load; latest/historical Get; latest/historical visible range scan | Batch requests, point requests, scan requests; visible live rows |
-| 2, one worker | Interleaved writes, point reads and scans at a fixed historical snapshot | Read requests plus batch requests; written versions separately |
+| 1 | Batch load; Get and visible scan using only the selected group's read view | Batch requests, point requests, scan requests; visible live rows |
+| 2, one worker | Interleaved writes and reads with latest publication or a fixed historical snapshot | Read requests plus batch requests; written versions separately |
 | 2, multiple workers | One writer + readers; or read-only workers when read-percent=100 | Aggregate wall throughput; separate writer service and readers rows |
 | 3 | Batch load → Freeze → ordered complete-version flush → Destroy | Written versions, all flushed versions, phase durations |
 
-Stage 2 uses a fixed snapshot from the completed prefill. New timestamps are
-strictly greater; readers continue to see the earlier view throughout the
-write phase. This permits exact independent validation despite scheduling
-differences. The model does not claim transaction-atomic batch visibility,
-moving/latest snapshots, multiwriter scaling, or transaction conflict handling.
-In a single-worker trace, batch calls and read calls are shuffled while write
-batches consume their globally ordered timestamps in submission order.
+### OLTP latest publication
+
+Stage 1 reads the latest completed prefill view and emits `get_latest` and
+`scan_latest`. Stage 2 reads a **moving latest committed bound**: a single writer
+submits monotonically increasing timestamps, then publishes the final timestamp
+of a batch with a release store after `Write` returns. Each Get or scan captures
+that bound once with an acquire load before accessing the table. Newer physical
+entries from an in-progress batch are filtered by that bound. A scan uses the
+same captured timestamp throughout its traversal.
+
+This models current reads at request start with benchmark-managed publication.
+Publication is not a transaction manager, and no native transaction-atomic batch
+implementation is claimed. Readers can miss a publication that happens after
+they capture their bound, as a snapshot reader normally would. Single-worker
+mixed mode follows the same publication rule with a deterministic action order.
+
+Each reader saves its captured timestamps in a preallocated trace. After timing,
+an independent oracle replays its requests against the precomputed write history
+at those exact timestamps. The index is not used to construct expected answers.
+The atomic load and trace write are timed; oracle replay is not. RSS is sampled
+before replay. CSV records snapshot bounds, reads after a newer publication,
+point hits on newly written versions and the oracle checksum. Scheduling changes
+which updates are visible in multiworker runs, so their read checksums and hit
+counts need not match across adapters. Deterministic request/write counts and
+input identity still must match. Single-worker OLTP results remain deterministic.
+
+### Historical fixed view
+
+Stage 1 emits `get_snapshot` and `scan_snapshot` only. Stage 2 readers retain the
+same first-round snapshot while a writer appends timestamps beyond the completed
+prefill. This stresses old-version visibility and concurrent maintenance without
+changing expected read results. All fixed-view contents/checksums must agree
+across adapters. The current history profiles use lag `versions-1`; custom runs
+can select any lag from 0 through `versions`.
+
+Both groups use one writer plus N-1 readers for mixed multiworker tests, or
+read-only workers at read-percent=100. They do not implement multiwriter scaling,
+transaction conflict handling, version reclamation or lower-SST lookup. In a
+single-worker trace, batch calls and read calls are shuffled while write batches
+consume their globally ordered timestamps in submission order.
 
 `--ops` is the stage 2 budget of read requests plus **written versions**;
 `--read-percent` splits that budget. Actual timed requests collapse written
@@ -158,29 +221,30 @@ descending order; it simulates flush traversal, without disk or SST encoding.
 
 All runs use precomputed keys/traces and include write batch construction and
 native entry ownership in the timed Write call. Dataset creation, sorting,
-payload generation and read oracle calculation precede index allocation.
+payload generation and fixed-view oracle preparation precede index allocation;
+latest concurrent oracle replay runs after timing using recorded snapshots.
 Read/scan validation hashes keys, visible timestamp/type and payload bytes;
 hashing is timed. The load phase hashes submission counts, with full contents
 validated by snapshot reads and lifecycle flush. No benchmark relies on exact
 raw Get to model MVCC visibility.
 
 ```sh
-# Eight versions per key; historical snapshot six rounds behind latest.
-build-cse/mvcc_bench --index cse_crossbeam --stage 1 \
-  --keys 100000 --versions 8 --snapshot-lag 6 --ops 100000 \
+# Old first-round view with a 64-version retained chain.
+build-core/mvcc_bench --index cse_crossbeam --stage 1 --read-view historical \
+  --keys 100000 --versions 64 --snapshot-lag 63 --ops 100000 \
   --batch-size 32 --key-size 32 --key-layout global-prefix --prefix-bytes 24 \
   --value-size 64 --delete-percent 10 --miss-percent 10 \
   --scan-length 100 --scan-ops 2000 --output mvcc-single.csv
 
-# Single writer + seven readers; 80% reads, of which 10% are visible scans.
-build-all/mvcc_bench --index cse_crossbeam --stage 2 \
-  --keys 100000 --versions 4 --snapshot-lag 2 --ops 1000000 \
-  --threads 8 --read-percent 80 --scan-percent 10 --batch-size 64 \
+# Single writer + seven latest-view point readers; 80% reads, Zipf access.
+build-core/mvcc_bench --index cse_crossbeam --stage 2 --read-view latest \
+  --keys 100000 --versions 2 --snapshot-lag 0 --ops 1000000 \
+  --threads 8 --read-percent 80 --scan-percent 0 --batch-size 32 \
   --distribution zipf --cpu-list 2,3,4,5,6,7,8,9 --numa-node 0 \
   --output mvcc-swmr.csv
 
 # Lifetime including all historical versions and delete markers.
-build-all/mvcc_bench --index rocksdb_inlineskiplist --stage 3 \
+build-core/mvcc_bench --index rocksdb_inlineskiplist --stage 3 \
   --keys 1000000 --versions 4 --batch-size 32 --output mvcc-lifecycle.csv
 ```
 
@@ -190,74 +254,83 @@ independently. Native key limits apply to encoded keys for the four ordered
 indexes and user-key width for CSE. Crossbeam has no Arena-specific 16 MiB
 value limit; the bridge checks uint16 keys, uint32 values and total batch bytes.
 
-## Screening matrix
+## Group matrices
 
-`scripts/mvcc_matrix.py` runs fresh processes in randomized serial order,
-with the same seeds across candidates. It obtains availability/concurrency
-from `mvcc_bench --list-indexes` and skips non-native multiworker cases. It
-records commands, raw per-process CSV/logs, binary SHA-256, source file hashes,
-dependency revisions and topology. All phase counts and cross-adapter contents
-are checked; missing phases, mismatches or process errors fail the run.
+`scripts/mvcc_matrix.py --group oltp|history|all` schedules fresh processes in
+randomized serial order. The default `all` covers both groups. `--profiles`
+selects a subset within the selected group. The runner discovers available/native
+concurrent candidates and records the group, exact parameters, commands,
+per-process CSV/logs, source/dependency hashes, binary hash and topology.
 
-Default profiles select representative changes from the base (16-byte key,
-32-byte payload, 4 versions, lag 2, batch 32):
-
-| Profile | Change |
-| --- | --- |
-| base | Reference configuration |
-| deep | 16 versions, lag 15, to expose historical chain traversal |
-| prefix | 32-byte user keys sharing a 24-byte prefix |
-| value | 1024-byte values |
-
-This is a screening design; timestamp retention, contention, key distribution,
-batch size and read/scan mix can then be explored in focused CLI runs. It avoids
-exhausting the Cartesian product before identifying expensive cases.
-
-The five-candidate base/deep/prefix/value plan, three repetitions and 1/4/8
-workers, schedules **300 processes / 960 phase rows**. Every retained candidate
-is eligible for SWMR. Use `--list-plan` to check the actual compiled participants.
-Arena-specific matched smaller cohorts are only part of the historical archive.
+With all five candidates, two profiles/group, three repetitions and 1/4/8
+workers, **each group has 150 processes / 420 phase rows**. Together they have
+**300 / 840**. Stage 1 now measures one read view per process, removing the old
+latest/history duplication. Without CSE the matrix schedules the four available
+C++ candidates. These are plan counts, not a claim of completed performance runs.
+At one million user keys, the history profiles load 16M/64M versions; plan memory
+and run time accordingly. To inspect participants without running:
 
 ```sh
-python3 scripts/mvcc_matrix.py --binary build-all/mvcc_bench \
-  --output results/mvcc-screening --keys 100000 --ops 100000 --repeats 3 \
-  --profiles base,deep,prefix,value --threads 1,4,8 \
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-oltp --group oltp --list-plan
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-history --group history --list-plan
+```
+
+Run each group separately:
+
+```sh
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-oltp --group oltp \
+  --keys 1000000 --ops 1000000 --repeats 3 --threads 1,4,8 \
+  --cpus 2,3,4,5,6,7,8,9 --numa-node 0
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-history --group history \
+  --keys 1000000 --ops 1000000 --repeats 3 --threads 1,4,8 \
   --cpus 2,3,4,5,6,7,8,9 --numa-node 0
 ```
+
+The former base/deep/prefix/value plan belongs to the historical `mvcc-v1`
+protocol. Its published raw files, reports, pins and source snapshots are
+unchanged; rebuild an archived source snapshot to reproduce its workload.
 
 ### Result validation and summaries
 
 The summarizer checks the complete declared process/phase matrix, native
-multiworker participation, dataset/profile fields and cross-adapter
-counts/checksums before producing median, quartile, min/max and sample-count
+multiworker participation, dataset/profile fields, per-run oracle digests and
+cross-adapter deterministic counts/contents before producing median, quartile, min/max and sample-count
 statistics. It requires completed runs and leaves measured input files alone.
 Multiple input directories are distinct cohorts; their populations are never
 pooled. The output directory must differ from each input directory.
 
 ```sh
-python3 scripts/summarize_mvcc.py results/mvcc-screening \
-  --output results/mvcc-screening-summary
+python3 scripts/summarize_mvcc.py results/mvcc-oltp results/mvcc-history \
+  --output results/mvcc-groups-summary
 # Optional figures require Matplotlib and NumPy.
-python3 scripts/plot_mvcc.py results/mvcc-screening-summary
+python3 scripts/plot_mvcc.py results/mvcc-groups-summary
 ```
 
-`report.md` includes single-thread operation rates, retained RSS per version,
+`report.md` has separate group/profile sections. `report-oltp.md` and
+`report-history.md` contain their own group's tables. They include single-thread
+operation rates, retained RSS per version,
 SWMR total/readers/writer service rates and lifecycle timings. `summary.csv`
 also retains latency, PMU and overlap-duration statistics. `validation.json`
 records process/phase counts, raw-file and binary hashes, and PMU availability.
 
-## CSV schema: `mvcc-v1`
+## CSV schema: `mvcc-v2`
 
 The full header is defined by `Csv::kHeader` in `src/mvcc_main.cc`. It cannot be
-appended to a legacy v3 CSV or a different header. Matrix raw CSV adds
-`profile`, `repeat`, and `scenario_threads` (the parent SWMR worker count).
+appended to a legacy exact-key v3 or MVCC v1 file. Use new output files.
+The summarizer can still validate/read original `mvcc-v1` archives.
+Matrix raw CSV adds `workload_group`, `profile`, `repeat`, and `scenario_threads`
+(the parent SWMR worker count). Summary CSV also carries `workload_group`.
 
 | Fields | Meaning |
 | --- | --- |
 | schema_version, run_id, index, representation, adapter_mode, native_batch | Workload/implementation identity and actual batch support |
 | stage, phase, threads | Phase worker count; writer row is 1, readers row N-1 |
 | user_keys, initial_versions_per_key, stored_versions | Present user population and physical MVCC version counts |
-| key_size, value_size, batch_size, snapshot_ts, snapshot_lag | Input widths, submission size and read timestamp |
+| key_size, value_size, batch_size, snapshot_ts, snapshot_lag | Input widths, submission size and initial/fixed read timestamp; latest stage 2 can advance beyond snapshot_ts |
 | delete_percent, miss_percent, read_percent, scan_percent, scan_length | Planned workload shares and visible-row limit |
 | distribution, key_layout, prefix_bytes, prefix_groups, seed, dataset_hash | Deterministic input identity |
 | cpu_list, numa_node | Requested worker placement; NUMA -1 means unbound |
@@ -269,7 +342,10 @@ appended to a legacy v3 CSV or a different header. Matrix raw CSV adds
 | rss_baseline_bytes, rss_before_bytes, rss_after_bytes, rss_retained_delta_bytes | Baseline after precomputed input allocation; delta is after minus baseline |
 | bytes_per_user_key, bytes_per_version, backend_retained_bytes | RSS normalization; optional CSE accounting counter |
 | concurrent_overlap_ns, writer_elapsed_ns | Common measured worker-active interval and writer service duration |
-| checksum | Validated deterministic contents, including timestamp/type |
+| checksum, oracle_checksum | Actual digest and independently computed expected digest; latest multiworker contents depend on scheduling |
+| read_view, snapshot_min_ts, snapshot_max_ts | Selected view and actual observed read timestamp range; bounds blank for phases without reads |
+| reads_with_newer_snapshot, newer_version_hits | Reads whose bound exceeds prefill latest; point hits (including tombstones) on versions added in stage 2 |
+| scan_ops | Requested stage-1 scan-call cap |
 
 Throughput per request does not mean per written version when batches contain
 multiple entries. A flush is one request; `items_s` is flushed versions/s.
@@ -293,7 +369,9 @@ shows the sampled call duration, which excludes PMU control but includes clock
 and call instrumentation. These small samples do not establish native-only
 Freeze latency rankings. Bulk operation phases amortize this setup overhead.
 
-Contract tests cover historical reads, deleted/absent/empty values, resurrection,
+Contract tests cover latest publication/oracle replay, historical reads, deleted/absent/empty values, resurrection,
 version navigation, visible scans, native concurrent readers with newer writes,
 permanent Freeze and complete flush cardinality. Workload tests compare all
 available candidates with independent oracles and enforce concurrency policy.
+Group runner/report tests exercise both groups and reject wrong groups/views,
+invalid snapshot ranges and mismatched oracle digests.

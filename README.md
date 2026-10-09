@@ -6,7 +6,7 @@ other platforms and cross builds before downloading dependencies.
 
 **RocksDB InlineSkipList is the required baseline and default index.**
 The project retains five candidates. For database semantics use `mvcc_bench`:
-fixed MVCC snapshots, tombstones, native or InternalKey version storage,
+latest published snapshots or fixed historical reads, tombstones, native or InternalKey version storage,
 visible-row scans, batch submissions and complete-version flush traversal.
 `memtable_bench` is the separate exact-key structural diagnostic; its
 `--internal-key` option does not implement snapshot visibility.
@@ -80,7 +80,7 @@ requests to enable removed adapters fail explicitly.
 ```sh
 mkdir -p results
 # Default InlineSkipList baseline, with full MVCC visibility.
-build/mvcc_bench --stage all --keys 100000 --versions 4 --ops 1000000 \
+build/mvcc_bench --read-view latest --stage all --keys 100000 --versions 2 --ops 1000000 \
   --key-size 16 --value-size 32 --scan-length 100 --output results/baseline.csv
 
 # Exact-key append workload; writes on RocksDB/UnoDB require --internal-key.
@@ -88,18 +88,27 @@ build-core/memtable_bench --index rocksdb_inlineskiplist --internal-key \
   --stage all --keys 100000 --ops 1000000 --threads 8 \
   --cpu-list 2,3,4,5,6,7,8,9 --numa-node 0 --output results/exact-key.csv
 
-# All five candidates, base/deep/prefix/value, three repeats and 1/4/8 workers.
+# OLTP: two initial versions/key, latest reads, uniform/Zipf access.
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-core --keys 1000000 --ops 1000000 --repeats 3 \
-  --profiles base,deep,prefix,value --threads 1,4,8 \
+  --output results/mvcc-oltp --group oltp --keys 1000000 --ops 1000000 --repeats 3 \
+  --threads 1,4,8 --cpus 2,3,4,5,6,7,8,9 --numa-node 0
+# History: 16/64 retained versions/key, fixed first-round snapshots.
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-history --group history --keys 1000000 --ops 1000000 --repeats 3 \
+  --threads 1,4,8 \
   --cpus 2,3,4,5,6,7,8,9 --numa-node 0
-python3 scripts/summarize_mvcc.py results/mvcc-core --output results/mvcc-core-summary
-python3 scripts/plot_mvcc.py results/mvcc-core-summary
+python3 scripts/summarize_mvcc.py results/mvcc-oltp results/mvcc-history \
+  --output results/mvcc-groups-summary
+python3 scripts/plot_mvcc.py results/mvcc-groups-summary
 ```
 
 Select CPU IDs from your actual topology. Missing perf access leaves PMU fields
 empty. Plotting needs Matplotlib/NumPy; validation uses Python's standard library.
-The full five-candidate MVCC plan has **300 processes / 960 phase rows**.
+Each five-candidate group has **150 processes / 420 phase rows**; both groups
+have **300 / 840**. OLTP reads the latest completed batch at request start;
+history holds a fixed old view. Mixed reader latency is point-only by default;
+stage 1 still measures dedicated visible scans. Separate group reports are
+`report-oltp.md` and `report-history.md`; the CSV protocol is now `mvcc-v2`.
 Availability is discovered from the binary; without the CSE export it has four
 candidates. No Arena-specific smaller cohorts are needed in the current plan.
 See [MVCC semantics and CSV schema](docs/mvcc.md).
@@ -285,12 +294,13 @@ include/memtable_bench/       Ordered-index/MVCC contracts, datasets and measure
 src/index.cc                 Registry, common Scan and InternalKey encoding
 src/*_index.cc               RocksDB, BTreeOLC, UnoDB, Wormhole and CSE adapters
 src/main.cc                  Exact-key diagnostic and CSV v3
-src/mvcc_main.cc             MVCC workloads and CSV mvcc-v1
+src/mvcc_main.cc             Latest/historical MVCC workloads and CSV mvcc-v2
 src/mvcc.cc                  Visibility, version cursors and flush
 rust/cse_memtable/           Pinned Crossbeam bridge and source/dependency checks
 cmake/                      Fixed dependency downloads and upstream patches
 scripts/build_all.sh         Proxy-free retained-adapter build/test entry point
-scripts/mvcc_matrix.py       MVCC workload matrix
+scripts/mvcc_matrix.py       OLTP/history workload matrices
+scripts/mvcc_workloads.py    Group parameters and phase/comparison rules
 scripts/summarize_mvcc.py    Cohort validation and median/quartile reports
 scripts/plot_mvcc.py         Optional PNG/SVG figures
 scripts/*matrix.py          Exact-key diagnostic matrices

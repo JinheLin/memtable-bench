@@ -1,0 +1,38 @@
+{
+  "status": "complete",
+  "processes": 100,
+  "phase_rows": 280,
+  "cohorts": [
+    {
+      "cohort": "pilot",
+      "processes": 100,
+      "phase_rows": 280,
+      "comparison_groups": 56,
+      "binary_sha256": "7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5",
+      "raw_sha256": "52e1fd97dfcc41645d9bca0650813a1a21ff690c2fb48230261c66b9d37065d7",
+      "pmu_rows": {
+        "cycles_per_request": 280,
+        "instructions_per_request": 280,
+        "l1d_miss_per_request": 280,
+        "llc_miss_per_request": 280,
+        "branch_miss_per_request": 280,
+        "dtlb_miss_per_request": 205
+      },
+      "groups": {
+        "history": {
+          "processes": 50,
+          "phase_rows": 140
+        },
+        "oltp": {
+          "processes": 50,
+          "phase_rows": 140
+        }
+      },
+      "cross_adapter_validation": {
+        "content_groups": 48,
+        "latest_scheduled_count_groups": 8,
+        "oracle_verified_rows": 200
+      }
+    }
+  ]
+}

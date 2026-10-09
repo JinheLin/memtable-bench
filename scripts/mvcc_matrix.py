@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""MVCC screening matrix: version depth, prefixes and values as separate factors."""
+"""Run OLTP latest-version and long-chain historical MVCC groups separately."""
 import argparse
 import csv
 import hashlib
@@ -10,15 +10,9 @@ import random
 import subprocess
 import time
 from adapter_policy import INDEXES
+from mvcc_workloads import GROUPS, PROFILES, comparison_fields, phases
 
 ENV = {k: v for k, v in os.environ.items() if k.lower() not in {'http_proxy', 'https_proxy', 'all_proxy'}}
-PROFILES = {
-    'base': dict(key_size=16, value_size=32, versions=4, snapshot_lag=2, batch_size=32),
-    'deep': dict(key_size=16, value_size=32, versions=16, snapshot_lag=15, batch_size=32),
-    'prefix': dict(key_size=32, value_size=32, versions=4, snapshot_lag=2, batch_size=32,
-                   key_layout='global-prefix', prefix_bytes=24),
-    'value': dict(key_size=16, value_size=1024, versions=4, snapshot_lag=2, batch_size=32),
-}
 
 
 def output(command):
@@ -30,7 +24,8 @@ def main():
     parser.add_argument('--binary', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--indexes', help='Default: all available adapters')
-    parser.add_argument('--profiles', default='base,deep,prefix,value')
+    parser.add_argument('--group', choices=['oltp', 'history', 'all'], default='all')
+    parser.add_argument('--profiles', help='Subset of profiles within the selected group')
     parser.add_argument('--threads', default='1,4,8')
     parser.add_argument('--keys', type=int, default=100000)
     parser.add_argument('--ops', type=int, default=100000)
@@ -49,12 +44,15 @@ def main():
             if 'native_concurrent=1' in fields:
                 native.add(name)
     indexes = args.indexes.split(',') if args.indexes else available
-    profiles = args.profiles.split(',')
+    allowed = [name for group, names in GROUPS.items()
+               if args.group in ('all', group) for name in names]
+    profiles = args.profiles.split(',') if args.profiles else allowed
+    args.profiles = ','.join(profiles)
     threads = [int(n) for n in args.threads.split(',')]
     if set(available) - {*INDEXES, 'cse_crossbeam'}:
         parser.error('binary advertises retired adapters; rebuild it for the current cohort')
-    if not indexes or set(indexes)-set(available) or set(profiles)-set(PROFILES):
-        parser.error('unavailable adapter or unknown profile')
+    if not indexes or set(indexes)-set(available) or set(profiles)-set(allowed):
+        parser.error('unavailable adapter or profile outside the selected group')
     if min(args.keys, args.ops, args.repeats, *threads) < 1 or len(set(threads)) != len(threads):
         parser.error('positive sizes / unique thread counts required')
     if len(set(indexes)) != len(indexes) or len(set(profiles)) != len(profiles):
@@ -65,7 +63,10 @@ def main():
             for index in indexes if workers == 1 or index in native
             for repeat in range(args.repeats)]
     if args.list_plan:
-        print(json.dumps(dict(processes=len(jobs), profiles=profiles, indexes=indexes,
+        print(json.dumps(dict(processes=len(jobs),
+                              phase_rows=sum(len(phases(stage, workers, PROFILES[profile]['read_view']))
+                                             for profile, stage, workers, _, _ in jobs),
+                              group=args.group, profiles=profiles, configurations={p: PROFILES[p] for p in profiles}, indexes=indexes,
                               native_concurrent=sorted(native), threads=threads), indent=2))
         return
     if args.cpus:
@@ -100,14 +101,17 @@ def main():
     if cse_manifest.exists():
         dependencies['cse'] = json.loads(cse_manifest.read_text())
         dependencies['rust_toolchain'] = output(['rustc', '+stable', '-vV'])
-    metadata = dict(status='running', model='mvcc-v1', started_at=time.time(),
+    metadata = dict(status='running', model='mvcc-v2', started_at=time.time(),
                     binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                     source_files=manifest, dependencies=dependencies, adapter_listing=listing,
                     arguments=vars(args) | {'binary': str(binary), 'output': str(root)},
-                    profiles={p: PROFILES[p] for p in profiles}, planned_processes=len(jobs),
+                    profiles={p: PROFILES[p] for p in profiles},
+                    profile_groups={p: group for group, names in GROUPS.items() for p in profiles if p in names},
+                    planned_processes=len(jobs),
                     completed_processes=0, host=output(['uname', '-a']),
                     method='Fresh process per profile/stage/index/repeat; randomized serial order; '
-                           'fixed snapshots; full independent oracle validation; no disk I/O; no warmup')
+                           'latest published batch or fixed historical snapshots; independent oracle validation; '
+                           'latest contents validated per run, deterministic counts compared across adapters; no disk I/O; no warmup')
     cache = binary.parent/'CMakeCache.txt'
     if cache.exists():
         metadata['cmake_configuration'] = [line for line in cache.read_text().splitlines()
@@ -135,16 +139,18 @@ def main():
             with (root/'runs'/f'{name}.log').open('w') as stream:
                 subprocess.run(command, env=ENV, stdout=stream, stderr=subprocess.STDOUT, check=True)
             process_rows = list(csv.DictReader(dest.open()))
-            expected_phases = {1: {'batch_load','get_latest','get_snapshot','scan_latest','scan_snapshot'},
-                               2: {'mixed_snapshot'} if workers == 1 else {'swmr_total','swmr_writer_batch','swmr_readers'},
-                               3: {'batch_load','freeze','flush_all_versions','destroy'}}[stage]
+            expected_phases = set(phases(stage, workers, PROFILES[profile]['read_view']))
             if {r['phase'] for r in process_rows} != expected_phases or len(process_rows) != len(expected_phases):
                 raise RuntimeError(f'phase matrix differs: {name}')
             for row in process_rows:
-                row.update(profile=profile, repeat=repeat+1, scenario_threads=workers)
+                if row['schema_version'] != 'mvcc-v2' or row['read_view'] != PROFILES[profile]['read_view']:
+                    raise RuntimeError(f'workload protocol differs: {name}; rebuild the binary')
+                if row['oracle_checksum'] and row['checksum'] != row['oracle_checksum']:
+                    raise RuntimeError(f'oracle checksum differs: {name}')
+                row.update(profile=profile, repeat=repeat+1, scenario_threads=workers,
+                           workload_group=metadata['profile_groups'][profile])
                 group = (profile, stage, workers, repeat, row['phase'])
-                signature = tuple(row[k] for k in ('requests','point_reads','scan_requests','written_versions',
-                    'live_hits','tombstone_hits','not_found','items','stored_versions','checksum','dataset_hash'))
+                signature = tuple(row[k] for k in comparison_fields(row))
                 if group in checks and checks[group] != signature:
                     raise RuntimeError(f'cross-adapter result differs: {group}, {index}')
                 checks[group] = signature

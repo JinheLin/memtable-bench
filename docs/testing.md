@@ -7,6 +7,56 @@ candidate sets and test counts. The build now rejects
 other platforms. Earlier macOS/ARM entries below describe historical verification
 and do not imply current platform support.
 
+## OLTP/latest and long-history groups (2026-10-09)
+
+Linux x86-64 / Xeon Gold 6240 / GCC 11.3.1:
+
+- Full five-candidate build: **15/15 CTest tests passed**;
+  [build/test log](test-results/2026-10-09/mvcc-groups/group-build-tests.log).
+  Fresh default-baseline reconfiguration: **11/11 passed**;
+  [baseline log](test-results/2026-10-09/mvcc-groups/baseline-build-tests.log).
+  Both latest and historical modes exercise empty values, tombstones,
+  resurrection, before-first snapshots, scans, single-worker mixing and SWMR.
+- The two-group pilot completed **100 fresh processes / 280 phase rows**:
+  **50 / 140 per group**, 1,000 user keys, 4,000 operation budgets, one repeat,
+  1/4/8 workers and all five candidates. OLTP has uniform/Zipf latest reads;
+  history has 16/64 retained versions with first-round fixed snapshots.
+  [Run log](test-results/2026-10-09/mvcc-groups/pilot.log),
+  [metadata](test-results/2026-10-09/mvcc-groups/pilot-metadata.json) and
+  [validation](test-results/2026-10-09/mvcc-groups/pilot-validation.json).
+- **48** deterministic content comparison groups agree. **8** latest
+  multiworker comparison groups agree on deterministic request/write/dataset
+  counts; their visible results depend on scheduling. **200** read/mixed/flush
+  rows match their independent oracle digests. All 20 latest multiworker runs
+  observed newer publications, point hits on newly written versions and a
+  nonzero common active interval. Snapshot traces are captured in memory for
+  timed-run oracle replay; the CSV retains bounds/counts/digests rather than
+  every request timestamp.
+- The final group reporting/count refinements passed the dedicated runner/report
+  integration test: **1/1**;
+  [test log](test-results/2026-10-09/mvcc-groups/final-report-test.log).
+  Invalid group/view, snapshot-range and oracle evidence is rejected.
+  Summaries export separate `report-oltp.md` and `report-history.md` files.
+  Four-profile plotting completed with Matplotlib/NumPy; latest and history
+  figures were visually checked. These pilot timings do not establish rankings.
+- The [source snapshot](test-results/2026-10-09/mvcc-groups/source-snapshot.tar.gz)
+  matches all 58 measured public inputs. Two subsequent reporting/test edits
+  have a separate [reporting snapshot](test-results/2026-10-09/mvcc-groups/reporting-source.tar.gz).
+  [Raw records](test-results/2026-10-09/mvcc-groups/pilot-records.tar.gz),
+  [derived pilot summaries](test-results/2026-10-09/mvcc-groups/pilot-summary.tar.gz)
+  and [verification manifest](test-results/2026-10-09/mvcc-groups/verification.json)
+  preserve commands, hashes, actual availability and new plan counts.
+  Private engine source and linked binaries remain excluded.
+- All 280 rows have cycles/instructions/L1/LLC/branch data; 205 have DTLB data.
+  Unavailable fields remain blank. Original `mvcc-v1` formal archives still
+  validate at **906 / 2,928**, and their contents and CSE pins are unchanged;
+  [archive validation](test-results/2026-10-09/mvcc-groups/historical-validation.json).
+
+The current full plan has **150 processes / 420 rows per group**, **300 / 840**
+together. No new million-key performance matrix was run in this change.
+All builds cleared proxy variables and no formatting target was run.
+See [group semantics, parameters and run commands](mvcc.md#two-workload-groups).
+
 ## Five-candidate pruning validation (2026-10-09)
 
 Linux x86-64 / Xeon Gold 6240 / GCC 11.3.1 / Rust 1.92.0:
@@ -35,7 +85,7 @@ Linux x86-64 / Xeon Gold 6240 / GCC 11.3.1 / Rust 1.92.0:
   records binary/artifact hashes, availability and plan counts.
 - Cycles, instructions, L1/LLC and branch fields are present in all 320 rows;
   DTLB fields in 238. Missing events remain empty.
-- The new million-key plan has **300 processes / 960 phase rows**, but was
+- The pruning change's then-current million-key plan had **300 processes / 960 phase rows**, but was
   not run in this change. The previous 906-process archive still validates,
   and its recorded file hashes are unchanged.
 
