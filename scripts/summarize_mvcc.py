@@ -48,6 +48,9 @@ def validate(root):
     profiles = args['profiles'].split(',')
     threads = [int(value) for value in args['threads'].split(',')]
     repeats = int(args['repeats'])
+    stages = [int(value) for value in args.get('stages', '1,2,3').split(',')]
+    require(bool(stages) and len(set(stages)) == len(stages) and set(stages) <= {1,2,3},
+            f'{root}: invalid stages')
     require(len(set(indexes)) == len(indexes) and set(indexes) <= set(available),
             f'{root}: duplicate or unavailable index')
     require(len(set(profiles)) == len(profiles) and set(profiles) <= set(meta['profiles']),
@@ -57,7 +60,7 @@ def validate(root):
     expected = set()
     processes = 0
     for profile in profiles:
-        for stage in (1, 2, 3):
+        for stage in stages:
             for workers in threads if stage == 2 else (1,):
                 config = meta['profiles'][profile]
                 expected_phases = phases(stage, workers, config.get('read_view'), config.get('read_percent', 80))
@@ -121,6 +124,10 @@ def validate(root):
                     comparison_groups=len(checks), binary_sha256=meta['binary_sha256'],
                     raw_sha256=hashlib.sha256((root / 'raw.csv').read_bytes()).hexdigest(),
                     pmu_rows={name: sum(bool(row[name]) for row in rows) for name in PMU})
+    if 'suite' in args:
+        evidence['suite'] = args['suite']
+        evidence['stages'] = stages
+        evidence['repeats'] = repeats
     if current:
         evidence['groups'] = {group: dict(
             processes=len({(r['profile'], r['stage'], r['scenario_threads'], r['index'], r['repeat'])
@@ -229,6 +236,7 @@ def main():
         indexes = options['indexes'].split(',') if options.get('indexes') else [
             line.split('\t')[0] for line in meta['adapter_listing'].splitlines() if line.split('\t')[1] == 'available']
         workers = [int(value) for value in options['threads'].split(',')]
+        stages = [int(value) for value in options.get('stages', '1,2,3').split(',')]
         for profile, config in meta['profiles'].items():
             section_begin = len(sections)
             view = config.get('read_view')
@@ -239,6 +247,10 @@ def main():
             sections.append(f"## {cohort}: {group} / {profile}\n\n"
                             f"User keys: {options['keys']:,}; operation budget: {options['ops']:,}; "
                             f"repetitions: {options['repeats']}. Profile: `{json.dumps(config, sort_keys=True)}`.")
+            if 'suite' in options:
+                sections.append(f"Suite: `{options['suite']}`; measured stages: `{options['stages']}`. " +
+                                ('One repetition: screening/correctness evidence, not a stable performance ranking.'
+                                 if options['repeats'] == 1 else ''))
             read_phases = [('Latest Get Mreq/s', 'get_latest', 'throughput_requests_s'),
                            ('Latest scan Mrows/s', 'scan_latest', 'items_s')] if view == 'latest' else [
                            ('Historical Get Mreq/s', 'get_snapshot', 'throughput_requests_s'),
@@ -248,26 +260,28 @@ def main():
                                ('Historical Get Mreq/s', 'get_snapshot', 'throughput_requests_s'),
                                ('Latest scan Mrows/s', 'scan_latest', 'items_s'),
                                ('Historical scan Mrows/s', 'scan_snapshot', 'items_s')]
-            sections.append('### Single-thread operations\n\n' + table(
-                ['Index', 'Load Mversions/s', *[label for label, _, _ in read_phases],
-                 'RSS MiB after load', 'Bytes/version'],
-                [[index, cell(index, 'batch_load', 'throughput_versions_s', scale=1e6),
-                  *[cell(index, phase, metric, scale=1e6) for _, phase, metric in read_phases],
-                  cell(index, 'batch_load', 'rss_retained_delta_bytes', scale=2**20),
-                  cell(index, 'batch_load', 'bytes_per_version')] for index in indexes]))
+            if 1 in stages:
+                sections.append('### Single-thread operations\n\n' + table(
+                    ['Index', 'Load Mversions/s', *[label for label, _, _ in read_phases],
+                     'RSS MiB after load', 'Bytes/version'],
+                    [[index, cell(index, 'batch_load', 'throughput_versions_s', scale=1e6),
+                      *[cell(index, phase, metric, scale=1e6) for _, phase, metric in read_phases],
+                      cell(index, 'batch_load', 'rss_retained_delta_bytes', scale=2**20),
+                      cell(index, 'batch_load', 'bytes_per_version')] for index in indexes]))
             mixed_phase = 'mixed_latest' if view == 'latest' else 'mixed_snapshot'
-            sections.append(('### Latest published batch: mixed / SWMR' if view == 'latest' else
-                             '### Fixed historical snapshot: mixed / SWMR') + '\n\n' + table(
-                ['Index', *[f'{count} workers Mreq/s' for count in workers],
-                 *[f'{count} workers: readers Mreq/s' for count in workers if count > 1],
-                 *[f'{count} workers: writer Mversions/s' for count in workers if count > 1]],
-                [[index, *[cell(index, mixed_phase if count == 1 else 'swmr_total',
-                               'throughput_requests_s', stage=2, count=count, scale=1e6) for count in workers],
-                  *[cell(index, 'swmr_readers', 'throughput_requests_s', stage=2, count=count, scale=1e6)
-                    for count in workers if count > 1],
-                  *[cell(index, 'swmr_writer_batch', 'throughput_versions_s', stage=2, count=count, scale=1e6)
-                    for count in workers if count > 1]] for index in indexes]))
-            if view == 'latest':
+            if 2 in stages:
+                sections.append(('### Latest published batch: mixed / SWMR' if view == 'latest' else
+                                 '### Fixed historical snapshot: mixed / SWMR') + '\n\n' + table(
+                    ['Index', *[f'{count} workers Mreq/s' for count in workers],
+                     *[f'{count} workers: readers Mreq/s' for count in workers if count > 1],
+                     *[f'{count} workers: writer Mversions/s' for count in workers if count > 1]],
+                    [[index, *[cell(index, mixed_phase if count == 1 else 'swmr_total',
+                                   'throughput_requests_s', stage=2, count=count, scale=1e6) for count in workers],
+                      *[cell(index, 'swmr_readers', 'throughput_requests_s', stage=2, count=count, scale=1e6)
+                        for count in workers if count > 1],
+                      *[cell(index, 'swmr_writer_batch', 'throughput_versions_s', stage=2, count=count, scale=1e6)
+                        for count in workers if count > 1]] for index in indexes]))
+            if 2 in stages and view == 'latest':
                 sections.append('### Latest visibility evidence\n\n' + table(
                     ['Index', 'Workers', 'Min observed snapshot', 'Max observed snapshot',
                      'Reads after newer publication', 'Point hits on new versions'],
@@ -275,13 +289,14 @@ def main():
                                            stage=2, count=count) for metric in
                         ('snapshot_min_ts', 'snapshot_max_ts', 'reads_with_newer_snapshot', 'newer_version_hits')]]
                      for index in indexes for count in workers]))
-            sections.append('### Lifecycle\n\n' + table(
-                ['Index', 'Load s', 'Freeze phase µs', 'Freeze sampled call µs', 'Flush Mversions/s', 'Destroy s'],
-                [[index, cell(index, 'batch_load', 'elapsed_ns', stage=3, scale=1e9),
-                  cell(index, 'freeze', 'elapsed_ns', stage=3, scale=1e3),
-                  cell(index, 'freeze', 'latency_p50_ns', stage=3, scale=1e3),
-                  cell(index, 'flush_all_versions', 'items_s', stage=3, scale=1e6),
-                  cell(index, 'destroy', 'elapsed_ns', stage=3, scale=1e9)] for index in indexes]))
+            if 3 in stages:
+                sections.append('### Lifecycle\n\n' + table(
+                    ['Index', 'Load s', 'Freeze phase µs', 'Freeze sampled call µs', 'Flush Mversions/s', 'Destroy s'],
+                    [[index, cell(index, 'batch_load', 'elapsed_ns', stage=3, scale=1e9),
+                      cell(index, 'freeze', 'elapsed_ns', stage=3, scale=1e3),
+                      cell(index, 'freeze', 'latency_p50_ns', stage=3, scale=1e3),
+                      cell(index, 'flush_all_versions', 'items_s', stage=3, scale=1e6),
+                      cell(index, 'destroy', 'elapsed_ns', stage=3, scale=1e9)] for index in indexes]))
             group_sections[group].extend(sections[section_begin:])
     (destination / 'report.md').write_text('\n\n'.join(sections) + '\n')
     for group in ('oltp', 'history'):

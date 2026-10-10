@@ -1,0 +1,97 @@
+{
+  "status": "verified",
+  "binary_sha256": {
+    "before": "7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5",
+    "after": "bce3aac78fc94dcbb91071c461937ec8f4e1d431dff5fcb941f800e38d343237"
+  },
+  "compared_fields": [
+    "phase",
+    "requests",
+    "point_reads",
+    "scan_requests",
+    "written_versions",
+    "live_hits",
+    "tombstone_hits",
+    "not_found",
+    "items",
+    "stored_versions",
+    "versions_tested",
+    "checksum",
+    "oracle_checksum",
+    "dataset_hash",
+    "snapshot_min_ts",
+    "snapshot_max_ts",
+    "reads_with_newer_snapshot",
+    "newer_version_hits"
+  ],
+  "cases": [
+    {
+      "read_view": "latest",
+      "versions": 2,
+      "stage": 1,
+      "phase_rows": 3,
+      "deterministic_fields_match": true,
+      "wall_seconds": {
+        "before": 0.08073925971984863,
+        "after": 0.04849779233336449
+      }
+    },
+    {
+      "read_view": "latest",
+      "versions": 2,
+      "stage": 2,
+      "phase_rows": 1,
+      "deterministic_fields_match": true,
+      "wall_seconds": {
+        "before": 0.045252058655023575,
+        "after": 0.023321297019720078
+      }
+    },
+    {
+      "read_view": "latest",
+      "versions": 2,
+      "stage": 3,
+      "phase_rows": 4,
+      "deterministic_fields_match": true,
+      "wall_seconds": {
+        "before": 0.03410271182656288,
+        "after": 0.011901367455720901
+      }
+    },
+    {
+      "read_view": "historical",
+      "versions": 64,
+      "stage": 1,
+      "phase_rows": 3,
+      "deterministic_fields_match": true,
+      "wall_seconds": {
+        "before": 1.1528950780630112,
+        "after": 1.1570983044803143
+      }
+    },
+    {
+      "read_view": "historical",
+      "versions": 64,
+      "stage": 2,
+      "phase_rows": 1,
+      "deterministic_fields_match": true,
+      "wall_seconds": {
+        "before": 0.24107494950294495,
+        "after": 0.22465742006897926
+      }
+    },
+    {
+      "read_view": "historical",
+      "versions": 64,
+      "stage": 3,
+      "phase_rows": 4,
+      "deterministic_fields_match": true,
+      "wall_seconds": {
+        "before": 0.27627162262797356,
+        "after": 0.2535572126507759
+      }
+    }
+  ],
+  "processes": 12,
+  "conclusion": "Deterministic inputs, counts and content unchanged; timings are functional probe data."
+}

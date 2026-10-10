@@ -1,0 +1,5 @@
+1/5 oltp_uniform-s1-t1-rocksdb_inlineskiplist-r1 done wall=6.604s
+2/5 oltp_uniform-s1-t1-btreeolc-r1 done wall=8.148s
+3/5 oltp_uniform-s1-t1-unodb_art-r1 done wall=5.759s
+4/5 oltp_uniform-s1-t1-cse_crossbeam-r1 done wall=10.321s
+5/5 oltp_uniform-s1-t1-wormhole-r1 done wall=5.620s

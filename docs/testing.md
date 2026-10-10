@@ -7,6 +7,37 @@ candidate sets and test counts. The build now rejects
 other platforms. Earlier macOS/ARM entries below describe historical verification
 and do not imply current platform support.
 
+## MVCC runtime controls and fixture setup (2026-10-10)
+
+Linux x86-64 / shared Xeon Gold 6240 / GCC 11.3.1. Builds cleared all six proxy
+variables; no formatting target was run. Binary SHA-256:
+`bce3aac78fc94dcbb91071c461937ec8f4e1d431dff5fcb941f800e38d343237`.
+
+- All **15/15 CTest tests passed** in 5.34 s, including quick/full plans,
+  stage selection, verified resume, retry of an incomplete job, corruption and
+  parameter-change rejection. [Build](test-results/2026-10-10/mvcc-runtime/build.log)
+  and [test log](test-results/2026-10-10/mvcc-runtime/ctest.log).
+- The default quick suite completed **45 processes / 150 phase rows** in
+  **62.35 s**, all five candidates, three profiles, 100k keys/ops, one repetition,
+  eight-worker SWMR and all three stages. Completed-job resume reused all
+  45 jobs and executed zero jobs (0.22 s inside the resumed runner).
+- A focused million-key single-thread Get/scan comparison completed all five
+  candidates: **5 processes / 15 rows in 36.53 s**, uniform latest reads,
+  one repetition and stage 1 only. Both runs passed matrix/oracle/content checks.
+  Quick/one-repeat results are functional screening evidence with reduced scope.
+- Six before/after cases (latest v2 and historical v64, each isolated stage)
+  matched all deterministic dataset, request/count and content fields across
+  **12 processes** using the preserved old and new binaries. Timing/RSS fields
+  are excluded from that equivalence check.
+- The preceding formal archive still validates at **300 / 840**. Its files,
+  metadata and source snapshot were left unchanged. Updated full plans retain
+  300 / 840, while defaults select quick; see [suite sizes](mvcc.md#suite-sizes-and-runtime).
+
+[Verification records](test-results/2026-10-10/mvcc-runtime/README.md) include
+commands/logs/CSV bytes in packed archives, file hashes, source/binary/dependency
+identity and separate wall-time evidence. Private engine source and linked
+binaries remain excluded.
+
 ## Million-key OLTP/latest and history completion (2026-10-09)
 
 The run completed at 19:59 Asia/Shanghai after about 5 h 10 min and was

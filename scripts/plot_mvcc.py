@@ -41,30 +41,34 @@ def main():
         indexes = list(dict.fromkeys(row['index'] for row in samples))
         # Summary rows are sorted by index. Use the same order in every panel.
         positions = np.arange(len(indexes))
-        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-        for ax, (phase, metric, title, stage) in zip(axes.flat, panels):
-            chosen = [stats[(phase, metric, stage, 1, index)] for index in indexes]
-            scale = 1 if metric == 'bytes_per_version' else 1e6
-            median = np.array([float(row['median']) / scale for row in chosen])
-            q1 = np.array([float(row['q1']) / scale for row in chosen])
-            q3 = np.array([float(row['q3']) / scale for row in chosen])
-            ax.barh(positions, median, color=[colors[index] for index in indexes], height=.7,
-                    xerr=np.array([median - q1, q3 - median]), capsize=3)
-            ax.set_yticks(positions, indexes)
-            ax.invert_yaxis()
-            ax.set_title(title, loc='left', fontweight='bold')
-            ax.set_xlim(left=0)
-            ax.grid(axis='x', alpha=.18)
-        fig.suptitle(f'MVCC benchmark | {group} | {stem}', fontsize=17, fontweight='bold')
-        view = 'Latest completed batch captured per request.' if latest else 'Fixed historical snapshots.'
-        fig.text(.5, .015, 'Fresh processes; medians with Q1-Q3. ' + view + ' '
-                 'Adapter, codec, copies and checksums included.\n'
-                 'Shared Xeon host; CPU/NUMA binding; no CPU reservation or frequency lock. '
-                 'No disk I/O. Cohorts with different key counts stay separate.', ha='center', fontsize=10)
-        fig.tight_layout(rect=(0, .05, 1, .95))
-        fig.savefig(root / f'{stem}.png', dpi=160, facecolor='white')
-        fig.savefig(root / f'{stem}.svg', facecolor='white')
-        plt.close(fig)
+        repetitions = max(int(row['samples']) for row in samples)
+        note = 'One repetition; exploratory results.' if repetitions == 1 else 'Medians with Q1-Q3.'
+        if any(row['stage'] == '1' for row in samples):
+            fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+            for ax, (phase, metric, title, stage) in zip(axes.flat, panels):
+                chosen = [stats[(phase, metric, stage, 1, index)] for index in indexes]
+                scale = 1 if metric == 'bytes_per_version' else 1e6
+                median = np.array([float(row['median']) / scale for row in chosen])
+                q1 = np.array([float(row['q1']) / scale for row in chosen])
+                q3 = np.array([float(row['q3']) / scale for row in chosen])
+                ax.barh(positions, median, color=[colors[index] for index in indexes], height=.7,
+                        xerr=np.array([median - q1, q3 - median]), capsize=3)
+                ax.set_yticks(positions, indexes)
+                ax.invert_yaxis()
+                ax.set_title(title, loc='left', fontweight='bold')
+                ax.set_xlim(left=0)
+                ax.grid(axis='x', alpha=.18)
+            fig.suptitle(f'MVCC benchmark | {group} | {stem}', fontsize=17, fontweight='bold')
+            view = 'Latest completed batch captured per request.' if latest else 'Fixed historical snapshots.'
+            fig.text(.5, .015, 'Fresh processes; ' + note + ' ' + view + ' '
+                     'Adapter, codec, copies and checksums included.\n'
+                     'Shared host; CPU/NUMA binding when configured; no CPU reservation or frequency lock. '
+                     'No disk I/O. Cohorts with different key counts stay separate.', ha='center', fontsize=10)
+            fig.tight_layout(rect=(0, .05, 1, .95))
+            fig.savefig(root / f'{stem}.png', dpi=160, facecolor='white')
+            fig.savefig(root / f'{stem}.svg', facecolor='white')
+            plt.close(fig)
+            print(root / f'{stem}.png')
         counts = sorted({int(row['scenario_threads']) for row in samples if row['phase'] == 'swmr_total'})
         native = [index for index in indexes if counts and
                   ('swmr_total', 'throughput_requests_s', 2, counts[0], index) in stats]
@@ -87,13 +91,13 @@ def main():
         fig.suptitle(f'MVCC SWMR | {stem}', fontsize=16, fontweight='bold')
         handles, labels = axes[0].get_legend_handles_labels()
         fig.legend(handles, labels, ncol=4, loc='lower center', bbox_to_anchor=(.5, .035), frameon=False)
-        fig.text(.5, .01, 'Fixed finite read/write budgets; reader tail included in group wall time. '
+        fig.text(.5, .01, note + ' Fixed finite read/write budgets; reader tail included in group wall time. '
                  'This does not measure parallel writers or pure read-only scaling.', ha='center', fontsize=10)
         fig.tight_layout(rect=(0, .16, 1, .94))
         fig.savefig(root / f'{stem}-swmr.png', dpi=160, facecolor='white')
         fig.savefig(root / f'{stem}-swmr.svg', facecolor='white')
         plt.close(fig)
-        print(root / f'{stem}.png')
+        print(root / f'{stem}-swmr.png')
 
 
 if __name__ == '__main__':

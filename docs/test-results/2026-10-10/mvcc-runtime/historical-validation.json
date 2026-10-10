@@ -1,0 +1,61 @@
+{
+  "status": "complete",
+  "processes": 300,
+  "phase_rows": 840,
+  "cohorts": [
+    {
+      "cohort": "oltp-1m",
+      "processes": 150,
+      "phase_rows": 420,
+      "comparison_groups": 84,
+      "binary_sha256": "7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5",
+      "raw_sha256": "fd04f5e90649461e2a1b393c4142b7565865a2b7e7bd571053db57b290391f29",
+      "pmu_rows": {
+        "cycles_per_request": 420,
+        "instructions_per_request": 420,
+        "l1d_miss_per_request": 420,
+        "llc_miss_per_request": 420,
+        "branch_miss_per_request": 420,
+        "dtlb_miss_per_request": 386
+      },
+      "groups": {
+        "oltp": {
+          "processes": 150,
+          "phase_rows": 420
+        }
+      },
+      "cross_adapter_validation": {
+        "content_groups": 60,
+        "latest_scheduled_count_groups": 24,
+        "oracle_verified_rows": 300
+      }
+    },
+    {
+      "cohort": "history-1m",
+      "processes": 150,
+      "phase_rows": 420,
+      "comparison_groups": 84,
+      "binary_sha256": "7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5",
+      "raw_sha256": "d2dacd1f729cb985b680ae7ecba649b9cfe6d3c9f2f457d1e9d260237cacf156",
+      "pmu_rows": {
+        "cycles_per_request": 420,
+        "instructions_per_request": 420,
+        "l1d_miss_per_request": 420,
+        "llc_miss_per_request": 420,
+        "branch_miss_per_request": 420,
+        "dtlb_miss_per_request": 390
+      },
+      "groups": {
+        "history": {
+          "processes": 150,
+          "phase_rows": 420
+        }
+      },
+      "cross_adapter_validation": {
+        "content_groups": 84,
+        "latest_scheduled_count_groups": 0,
+        "oracle_verified_rows": 300
+      }
+    }
+  ]
+}

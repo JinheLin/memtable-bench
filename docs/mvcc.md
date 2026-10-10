@@ -130,7 +130,8 @@ InlineSkipList remains the baseline; all five candidates participate.
 | `history` | `history_v16`, `history_v64` | 16 / 64 | Fixed snapshot at the end of the first version round; lag 15 / 63 | Long retained histories, old-version lookup and visible-row scans |
 
 Both groups use the same 16 B random user keys, 32 B live values, batch size 32,
-10% deterministic deletions, 10% point misses, 80% read budgets and 1/4/8 workers.
+10% deterministic deletions, 10% point misses and 80% read budgets. The full
+suite uses 1/4/8 stage-2 workers; quick uses eight (one writer and seven readers).
 Their mixed reader workload is **point-only** (`scan_percent=0`), allowing reader
 latency comparisons without a mixture of Get and scan. Dedicated visible scans
 remain in stage 1: maximum 100 live rows/call, at most 1,024 calls.
@@ -267,38 +268,91 @@ value limit; the bridge checks uint16 keys, uint32 values and total batch bytes.
 ## Group matrices
 
 `scripts/mvcc_matrix.py --group oltp|history|all` schedules fresh processes in
-randomized serial order. The default `all` covers both groups. `--profiles`
-selects a subset within the selected group. The runner discovers available/native
+randomized serial order. The default group is `all`; the default suite is `quick`.
+`--profiles` selects a subset within the selected group, overriding the suite's
+profile selection. The runner discovers available/native
 concurrent candidates and records the group, exact parameters, commands,
 per-process CSV/logs, source/dependency hashes, binary hash and topology.
 
-With all five candidates, two profiles/group, three repetitions and 1/4/8
-workers, **each group has 150 processes / 420 phase rows**. Together they have
-**300 / 840**. Stage 1 now measures one read view per process, removing the old
-latest/history duplication. Without CSE the matrix schedules the four available
-C++ candidates. These are plan counts, not a claim of completed performance runs.
-At one million user keys, the history profiles load 16M/64M versions; plan memory
-and run time accordingly. To inspect participants without running:
+### Suite sizes and runtime
+
+Counts below assume all five available candidates and all three stages:
+
+| Suite | Keys / operation budget | Profiles | Stage-2 workers | Repeats | Processes / rows | Total prefill versions |
+| --- | --- | --- | --- | --- | --- | --- |
+| `quick` (default) | 100k / 100k | Both OLTP, history v16 | 8 | 1 | 45 / 150 | 30M |
+| `full` | 1M / 1M | Both OLTP, history v16/v64 | 1,4,8 | 3 | 300 / 840 | 6.3B |
+| `smoke` | 1k / 2k | Both OLTP, history v16/v64 | 1,4 | 1 | 80 / 220 | 1.68M |
+
+The measured full run took about 5 h 10 min. Each profile/index/repeat loaded
+the same history five times: once in stages 1 and 3, and once for each of the
+three stage-2 worker counts. Consequently, one million user keys meant 6.3B
+prefill inserts across the complete matrix; 4.8B belonged to history v64.
+Stage-2 prefill and process teardown are outside its timed throughput interval.
+Reducing `--ops` alone barely changes that load cost.
+
+Quick keeps single-thread Get/scan, SWMR and full lifecycle coverage. It
+omits history v64 and intermediate worker counts and uses one repetition;
+its results are screening evidence. Override `--keys 1000000 --ops 1000000`
+for a million-key quick run (300M prefill versions, 21 times fewer than full).
+This is reduced coverage, not a claim that identical workloads run 21 times
+faster. All candidates retain the same per-profile data and independent oracles.
+Processes remain serial to preserve CPU/cache/memory-bandwidth comparability.
+
+`--stages 1`, `--stages 2`, `--stages 3` or comma-separated subsets avoid unrelated
+fresh loads. `--threads`, `--repeats`, `--keys`, `--ops` override suite defaults.
+An explicit `--profiles history_v64 --stages 1` measures only the costly historical
+read/scan case. Stage 1/3 always use one worker, regardless of `--threads`.
+Without CSE, only available candidates are scheduled. Inspect the planned
+process/row counts and `total_prefill_versions` before running:
 
 ```sh
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-oltp --group oltp --list-plan
+  --output results/mvcc-quick --list-plan
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-history --group history --list-plan
+  --output results/mvcc-history --suite full --group history --list-plan
 ```
 
-Run each group separately:
+Run the quick suite, or opt into each full group:
 
 ```sh
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-oltp --group oltp \
+  --output results/mvcc-quick --cpus 2,3,4,5,6,7,8,9 --numa-node 0
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-oltp --suite full --group oltp \
   --keys 1000000 --ops 1000000 --repeats 3 --threads 1,4,8 \
   --cpus 2,3,4,5,6,7,8,9 --numa-node 0
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-history --group history \
+  --output results/mvcc-history --suite full --group history \
   --keys 1000000 --ops 1000000 --repeats 3 --threads 1,4,8 \
   --cpus 2,3,4,5,6,7,8,9 --numa-node 0
 ```
+
+### Checkpoints and setup costs
+
+Each successful process gets a `runs/*.complete.json` marker containing its
+exact command, wall time and command/CSV/log hashes. Metadata and combined raw
+CSV are atomically checkpointed after each job. Restart with **the same command
+plus `--resume`**. Source, binary, dependencies, parameters and host must match;
+completed records are rehashed and their phase/oracle/comparison checks replayed.
+Jobs without a completion marker are rerun in fresh processes; their partial
+files are retained in `failed-attempts/`. A directory lock prevents simultaneous
+runners from sharing an output. Older archives have no resume markers.
+
+`metadata.json` records per-process `process_wall_seconds` and each invocation's
+executed/reused counts. Wall time includes trace setup, stage-2 prefill, oracle
+validation and table destruction, rather than only the throughput intervals.
+Source/binary integrity is checked again at completion.
+
+Fixture setup now prepares only the inputs needed by the chosen stage. Stage 1
+does not allocate timed-update chains; stage 2 does not compute unused standalone
+read/scan oracles; stage 3 does not build read/update traces. Only the selected
+stage-1 read view is hashed. Timed operations and their independent content
+checks remain intact. These allocation changes can affect allocator retention
+and RSS baselines: compare candidates within a new cohort and keep the measured
+older archives separate. Their data, hashes and source snapshots are preserved.
+Captured commands from before this default change require their archived source,
+or `--suite full` to request the former profile/worker/repetition matrix.
 
 The former base/deep/prefix/value plan belongs to the historical `mvcc-v1`
 protocol. Its published raw files, reports, pins and source snapshots are

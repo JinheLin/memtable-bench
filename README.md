@@ -88,13 +88,22 @@ build-core/memtable_bench --index rocksdb_inlineskiplist --internal-key \
   --stage all --keys 100000 --ops 1000000 --threads 8 \
   --cpu-list 2,3,4,5,6,7,8,9 --numa-node 0 --output results/exact-key.csv
 
-# OLTP: two initial versions/key, latest reads, uniform/Zipf access.
+# Default quick screening: 100k keys, one repetition, all three stages.
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-oltp --group oltp --keys 1000000 --ops 1000000 --repeats 3 \
+  --output results/mvcc-quick --cpus 2,3,4,5,6,7,8,9 --numa-node 0
+
+# Focused million-key point/scan comparison, without concurrency or lifecycle.
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-point-1m --profiles oltp_uniform --stages 1 \
+  --keys 1000000 --ops 1000000 --cpus 2 --numa-node 0
+
+# Formal OLTP: latest reads, uniform/Zipf, three repetitions, 1/4/8 workers.
+python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
+  --output results/mvcc-oltp --suite full --group oltp --keys 1000000 --ops 1000000 --repeats 3 \
   --threads 1,4,8 --cpus 2,3,4,5,6,7,8,9 --numa-node 0
 # History: 16/64 retained versions/key, fixed first-round snapshots.
 python3 scripts/mvcc_matrix.py --binary build-core/mvcc_bench \
-  --output results/mvcc-history --group history --keys 1000000 --ops 1000000 --repeats 3 \
+  --output results/mvcc-history --suite full --group history --keys 1000000 --ops 1000000 --repeats 3 \
   --threads 1,4,8 \
   --cpus 2,3,4,5,6,7,8,9 --numa-node 0
 python3 scripts/summarize_mvcc.py results/mvcc-oltp results/mvcc-history \
@@ -104,8 +113,18 @@ python3 scripts/plot_mvcc.py results/mvcc-groups-summary
 
 Select CPU IDs from your actual topology. Missing perf access leaves PMU fields
 empty. Plotting needs Matplotlib/NumPy; validation uses Python's standard library.
-Each five-candidate group has **150 processes / 420 phase rows**; both groups
-have **300 / 840**. OLTP reads the latest completed batch at request start;
+The default `quick` suite has **45 processes / 150 phase rows** with all five
+candidates, both OLTP profiles and history v16. It is a one-repetition screening
+run. `--suite full` retains **150 processes / 420 rows per group**, **300 / 840**
+together, including history v64. `--suite smoke` uses small inputs for correctness.
+Use `--list-plan` to see total prefill versions before running, `--stages 1`
+(or `2` / `3`) to focus on a phase, and the same command with `--resume` after interruption.
+Resume verifies source/binary/configuration and completed command/CSV/log hashes;
+process wall times include setup, prefill, validation and destruction.
+The [Linux runtime verification](docs/test-results/2026-10-10/mvcc-runtime/README.md)
+completed the default quick suite in 62.35 s and a focused million-key
+five-index Get/scan comparison in 36.53 s; these are different scopes from full.
+OLTP reads the latest completed batch at request start;
 history holds a fixed old view. Mixed reader latency is point-only by default;
 stage 1 still measures dedicated visible scans. Separate group reports are
 `report-oltp.md` and `report-history.md`; the CSV protocol is now `mvcc-v2`.

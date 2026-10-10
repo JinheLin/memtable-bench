@@ -1,0 +1,113 @@
+{
+  "processes": 80,
+  "phase_rows": 220,
+  "suite": "smoke",
+  "repeats": 1,
+  "keys": 1000,
+  "ops": 2000,
+  "stages": [
+    1,
+    2,
+    3
+  ],
+  "total_prefill_versions": 1680000,
+  "group": "all",
+  "profiles": [
+    "oltp_uniform",
+    "oltp_zipf",
+    "history_v16",
+    "history_v64"
+  ],
+  "configurations": {
+    "oltp_uniform": {
+      "key_size": 16,
+      "value_size": 32,
+      "batch_size": 32,
+      "read_percent": 80,
+      "scan_percent": 0,
+      "delete_percent": 10,
+      "miss_percent": 10,
+      "scan_length": 100,
+      "scan_ops": 1024,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "read_view": "latest",
+      "versions": 2,
+      "snapshot_lag": 0,
+      "distribution": "uniform"
+    },
+    "oltp_zipf": {
+      "key_size": 16,
+      "value_size": 32,
+      "batch_size": 32,
+      "read_percent": 80,
+      "scan_percent": 0,
+      "delete_percent": 10,
+      "miss_percent": 10,
+      "scan_length": 100,
+      "scan_ops": 1024,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "read_view": "latest",
+      "versions": 2,
+      "snapshot_lag": 0,
+      "distribution": "zipf"
+    },
+    "history_v16": {
+      "key_size": 16,
+      "value_size": 32,
+      "batch_size": 32,
+      "read_percent": 80,
+      "scan_percent": 0,
+      "delete_percent": 10,
+      "miss_percent": 10,
+      "scan_length": 100,
+      "scan_ops": 1024,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "read_view": "historical",
+      "versions": 16,
+      "snapshot_lag": 15,
+      "distribution": "uniform"
+    },
+    "history_v64": {
+      "key_size": 16,
+      "value_size": 32,
+      "batch_size": 32,
+      "read_percent": 80,
+      "scan_percent": 0,
+      "delete_percent": 10,
+      "miss_percent": 10,
+      "scan_length": 100,
+      "scan_ops": 1024,
+      "key_layout": "random",
+      "prefix_bytes": 0,
+      "prefix_groups": 1,
+      "read_view": "historical",
+      "versions": 64,
+      "snapshot_lag": 63,
+      "distribution": "uniform"
+    }
+  },
+  "indexes": [
+    "rocksdb_inlineskiplist",
+    "btreeolc",
+    "unodb_art",
+    "wormhole",
+    "cse_crossbeam"
+  ],
+  "native_concurrent": [
+    "btreeolc",
+    "cse_crossbeam",
+    "rocksdb_inlineskiplist",
+    "unodb_art",
+    "wormhole"
+  ],
+  "threads": [
+    1,
+    4
+  ]
+}

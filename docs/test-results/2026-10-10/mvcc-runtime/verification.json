@@ -1,0 +1,23 @@
+{
+  "status": "verified",
+  "runs": {
+    "quick": {
+      "processes": 45,
+      "phase_rows": 150,
+      "first_run_wall_seconds": 62.35419487953186,
+      "prefill_versions": 30000000,
+      "packed_files": 181,
+      "binary_sha256": "bce3aac78fc94dcbb91071c461937ec8f4e1d431dff5fcb941f800e38d343237"
+    },
+    "point-1m": {
+      "processes": 5,
+      "phase_rows": 15,
+      "first_run_wall_seconds": 36.52601504325867,
+      "prefill_versions": 10000000,
+      "packed_files": 21,
+      "binary_sha256": "bce3aac78fc94dcbb91071c461937ec8f4e1d431dff5fcb941f800e38d343237"
+    }
+  },
+  "private_engine_source_and_binaries_excluded": true,
+  "note": "Quick/single-repetition runs are functional screening evidence; scopes differ from the formal archive."
+}

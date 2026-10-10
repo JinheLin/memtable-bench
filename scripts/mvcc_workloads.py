@@ -15,6 +15,14 @@ PROFILES = {
 }
 GROUPS = {'oltp': ('oltp_uniform', 'oltp_zipf'),
           'history': ('history_v16', 'history_v64')}
+SUITES = {
+    'quick': dict(keys=100000, ops=100000, repeats=1, threads='8', stages='1,2,3',
+                  profiles=('oltp_uniform', 'oltp_zipf', 'history_v16')),
+    'full': dict(keys=1000000, ops=1000000, repeats=3, threads='1,4,8', stages='1,2,3',
+                 profiles=tuple(PROFILES)),
+    'smoke': dict(keys=1000, ops=2000, repeats=1, threads='1,4', stages='1,2,3',
+                  profiles=tuple(PROFILES)),
+}
 SIGNATURE = ('requests', 'point_reads', 'scan_requests', 'written_versions', 'live_hits',
              'tombstone_hits', 'not_found', 'items', 'stored_versions', 'checksum', 'dataset_hash')
 

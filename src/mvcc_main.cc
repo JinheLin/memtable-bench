@@ -165,7 +165,7 @@ struct Fixture {
   std::vector<mb::MvccWrite> load, writes;
   std::vector<Request> reads;
   std::vector<Request> scans;
-  std::array<std::uint64_t,4> read_checks{};
+  std::array<std::uint64_t,2> read_checks{};
   std::vector<std::size_t> sorted_present;
   // Independent oracle index over precomputed writes, never over the adapter.
   std::vector<std::vector<std::size_t>> updates;
@@ -190,6 +190,9 @@ struct Fixture {
                       round*o.keys+id+1, deleted});
     }
     for (auto id : keys.SortedIds()) if (id < o.keys) sorted_present.push_back(id);
+    // Lifecycle needs only load inputs and user-key order. Keep unused read,
+    // update and oracle allocations out of its setup and RSS baseline.
+    if (o.stage == "3") return;
     if (o.distribution == "zipf") {
       double sum = 0;
       for (std::size_t i = 0; i < o.keys; ++i) { sum += 1.0/std::pow(i+1, 1.1); cdf.push_back(sum); }
@@ -202,9 +205,10 @@ struct Fixture {
       if (!scan && rng()%100 < o.miss_percent) id += o.keys;
       reads.push_back({id, scan});
     }
-    const auto count = o.ops - o.ops/100*o.read_percent - (o.ops%100)*o.read_percent/100;
+    const auto count = o.stage == "1" ? 0 :
+      o.ops - o.ops/100*o.read_percent - (o.ops%100)*o.read_percent/100;
     writes.reserve(count);
-    if (o.read_view == "latest") updates.resize(o.keys);
+    if (count && o.read_view == "latest") updates.resize(o.keys);
     for (std::size_t i = 0; i < count; ++i) {
       const auto id = Pick(rng, i);
       const bool deleted = Mix(o.seed+i+991)%100 < o.delete_percent;
@@ -212,10 +216,12 @@ struct Fixture {
                         o.keys*o.versions+i+1, deleted});
       if (!updates.empty()) updates[id].push_back(i);
     }
-    scans.reserve(std::min(o.ops,o.scan_ops));
-    for (std::size_t i=0;i<std::min(o.ops,o.scan_ops);++i) scans.push_back({reads[i].id%o.keys,true});
-    read_checks={ExpectedReads(reads,Snapshot(true),false),ExpectedReads(reads,Snapshot(),false),
-                 ExpectedReads(scans,Snapshot(true),true),ExpectedReads(scans,Snapshot(),true)};
+    if (o.stage == "1" || o.stage == "all") {
+      scans.reserve(std::min(o.ops,o.scan_ops));
+      for (std::size_t i=0;i<std::min(o.ops,o.scan_ops);++i) scans.push_back({reads[i].id%o.keys,true});
+      const auto snapshot = Snapshot(o.read_view == "latest");
+      read_checks={ExpectedReads(reads,snapshot,false),ExpectedReads(scans,snapshot,true)};
+    }
   }
   bool Deleted(std::size_t id, std::size_t round) const {
     // Seed initial live rows, then permit deletes and resurrection in any round.
@@ -427,11 +433,11 @@ void Single(const Options& o, const Fixture& f, Csv& csv, bool lifecycle) {
       const bool latest = o.read_view == "latest";
       const auto snapshot = f.Snapshot(latest);
       before = mb::ResidentBytes(); stats = {};
-      const auto expected = f.read_checks[latest ? 0 : 1];
+      const auto expected = f.read_checks[0];
       sample = mb::Measure(f.reads.size(),[&](auto i,auto* hash) { return f.Read(*table,f.reads[i],snapshot,false,&stats,hash); });
       Verify(sample.checksum==expected,"point snapshot visibility / payload");
       emit(latest ? "get_latest" : "get_snapshot",sample,stats,before,snapshot,expected);
-      const auto scan_expected = f.read_checks[latest ? 2 : 3];
+      const auto scan_expected = f.read_checks[1];
       before=mb::ResidentBytes(); stats={};
       sample=mb::Measure(f.scans.size(),[&](auto i,auto* hash) { return f.Read(*table,f.scans[i],snapshot,true,&stats,hash); });
       Verify(sample.checksum==scan_expected,"visible range scan");
