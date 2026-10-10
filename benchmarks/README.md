@@ -13,9 +13,13 @@ BTreeOLC, UnoDB ART, Wormhole and CSE Crossbeam. [Index selection](../docs/index
 records why seven adapters were removed. The archives below preserve the
 candidate sets, source snapshots and original statistics actually measured;
 retired names remain valid for historical reporting only.
-The current `mvcc-v2` workload has separate OLTP/latest and long-history groups;
-see [the current protocol](../docs/mvcc.md#two-workload-groups). Its small
-functional pilot is recorded in [verification notes](../docs/testing.md#oltplatest-and-long-history-groups-2026-10-09).
+The current `mvcc-v2` workload has separate OLTP/latest and long-history groups.
+The [completed million-user-key experiment](mvcc-groups-formal-1m-2026-10-09/README.md)
+has **300 processes / 840 phase rows**, all five candidates, three repetitions
+and 1/4/8 workers. Its [OLTP](mvcc-groups-formal-1m-2026-10-09/summary/report-oltp.md)
+and [history](mvcc-groups-formal-1m-2026-10-09/summary/report-history.md) reports
+keep the groups separate. See [the protocol](../docs/mvcc.md#two-workload-groups)
+and [verification notes](../docs/testing.md).
 The formal `mvcc-v1` archive below retains its original read protocol.
 
 ## Historical comparison policy
@@ -45,12 +49,13 @@ below keep the historical protocol and original data unchanged.
 
 | Experiment | Stored records | Repeats | Processes | Phase rows | Scope |
 | --- | --- | --- | --- | --- | --- |
+| [OLTP/latest and long history](mvcc-groups-formal-1m-2026-10-09/README.md) | 1M user keys; 2M/16M/64M retained versions | 3 | 300 | 840 | Five retained candidates; uniform/Zipf latest reads; v16/v64 oldest reads; 1/4/8 workers; scans and full lifecycle |
 | [Original comparison](xeon79-2026-10-08/report.md) | 1,000,000 | 5 | 360 | 675 | Single-thread uniform/Zipf, 1/2/4/8/16-thread mixed workload, MemTable lifecycle |
 | [Key/prefix/value screening](sensitivity-screening-2026-10-08/report.md) | 1,000,000 | 3 | 540 | 2,700 | 20 configurations, LookupOnly/GetCopy, cursor/payload scans, memory and PMU counters |
 | [Range scan lengths](range-scan-1m-2026-10-08/report.md) | 1,000,000 | 3 | 270 | 810 | Random keys and 56 B common prefix; limits 1/10/100/1,000/10,000; SeekOnly, cursor and payload scans |
 | [MVCC operations and lifecycle](mvcc-formal-1m-2026-10-08/README.md) | 1M user keys (4/16 versions); matched 500k/100k supplements | 3 | 906 | 2,928 | Base/deep/prefix/value; latest/historical Get and scans; 1/4/8-worker mixed/SWMR; all-version flush and Destroy |
 
-The first three cover nine adapters. There are **1,170 legacy exact-key formal
+The three legacy exact-key experiments cover nine adapters. There are **1,170 legacy exact-key formal
 processes and 4,185 phase rows**. Counts and checksums agree across adapters within each comparison.
 Three-repeat medians and quartiles are screening statistics, not confidence
 intervals. The range suite has only 16 latency samples per phase/repeat; its
@@ -89,7 +94,7 @@ across candidates. Its times are not comparable to the legacy exact-key suites.
 
 Pilot timings are not used for formal performance rankings. The legacy
 exact-key million-record representative-profile concurrency/lifecycle experiment
-is still pending. The separate formal MVCC experiment is complete.
+is still pending. Both formal MVCC experiments above are complete.
 
 ## Archive layout and verification
 

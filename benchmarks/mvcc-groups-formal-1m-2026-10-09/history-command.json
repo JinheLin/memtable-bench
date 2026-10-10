@@ -1,0 +1,23 @@
+[
+  "python3",
+  "-u",
+  "scripts/mvcc_matrix.py",
+  "--binary",
+  "/DATA/disk1/jinhelin/github/memtable-bench/build-linux-core/mvcc_bench",
+  "--output",
+  "/DATA/disk1/jinhelin/github/memtable-bench/results/mvcc-groups-formal-1m-2026-10-09/history-1m",
+  "--group",
+  "history",
+  "--keys",
+  "1000000",
+  "--ops",
+  "1000000",
+  "--repeats",
+  "3",
+  "--threads",
+  "1,4,8",
+  "--cpus",
+  "2,3,4,5,6,7,8,9",
+  "--numa-node",
+  "0"
+]

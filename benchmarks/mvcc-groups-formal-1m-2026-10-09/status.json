@@ -1,0 +1,13 @@
+{
+  "status": "complete",
+  "pid": 105035,
+  "started_at": 1791528522.6596587,
+  "completed_groups": [
+    "oltp",
+    "history"
+  ],
+  "planned_processes": 300,
+  "planned_phase_rows": 840,
+  "active_group": "validation",
+  "finished_at": 1791547144.546966
+}

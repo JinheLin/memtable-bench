@@ -7,6 +7,37 @@ candidate sets and test counts. The build now rejects
 other platforms. Earlier macOS/ARM entries below describe historical verification
 and do not imply current platform support.
 
+## Million-key OLTP/latest and history completion (2026-10-09)
+
+The run completed at 19:59 Asia/Shanghai after about 5 h 10 min and was
+archived on 2026-10-10. It reused the validated five-candidate Linux x86-64
+binary, SHA-256 `7ecb7d29c148a27b7ba1975f77f72daf5e7ecbbca8ab953b48f5bf508c24fbe5`.
+The source revision is `4c99d0f18af25918a4162e80617f127d251f28e8`.
+
+- **300 fresh processes / 840 phase rows**, **150 / 420 per group**, three
+  repetitions, 1/4/8 workers, all five retained candidates. Each profile has
+  one million user keys and a one-million operation budget. Initial retained
+  versions are 2M for OLTP, and 16M/64M for history. No exclusions or failures.
+- **144** deterministic count/content comparison groups agree; **24** latest
+  multiworker groups agree on deterministic request/write/dataset counts.
+  **480** read/mixed/flush rows match independent oracle digests. The reported
+  600 oracle-field rows also include 120 writer-only empty-read digests.
+  All 60 latest
+  SWMR runs observed newly published bounds, point hits on new versions and
+  nonzero reader/writer overlap.
+- Both cohorts have the same binary hash and the same 58 source digests.
+  Raw rows match all 300 original process CSVs; packed commands/logs/CSVs
+  match all **900** file hashes. The copied source and process archives were
+  checked again locally. Private engine source and linked binaries are excluded.
+- Cycles, instructions, L1/LLC and branch data are available in all **840**
+  rows; DTLB data in **776**. Missing fields remain blank. CPU/NUMA placement
+  is fixed, while frequency and background activity are uncontrolled.
+
+See [protocol, tables and figures](../benchmarks/mvcc-groups-formal-1m-2026-10-09/README.md),
+[matrix validation](../benchmarks/mvcc-groups-formal-1m-2026-10-09/summary/validation.json)
+and [record verification](../benchmarks/mvcc-groups-formal-1m-2026-10-09/records-verification.json).
+The preceding build/test evidence is recorded in the pilot section below.
+
 ## OLTP/latest and long-history groups (2026-10-09)
 
 Linux x86-64 / Xeon Gold 6240 / GCC 11.3.1:
@@ -52,8 +83,9 @@ Linux x86-64 / Xeon Gold 6240 / GCC 11.3.1:
   validate at **906 / 2,928**, and their contents and CSE pins are unchanged;
   [archive validation](test-results/2026-10-09/mvcc-groups/historical-validation.json).
 
-The current full plan has **150 processes / 420 rows per group**, **300 / 840**
-together. No new million-key performance matrix was run in this change.
+The subsequent full run completed **150 processes / 420 rows per group**,
+**300 / 840** together, as recorded above. The pilot logs here preserve the
+earlier functional validation and are separate from performance evidence.
 All builds cleared proxy variables and no formatting target was run.
 See [group semantics, parameters and run commands](mvcc.md#two-workload-groups).
 

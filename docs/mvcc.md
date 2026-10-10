@@ -4,6 +4,16 @@
 `memtable_bench` and its CSV v3 archives remain exact-key index diagnostics.
 Results from these two workload models must be analyzed separately.
 
+The [completed current million-key matrix](../benchmarks/mvcc-groups-formal-1m-2026-10-09/README.md)
+contains **300 fresh processes / 840 phase rows**, five candidates, three
+repetitions and 1/4/8 workers. The separate OLTP/latest group uses 2 initial
+versions with uniform/Zipf access; the history group retains 16/64 versions
+and reads the fixed first-round snapshot. All 480 read/mixed/flush rows pass
+independent oracle verification; 120 additional writer rows carry empty-read
+digests. See the [OLTP](../benchmarks/mvcc-groups-formal-1m-2026-10-09/summary/report-oltp.md)
+and [history](../benchmarks/mvcc-groups-formal-1m-2026-10-09/summary/report-history.md)
+tables and figures.
+
 The [historical completed formal matrix](../benchmarks/mvcc-formal-1m-2026-10-08/README.md)
 contains six cohorts and three repetitions: **906 processes / 2,928 phase rows**,
 with 288 matching count/content comparison groups. The million-user-key
@@ -16,7 +26,7 @@ See [all cohort tables](../benchmarks/mvcc-formal-1m-2026-10-08/summary/report.m
 
 The current benchmark retains five candidates; InlineSkipList is the default
 baseline. See [index selection and removal reasons](index-selection.md).
-The completed archive above records the twelve-candidate run before pruning.
+The historical `mvcc-v1` archive above records the twelve-candidate run before pruning.
 
 | Candidates | Physical representation | Multiworker participation |
 | --- | --- | --- |

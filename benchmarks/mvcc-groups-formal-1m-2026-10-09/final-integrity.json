@@ -1,0 +1,36 @@
+{
+  "status": "verified",
+  "verified_at": 1791615576.970693,
+  "verification_host": "Darwin",
+  "source_files_verified": 58,
+  "all_source_bytes_match_current_checkout": true,
+  "original_process_files_verified": 900,
+  "cohorts": [
+    {
+      "cohort": "oltp-1m",
+      "process_records": 450,
+      "process_csvs": 150,
+      "raw_rows_matching_process_csv": 420,
+      "raw_sha256": "fd04f5e90649461e2a1b393c4142b7565865a2b7e7bd571053db57b290391f29"
+    },
+    {
+      "cohort": "history-1m",
+      "process_records": 450,
+      "process_csvs": 150,
+      "raw_rows_matching_process_csv": 420,
+      "raw_sha256": "d2dacd1f729cb985b680ae7ecba649b9cfe6d3c9f2f457d1e9d260237cacf156"
+    }
+  ],
+  "oracle_field_rows": 600,
+  "read_mixed_flush_content_rows": 480,
+  "writer_empty_read_digest_rows": 120,
+  "latest_swmr_runs_with_overlap_and_new_visibility": 60,
+  "pmu_rows": {
+    "cycles_per_request": 840,
+    "instructions_per_request": 840,
+    "l1d_miss_per_request": 840,
+    "llc_miss_per_request": 840,
+    "branch_miss_per_request": 840,
+    "dtlb_miss_per_request": 776
+  }
+}

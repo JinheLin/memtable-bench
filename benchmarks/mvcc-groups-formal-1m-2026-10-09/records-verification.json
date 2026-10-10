@@ -1,0 +1,30 @@
+{
+  "status": "verified",
+  "verified_at": 1791614993.914156,
+  "model": "mvcc-v2",
+  "source_commit": "4c99d0f18af25918a4162e80617f127d251f28e8",
+  "source_snapshot_verified": true,
+  "source_files": 58,
+  "cohorts": [
+    {
+      "cohort": "oltp-1m",
+      "processes": 150,
+      "phase_rows": 420,
+      "raw_matches_original_process_csv": true,
+      "process_archive_bytes_verified": true,
+      "raw_sha256": "fd04f5e90649461e2a1b393c4142b7565865a2b7e7bd571053db57b290391f29"
+    },
+    {
+      "cohort": "history-1m",
+      "processes": 150,
+      "phase_rows": 420,
+      "raw_matches_original_process_csv": true,
+      "process_archive_bytes_verified": true,
+      "raw_sha256": "d2dacd1f729cb985b680ae7ecba649b9cfe6d3c9f2f457d1e9d260237cacf156"
+    }
+  ],
+  "processes": 300,
+  "phase_rows": 840,
+  "all_cohorts_same_binary_and_source": true,
+  "private_engine_sources_and_binary_excluded": true
+}

@@ -141,6 +141,16 @@ use different workload semantics and CSV schemas; keep their statistics separate
 
 ## Published measurements
 
+The [completed two-group MVCC million-key run](benchmarks/mvcc-groups-formal-1m-2026-10-09/README.md)
+has **300 processes / 840 phase rows**, all five retained candidates, three
+repetitions and 1/4/8 workers. OLTP measures latest published versions with
+uniform/Zipf access; history measures fixed first-round snapshots with 16/64
+retained versions per key. All 480 read/mixed/flush rows match independent
+oracle digests; another 120 writer rows have no read content to hash.
+[OLTP tables](benchmarks/mvcc-groups-formal-1m-2026-10-09/summary/report-oltp.md)
+and [history tables](benchmarks/mvcc-groups-formal-1m-2026-10-09/summary/report-history.md)
+include operation, scan, memory, SWMR and lifecycle results.
+
 The [completed historical MVCC matrix](benchmarks/mvcc-formal-1m-2026-10-08/README.md)
 has **906 processes / 2,928 rows**, three repetitions and 288 matching content/count
 comparison groups. It was measured before pruning, with twelve candidates and
